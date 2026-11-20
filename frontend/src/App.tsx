@@ -1,19 +1,26 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
-import EvalSets from "./pages/EvalSets";
-import Review from "./pages/Review";
-import Scoreboard from "./pages/Scoreboard";
+import RequireAuth from "./components/RequireAuth";
+import KnowledgeBaseDetail from "./pages/KnowledgeBaseDetail";
+import KnowledgeBases from "./pages/KnowledgeBases";
+import Login from "./pages/Login";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Navigate to="/evals" replace />} />
-          <Route path="/evals" element={<EvalSets />} />
-          <Route path="/review" element={<Review />} />
-          <Route path="/scores" element={<Scoreboard />} />
-          <Route path="*" element={<Navigate to="/evals" replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          element={
+            <RequireAuth>
+              <AppLayout />
+            </RequireAuth>
+          }
+        >
+          <Route path="/" element={<Navigate to="/kbs" replace />} />
+          <Route path="/kbs" element={<KnowledgeBases />} />
+          <Route path="/kbs/:kbId" element={<KnowledgeBaseDetail />} />
+          <Route path="*" element={<Navigate to="/kbs" replace />} />
         </Route>
       </Routes>
     </BrowserRouter>

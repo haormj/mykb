@@ -110,15 +110,15 @@ def test_similarity_bounds():
     assert 0.0 < similarity("a b c", "a b") < 1.0
 
 
-def test_api_eval_endpoints(tmp_path):
-    from fastapi.testclient import TestClient
+def test_api_eval_endpoints(client):
+    from tests.helpers import create_kb, register
 
-    from mykb.api.app import create_app
-
-    bundle = _bundle(tmp_path)
+    headers = register(client, "eval-user")
+    kb = create_kb(client, headers, "api-eval")
+    bundle = Bundle(kb["local_path"])
     _knowledge(bundle, "finance/ltv", body="90 day LTV aggregate across orders")
-    client = TestClient(create_app(bundle.root))
 
+    base = f"/kbs/{kb['id']}/eval"
     payload = {
         "name": "finance",
         "cases": [
@@ -129,12 +129,12 @@ def test_api_eval_endpoints(tmp_path):
             }
         ],
     }
-    assert client.post("/eval/sets", json=payload).status_code == 200
-    assert client.get("/eval/sets").json()["sets"] == ["finance"]
+    assert client.post(f"{base}/sets", json=payload, headers=headers).status_code == 200
+    assert client.get(f"{base}/sets", headers=headers).json()["sets"] == ["finance"]
 
-    run = client.post("/eval/run", params={"name": "finance"}).json()
+    run = client.post(f"{base}/run", params={"name": "finance"}, headers=headers).json()
     assert run["a_score"] == 1.0
     assert run["b_score"] > 0.5
 
-    trend = client.get("/eval/sets/finance/trend").json()["trend"]
+    trend = client.get(f"{base}/sets/finance/trend", headers=headers).json()["trend"]
     assert len(trend) == 1

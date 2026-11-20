@@ -17,9 +17,13 @@ if [ ! -d "$ROOT/frontend/node_modules" ]; then
   exit 1
 fi
 
+: "${DATABASE_URL:?DATABASE_URL is required}"
+: "${JWT_SECRET:?JWT_SECRET is required}"
+: "${MYKB_SECRET_KEY:?MYKB_SECRET_KEY is required}"
+
 BACKEND_PORT="${BACKEND_PORT:-8000}"
 FRONTEND_PORT="${FRONTEND_PORT:-5173}"
-BUNDLE="${MYKB_BUNDLE_ROOT:-$HOME/.mykb/kb}"
+KB_ROOT="${MYKB_KB_ROOT:-$HOME/.mykb/kbs}"
 
 # Job control: each background job gets its own process group, so we can kill
 # the whole tree (uvicorn reloader + worker, npm + vite) on shutdown.
@@ -32,8 +36,8 @@ cleanup() {
 }
 trap cleanup INT TERM EXIT
 
-echo "→ backend   http://localhost:${BACKEND_PORT}  (uvicorn --reload, bundle=${BUNDLE})"
-MYKB_BUNDLE_ROOT="$BUNDLE" "$PY" -m uvicorn mykb.api.app:app \
+echo "→ backend   http://localhost:${BACKEND_PORT}  (uvicorn --reload, kb_root=${KB_ROOT})"
+MYKB_KB_ROOT="$KB_ROOT" "$PY" -m uvicorn mykb.api.app:app \
   --reload --reload-dir mykb --host 127.0.0.1 --port "$BACKEND_PORT" &
 BACKEND_PID=$!
 

@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from fastapi.testclient import TestClient
-
-from mykb.api.app import create_app
 from mykb.okf.bundle import Bundle
 from mykb.okf.model import Concept
+from tests.helpers import create_kb, register
 
 
-def test_review_flow_list_diff_approve(tmp_path):
-    bundle = Bundle(tmp_path / "kb")
-    bundle.ensure_layout()
+def test_review_flow_list_diff_approve(client):
+    headers = register(client, "reviewer")
+    kb = create_kb(client, headers, "review-kb")
+    bundle = Bundle(kb["local_path"])
 
     source_id = bundle.write_concept(
         Concept(
@@ -34,16 +33,19 @@ def test_review_flow_list_diff_approve(tmp_path):
         "finance/ltv",
     )
 
-    client = TestClient(create_app(bundle.root))
-
-    drafts = client.get("/review/drafts").json()["drafts"]
+    base = f"/kbs/{kb['id']}/review"
+    drafts = client.get(f"{base}/drafts", headers=headers).json()["drafts"]
     assert any(d["concept_id"] == draft_id for d in drafts)
 
-    diff = client.get("/review/diff", params={"concept_id": draft_id}).json()["diff"]
+    diff = client.get(
+        f"{base}/diff", params={"concept_id": draft_id}, headers=headers
+    ).json()["diff"]
     assert "aggregate across orders" in diff
 
     approved = client.post(
-        "/review/approve", params={"concept_id": draft_id, "reviewer": "bob"}
+        f"{base}/approve",
+        params={"concept_id": draft_id, "reviewer": "bob"},
+        headers=headers,
     ).json()
     assert approved["approved"] is True
 
@@ -51,9 +53,10 @@ def test_review_flow_list_diff_approve(tmp_path):
     assert loaded.status == "stable"
     assert loaded.verified[-1]["by"] == "human:bob"
 
-    remaining = client.get("/review/drafts").json()["drafts"]
+    remaining = client.get(f"{base}/drafts", headers=headers).json()["drafts"]
     assert all(d["concept_id"] != draft_id for d in remaining)
 
-    # Approved knowledge is now retrievable through the unified interface.
-    hits = client.get("/retrieve", params={"q": "ltv"}).json()["hits"]
+    hits = client.get(
+        f"/kbs/{kb['id']}/retrieve", params={"q": "ltv"}, headers=headers
+    ).json()["hits"]
     assert any(hit["concept_id"] == draft_id for hit in hits)

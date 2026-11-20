@@ -140,14 +140,16 @@ def test_codegraph_returns_symbol_hits(tmp_path):
     assert response.hits and response.hits[0].concept_id.startswith("raw/code/")
 
 
-def test_api_retrieve_uses_unified_interface(tmp_path):
-    from fastapi.testclient import TestClient
+def test_api_retrieve_uses_unified_interface(client):
+    from tests.helpers import create_kb, register
 
-    from mykb.api.app import create_app
-
-    bundle = _bundle(tmp_path)
+    headers = register(client, "retrieval-user")
+    kb = create_kb(client, headers, "api-retrieval")
+    bundle = Bundle(kb["local_path"])
     _knowledge(bundle, "finance/ltv", body="90 day LTV aggregate across orders")
-    client = TestClient(create_app(bundle.root))
-    body = client.get("/retrieve", params={"q": "ltv"}).json()
+
+    body = client.get(
+        f"/kbs/{kb['id']}/retrieve", params={"q": "ltv"}, headers=headers
+    ).json()
     assert body["engine"] == "local-markdown-rag"
     assert body["hits"][0]["concept_id"] == "knowledge/finance/ltv"

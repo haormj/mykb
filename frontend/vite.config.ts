@@ -16,11 +16,9 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/health": backend,
-      "/retrieve": backend,
-      "/answer": backend,
-      "/index-sync": backend,
-      "/eval": backend,
-      "/review": backend,
+      "/auth": backend,
+      "/admin": backend,
+      "/kbs": backend,
     },
   },
 });
