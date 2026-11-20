@@ -21,10 +21,16 @@ class Settings:
     secret_key: str
     kb_root: Path
     token_expires_days: int = 7
+    upload_max_bytes: int = 50 * 1024 * 1024
+    upload_max_zip_entries: int = 2000
 
     @property
     def is_sqlite(self) -> bool:
         return self.database_url.startswith("sqlite")
+
+    @property
+    def tmp_root(self) -> Path:
+        return self.kb_root / ".tmp"
 
 
 def load_database_url(env: Mapping[str, str] | None = None) -> str:
@@ -43,11 +49,12 @@ def load_settings(env: Mapping[str, str] | None = None) -> Settings:
         joined = ", ".join(missing)
         raise ConfigError(f"missing required configuration: {joined}")
 
-    raw_days = source.get("TOKEN_EXPIRES_DAYS", "7")
-    try:
-        token_expires_days = int(raw_days)
-    except ValueError as exc:
-        raise ConfigError(f"TOKEN_EXPIRES_DAYS must be an integer, got {raw_days!r}") from exc
+    def _int(key: str, default: int) -> int:
+        raw = source.get(key, str(default))
+        try:
+            return int(raw)
+        except ValueError as exc:
+            raise ConfigError(f"{key} must be an integer, got {raw!r}") from exc
 
     kb_root = Path(source.get("MYKB_KB_ROOT", "~/.mykb/kbs")).expanduser()
     return Settings(
@@ -55,5 +62,7 @@ def load_settings(env: Mapping[str, str] | None = None) -> Settings:
         jwt_secret=source["JWT_SECRET"],
         secret_key=source["MYKB_SECRET_KEY"],
         kb_root=kb_root,
-        token_expires_days=token_expires_days,
+        token_expires_days=_int("TOKEN_EXPIRES_DAYS", 7),
+        upload_max_bytes=_int("MYKB_UPLOAD_MAX_BYTES", 50 * 1024 * 1024),
+        upload_max_zip_entries=_int("MYKB_UPLOAD_MAX_ZIP_ENTRIES", 2000),
     )

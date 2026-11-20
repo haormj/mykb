@@ -8,7 +8,7 @@ ADMIN_USERNAME ?= admin
 ADMIN_PASSWORD ?= admin123
 BUNDLE ?= $(HOME)/.mykb/kb
 
-.PHONY: help setup migrate bootstrap backend frontend dev test typecheck lint check build stop clean
+.PHONY: help setup migrate bootstrap backend frontend dev test frontend-test typecheck lint check build stop clean
 
 help:
 	@echo "make setup      安装后端(uv)与前端(npm)依赖"
@@ -18,6 +18,7 @@ help:
 	@echo "make backend    仅启动后端 http://localhost:8000 (uvicorn --reload)"
 	@echo "make frontend   仅启动前端 http://localhost:5173 (vite HMR)"
 	@echo "make test       运行后端测试"
+	@echo "make frontend-test  运行前端测试 (vitest)"
 	@echo "make check      lint + typecheck + 测试"
 	@echo "make build      构建前端生产包"
 	@echo "make seed       生成 CLI 演示用独立 bundle（默认 $(BUNDLE)，不进入平台）"
@@ -58,6 +59,9 @@ seed:
 
 test:
 	$(PY) -m pytest tests/ -q
+
+frontend-test:
+	cd frontend && npm test
 
 typecheck:
 	$(PY) -m mypy mykb

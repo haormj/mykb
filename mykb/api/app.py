@@ -8,6 +8,10 @@ registry live under ``/auth`` and ``/kbs``; content operations live under
 from __future__ import annotations
 
 import os
+import threading
+from collections.abc import AsyncIterator
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -16,8 +20,20 @@ from ..auth.tokens import TokenService
 from ..config import Settings, load_settings
 from ..db import Base
 from ..db.session import create_db_engine, create_session_factory
+from ..importing.service import mark_stale_running_failed
 from ..kb.context import RetrievalCache
-from .routes import admin, auth, evaluation, kbs, members, retrieval, review
+from .routes import (
+    admin,
+    auth,
+    documents,
+    evaluation,
+    import_tasks,
+    kbs,
+    knowledge,
+    members,
+    retrieval,
+    review,
+)
 
 
 def build_settings(
@@ -39,18 +55,31 @@ def create_app(
     create_tables: bool = False,
 ) -> FastAPI:
     resolved = settings or build_settings(database_url=database_url, kb_root=kb_root)
-
-    app = FastAPI(title="mykb", version="0.2.0")
-    app.state.settings = resolved
     resolved.kb_root.mkdir(parents=True, exist_ok=True)
 
     engine = create_db_engine(resolved.database_url)
+    session_factory = create_session_factory(engine)
+    executor = ThreadPoolExecutor(max_workers=4, thread_name_prefix="mykb-import")
+
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+        mark_stale_running_failed(session_factory)
+        try:
+            yield
+        finally:
+            executor.shutdown(wait=False)
+
+    app = FastAPI(title="mykb", version="0.2.0", lifespan=lifespan)
+    app.state.settings = resolved
     app.state.db_engine = engine
-    app.state.session_factory = create_session_factory(engine)
+    app.state.session_factory = session_factory
     app.state.token_service = TokenService(
         resolved.jwt_secret, expires_days=resolved.token_expires_days
     )
     app.state.retrieval_cache = RetrievalCache()
+    app.state.import_executor = executor
+    app.state.kb_locks = {}
+    app.state.kb_locks_guard = threading.Lock()
 
     if create_tables:
         Base.metadata.create_all(engine)
@@ -63,9 +92,12 @@ def create_app(
     app.include_router(admin.router)
     app.include_router(kbs.router)
     app.include_router(members.router)
+    app.include_router(knowledge.router)
     app.include_router(retrieval.router)
     app.include_router(evaluation.router)
     app.include_router(review.router)
+    app.include_router(import_tasks.router)
+    app.include_router(documents.router)
     return app
 
 

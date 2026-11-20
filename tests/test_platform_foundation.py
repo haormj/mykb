@@ -237,3 +237,34 @@ def _user_id(members: list[dict], username: str) -> str:
 
 def _role(members: list[dict], username: str) -> str:
     return next(m["role"] for m in members if m["username"] == username)
+
+
+def test_knowledge_list_projection(client):
+    headers = register(client, "knowledge-list-user")
+    kb = create_kb(client, headers, "knowledge-list")
+    bundle = Bundle(kb["local_path"])
+    source_id = bundle.write_concept(
+        Concept(frontmatter={"type": "源数据", "title": "LTV"}, body="source"), "raw", "src/ltv"
+    )
+    bundle.write_concept(
+        Concept(
+            frontmatter={
+                "type": "业务知识",
+                "title": "LTV 口径",
+                "status": "stable",
+                "verified": [{"by": "human:alice", "at": "2026-01-01T00:00:00Z"}],
+                "sources": [{"id": source_id}],
+            },
+            body="knowledge",
+        ),
+        "knowledge",
+        "finance/ltv",
+    )
+
+    items = client.get(f"/kbs/{kb['id']}/knowledge", headers=headers).json()["knowledge"]
+    assert len(items) == 1
+    item = items[0]
+    assert item["concept_id"] == "knowledge/finance/ltv"
+    assert item["title"] == "LTV 口径"
+    assert item["verified"] is True
+    assert item["sources"] == [source_id]

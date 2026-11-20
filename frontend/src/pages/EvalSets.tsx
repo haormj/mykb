@@ -11,13 +11,16 @@ import {
   message,
 } from "antd";
 import { DeleteOutlined, PlayCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { useOutletContext } from "react-router-dom";
 import { api, type EvalCase, type EvalRun } from "@/services/api";
+import type { KbOutletContext } from "./kb/context";
 
 const { Text } = Typography;
 
 const emptyCase: EvalCase = { question: "", reference_answer: "", expected_concept: "" };
 
 export default function EvalSets() {
+  const { kb, canWrite } = useOutletContext<KbOutletContext>();
   const [sets, setSets] = useState<string[]>([]);
   const [name, setName] = useState("");
   const [title, setTitle] = useState("");
@@ -27,7 +30,7 @@ export default function EvalSets() {
 
   const refresh = async () => {
     try {
-      setSets(await api.listEvalSets());
+      setSets(await api.listEvalSets(kb.id));
     } catch (error) {
       message.error(String(error));
     }
@@ -35,7 +38,7 @@ export default function EvalSets() {
 
   useEffect(() => {
     void refresh();
-  }, []);
+  }, [kb.id]);
 
   const updateCase = (index: number, patch: Partial<EvalCase>) => {
     setCases((prev) => prev.map((item, i) => (i === index ? { ...item, ...patch } : item)));
@@ -50,7 +53,7 @@ export default function EvalSets() {
     }
     setSaving(true);
     try {
-      await api.createEvalSet({ name, title: title || undefined, cases });
+      await api.createEvalSet(kb.id, { name, title: title || undefined, cases });
       message.success("评测集已保存");
       setName("");
       setTitle("");
@@ -65,7 +68,7 @@ export default function EvalSets() {
 
   const runSet = async (setName: string) => {
     try {
-      setRun(await api.runEval(setName));
+      setRun(await api.runEval(kb.id, setName));
       message.success("评测完成");
     } catch (error) {
       message.error(String(error));
@@ -74,6 +77,7 @@ export default function EvalSets() {
 
   return (
     <Space direction="vertical" size={16} style={{ width: "100%" }}>
+      {canWrite && (
       <Card
         title="新建评测集"
         extra={<Text type="secondary">问题 + 期望答案 + 期望命中概念</Text>}
@@ -154,6 +158,8 @@ export default function EvalSets() {
         </Space>
       </Card>
 
+      )}
+
       <Card title="已有评测集">
         {sets.length === 0 ? (
           <Empty description="暂无评测集" />
@@ -162,17 +168,21 @@ export default function EvalSets() {
             dataSource={sets}
             renderItem={(setName) => (
               <List.Item
-                actions={[
-                  <Button
-                    key="run"
-                    type="primary"
-                    ghost
-                    icon={<PlayCircleOutlined />}
-                    onClick={() => void runSet(setName)}
-                  >
-                    运行评测
-                  </Button>,
-                ]}
+                actions={
+                  canWrite
+                    ? [
+                        <Button
+                          key="run"
+                          type="primary"
+                          ghost
+                          icon={<PlayCircleOutlined />}
+                          onClick={() => void runSet(setName)}
+                        >
+                          运行评测
+                        </Button>,
+                      ]
+                    : []
+                }
               >
                 <List.Item.Meta title={setName} />
               </List.Item>

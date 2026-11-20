@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Empty, Input, List, Space, Tag, Typography, message } from "antd";
 import { CheckOutlined, ReloadOutlined } from "@ant-design/icons";
+import { useOutletContext } from "react-router-dom";
 import { api, type Draft } from "@/services/api";
+import type { KbOutletContext } from "./kb/context";
 
 const { Text } = Typography;
 
 export default function Review() {
+  const { kb } = useOutletContext<KbOutletContext>();
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const [selected, setSelected] = useState("");
   const [diff, setDiff] = useState("");
@@ -14,7 +17,7 @@ export default function Review() {
 
   const refresh = async () => {
     try {
-      setDrafts(await api.listDrafts());
+      setDrafts(await api.listDrafts(kb.id));
     } catch (error) {
       message.error(String(error));
     }
@@ -22,13 +25,13 @@ export default function Review() {
 
   useEffect(() => {
     void refresh();
-  }, []);
+  }, [kb.id]);
 
   const open = async (conceptId: string) => {
     setSelected(conceptId);
     setDiff("");
     try {
-      setDiff(await api.diff(conceptId));
+      setDiff(await api.diff(kb.id, conceptId));
     } catch (error) {
       message.error(String(error));
     }
@@ -38,7 +41,7 @@ export default function Review() {
     if (!selected) return;
     setLoading(true);
     try {
-      await api.approve(selected, reviewer);
+      await api.approve(kb.id, selected, reviewer);
       message.success("已审核并合并");
       setSelected("");
       setDiff("");

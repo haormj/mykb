@@ -10,7 +10,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useOutletContext } from "react-router-dom";
 import { api, type TrendPoint } from "@/services/api";
+import type { KbOutletContext } from "./kb/context";
 
 interface Row {
   name: string;
@@ -21,6 +23,7 @@ interface Row {
 }
 
 export default function Scoreboard() {
+  const { kb } = useOutletContext<KbOutletContext>();
   const [sets, setSets] = useState<string[]>([]);
   const [selected, setSelected] = useState<string>();
   const [trend, setTrend] = useState<TrendPoint[]>([]);
@@ -28,25 +31,25 @@ export default function Scoreboard() {
   useEffect(() => {
     void (async () => {
       try {
-        const values = await api.listEvalSets();
+        const values = await api.listEvalSets(kb.id);
         setSets(values);
         setSelected((prev) => prev ?? values[0]);
       } catch {
         // empty state covers the failure
       }
     })();
-  }, []);
+  }, [kb.id]);
 
   useEffect(() => {
     if (!selected) return;
     void (async () => {
       try {
-        setTrend(await api.trend(selected));
+        setTrend(await api.trend(kb.id, selected));
       } catch {
         setTrend([]);
       }
     })();
-  }, [selected]);
+  }, [kb.id, selected]);
 
   const rows: Row[] = trend.map((point, index) => ({
     name: `第 ${index + 1} 次`,

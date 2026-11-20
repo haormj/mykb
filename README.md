@@ -32,6 +32,8 @@ Postgres                          git repo per knowledge base
 | `MYKB_SECRET_KEY` | 是 | 加密知识库 git 凭据的密钥 |
 | `MYKB_KB_ROOT` | 否 | 本地知识库根目录，默认 `~/.mykb/kbs` |
 | `TOKEN_EXPIRES_DAYS` | 否 | 登录令牌有效期，默认 7 |
+| `MYKB_UPLOAD_MAX_BYTES` | 否 | 单次上传大小上限，默认 50 MiB |
+| `MYKB_UPLOAD_MAX_ZIP_ENTRIES` | 否 | zip 条目数上限，默认 2000 |
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | 引导时 | 首个平台管理员 |
 
 缺失必需变量时服务启动会直接报错。
@@ -69,6 +71,15 @@ make dev                  # 后端 :8000 + 前端 :5173
 - 已存在的本地知识库可由 owner 在后续补绑远程，当前只允许绑定**空远程**。
 - 服务端使用 `oauth2:<token>@host` 形式注入 HTTPS 凭据；提交作者固定为 `mykb-agent`。
 
+## 文档导入
+
+- 在知识库「文档」页点击「导入文档」，上传 Markdown（`.md` / `.markdown`）或包含 Markdown 的 zip。
+- 每次上传创建一个持久化的导入任务，状态为 `queued → running → succeeded | partial | failed | cancelled`，计数与错误写回数据库。
+- 同一知识库的导入任务串行执行（不同库可并行），写入该库 `raw/` 后提交 git；配置了远程则一并推送。
+- 上传内容临时存放在 `MYKB_KB_ROOT/.tmp/<task_id>`，任务结束后清理；原文件不长期保留。
+- 服务重启时会把残留的 `running` 任务标记为 `failed`。
+- 任务执行器是**进程内**的，因此后端必须以单进程运行（`--workers 1`，`make backend` 已是如此）；多 worker/多实例需要换成外部队列。
+
 ## 主要接口
 
 ```
@@ -85,6 +96,11 @@ POST /kbs/{kb_id}/index-sync           admin
 GET|POST /kbs/{kb_id}/eval/*
 GET  /kbs/{kb_id}/review/drafts|diff
 POST /kbs/{kb_id}/review/approve       admin
+GET  /kbs/{kb_id}/documents            viewer
+GET  /kbs/{kb_id}/knowledge            业务知识只读投影
+POST /kbs/{kb_id}/import-tasks         editor（multipart: files）
+GET  /kbs/{kb_id}/import-tasks         列表/详情
+POST /kbs/{kb_id}/import-tasks/{id}/cancel
 ```
 
 旧的全局路由（`/retrieve`、`/eval/*`、`/review/*` 等）已移除，返回 404。
@@ -97,9 +113,21 @@ make lint        # ruff
 make typecheck   # mypy
 make check       # lint + typecheck + test
 make build       # 前端生产构建
+cd frontend && npm test   # 前端权限逻辑测试
 ```
 
-## 后续阶段
+## 界面结构
 
-- `add-document-import-tasks`：上传导入、导入任务状态机、文档页。
-- `scope-features-to-knowledge-base`：评测/审核/看板/设置/成员收进知识库详情。
+登录后进入知识库列表，每个知识库是一个完整工作台：
+
+```
+/kbs/:kbId/documents   文档导入与导入任务
+/kbs/:kbId/knowledge   业务知识（只读，含状态与血缘）
+/kbs/:kbId/evals       评测集与运行
+/kbs/:kbId/review      草稿审核（admin+）
+/kbs/:kbId/scores      分数看板
+/kbs/:kbId/settings    基础设置、远程仓库、成员管理（admin+）
+```
+
+- viewer 只读；editor 可导入、起草、评测；admin 可审核、设置与成员管理；owner 还可删除/转让/修改远程。
+- 深链访问无权知识库或页面会显示 403 提示。

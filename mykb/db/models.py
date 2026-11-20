@@ -15,6 +15,7 @@ from sqlalchemy import (
     JSON,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     String,
     UniqueConstraint,
@@ -114,3 +115,30 @@ class KbMember(Base):
     )
     role: Mapped[str] = mapped_column(String(16), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+
+class ImportTask(Base):
+    __tablename__ = "import_tasks"
+    __table_args__ = (Index("ix_import_tasks_kb_created", "kb_id", "created_at"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    kb_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("knowledge_bases.id", ondelete="CASCADE"), nullable=False
+    )
+    source_type: Mapped[str] = mapped_column(String(32), default="upload", nullable=False)
+    source_config: Mapped[dict[str, Any]] = mapped_column(
+        JSONType, default=dict, nullable=False
+    )
+    status: Mapped[str] = mapped_column(String(16), default="queued", nullable=False)
+    total: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    added: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    updated: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    skipped: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    failed: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    error: Mapped[str | None] = mapped_column(String(2048))
+    created_by: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

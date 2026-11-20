@@ -62,6 +62,47 @@ export interface Member {
   role: string;
 }
 
+export interface DocumentItem {
+  concept_id: string;
+  title: string;
+  resource?: string | null;
+  status?: string | null;
+  type?: string | null;
+  import_task_id?: string | null;
+}
+
+export interface KnowledgeItem {
+  concept_id: string;
+  title: string;
+  status?: string | null;
+  type?: string | null;
+  verified: boolean;
+  sources: string[];
+}
+
+export interface ImportTask {
+  id: string;
+  kb_id: string;
+  source_type: string;
+  status: "queued" | "running" | "succeeded" | "partial" | "failed" | "cancelled";
+  total: number;
+  added: number;
+  updated: number;
+  skipped: number;
+  failed: number;
+  error?: string | null;
+  created_by: string;
+  created_at?: string | null;
+  started_at?: string | null;
+  finished_at?: string | null;
+}
+
+const ACTIVE_TASK_STATUSES = new Set(["queued", "running"]);
+
+export function isActiveTask(task: ImportTask): boolean {
+  return ACTIVE_TASK_STATUSES.has(task.status);
+}
+
 const TOKEN_KEY = "mykb.token";
 
 export function getToken(): string | null {
@@ -147,48 +188,96 @@ export const api = {
   listMembers: async (kbId: string): Promise<Member[]> =>
     (await request<{ members: Member[] }>(`/kbs/${kbId}/members`)).members,
 
-  // -- legacy (hidden in this phase; moved into knowledge-base scope next) --
-  listEvalSets: async (): Promise<string[]> =>
-    (await getJson<{ sets: string[] }>(await fetch("/eval/sets"))).sets,
+  // -- documents & import tasks ----------------------------------------
+  listDocuments: async (kbId: string): Promise<DocumentItem[]> =>
+    (await request<{ documents: DocumentItem[] }>(`/kbs/${kbId}/documents`)).documents,
 
-  createEvalSet: async (input: EvalSetInput): Promise<void> => {
-    await getJson<unknown>(
-      await fetch("/eval/sets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
-      }),
-    );
+  listImportTasks: async (kbId: string): Promise<ImportTask[]> =>
+    (await request<{ tasks: ImportTask[] }>(`/kbs/${kbId}/import-tasks`)).tasks,
+
+  createImportTask: async (kbId: string, files: File[]): Promise<ImportTask> => {
+    const form = new FormData();
+    files.forEach((file) => form.append("files", file));
+    return request<ImportTask>(`/kbs/${kbId}/import-tasks`, { method: "POST", body: form });
   },
 
-  runEval: async (name: string): Promise<EvalRun> =>
-    getJson<EvalRun>(
-      await fetch(`/eval/run?name=${encodeURIComponent(name)}`, { method: "POST" }),
-    ),
+  cancelImportTask: async (kbId: string, taskId: string): Promise<ImportTask> =>
+    request<ImportTask>(`/kbs/${kbId}/import-tasks/${taskId}/cancel`, { method: "POST" }),
 
-  trend: async (name: string): Promise<TrendPoint[]> =>
+  listKnowledge: async (kbId: string): Promise<KnowledgeItem[]> =>
+    (await request<{ knowledge: KnowledgeItem[] }>(`/kbs/${kbId}/knowledge`)).knowledge,
+
+  // -- knowledge-base settings -----------------------------------------
+  bindRemote: async (
+    kbId: string,
+    input: { git_url: string; git_branch?: string; git_token?: string },
+  ): Promise<KnowledgeBase> =>
+    request<KnowledgeBase>(`/kbs/${kbId}/remote`, { method: "POST", body: jsonBody(input) }),
+
+  deleteKb: async (kbId: string): Promise<void> => {
+    await request<unknown>(`/kbs/${kbId}`, { method: "DELETE" });
+  },
+
+  addMember: async (
+    kbId: string,
+    input: { username: string; role: string },
+  ): Promise<void> => {
+    await request<unknown>(`/kbs/${kbId}/members`, { method: "POST", body: jsonBody(input) });
+  },
+
+  updateMember: async (kbId: string, userId: string, role: string): Promise<void> => {
+    await request<unknown>(`/kbs/${kbId}/members/${userId}`, {
+      method: "PATCH",
+      body: jsonBody({ role }),
+    });
+  },
+
+  removeMember: async (kbId: string, userId: string): Promise<void> => {
+    await request<unknown>(`/kbs/${kbId}/members/${userId}`, { method: "DELETE" });
+  },
+
+  transferOwner: async (kbId: string, userId: string): Promise<void> => {
+    await request<unknown>(`/kbs/${kbId}/members/${userId}/transfer`, { method: "POST" });
+  },
+
+  // -- scoped evaluation ------------------------------------------------
+  listEvalSets: async (kbId: string): Promise<string[]> =>
+    (await request<{ sets: string[] }>(`/kbs/${kbId}/eval/sets`)).sets,
+
+  createEvalSet: async (kbId: string, input: EvalSetInput): Promise<void> => {
+    await request<unknown>(`/kbs/${kbId}/eval/sets`, {
+      method: "POST",
+      body: jsonBody(input),
+    });
+  },
+
+  runEval: async (kbId: string, name: string): Promise<EvalRun> =>
+    request<EvalRun>(`/kbs/${kbId}/eval/run?name=${encodeURIComponent(name)}`, {
+      method: "POST",
+    }),
+
+  trend: async (kbId: string, name: string): Promise<TrendPoint[]> =>
     (
-      await getJson<{ trend: TrendPoint[] }>(
-        await fetch(`/eval/sets/${encodeURIComponent(name)}/trend`),
+      await request<{ trend: TrendPoint[] }>(
+        `/kbs/${kbId}/eval/sets/${encodeURIComponent(name)}/trend`,
       )
     ).trend,
 
-  listDrafts: async (): Promise<Draft[]> =>
-    (await getJson<{ drafts: Draft[] }>(await fetch("/review/drafts"))).drafts,
+  // -- scoped review ----------------------------------------------------
+  listDrafts: async (kbId: string): Promise<Draft[]> =>
+    (await request<{ drafts: Draft[] }>(`/kbs/${kbId}/review/drafts`)).drafts,
 
-  diff: async (conceptId: string): Promise<string> =>
+  diff: async (kbId: string, conceptId: string): Promise<string> =>
     (
-      await getJson<{ diff: string }>(
-        await fetch(`/review/diff?concept_id=${encodeURIComponent(conceptId)}`),
+      await request<{ diff: string }>(
+        `/kbs/${kbId}/review/diff?concept_id=${encodeURIComponent(conceptId)}`,
       )
     ).diff,
 
-  approve: async (conceptId: string, reviewer: string): Promise<void> => {
-    await getJson<unknown>(
-      await fetch(
-        `/review/approve?concept_id=${encodeURIComponent(conceptId)}&reviewer=${encodeURIComponent(reviewer)}`,
-        { method: "POST" },
-      ),
+  approve: async (kbId: string, conceptId: string, reviewer: string): Promise<void> => {
+    await request<unknown>(
+      `/kbs/${kbId}/review/approve?concept_id=${encodeURIComponent(conceptId)}&reviewer=${encodeURIComponent(reviewer)}`,
+      { method: "POST" },
     );
   },
 };
