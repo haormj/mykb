@@ -1,0 +1,33 @@
+[project]
+name = "mykb"
+version = "0.1.0"
+description = "Enterprise knowledge management platform (git + OKF native)"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "pydantic>=2.6",
+    "PyYAML>=6.0",
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23", "mypy>=1.9", "ruff>=0.4", "types-PyYAML>=6.0"]
+
+[project.scripts]
+mykb = "mykb.cli:main"
+
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mykb"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100

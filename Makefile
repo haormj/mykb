@@ -1,0 +1,57 @@
+PY := .venv/bin/python
+NPM_CACHE := $(CURDIR)/.npm-cache
+BUNDLE ?= $(HOME)/.mykb/kb
+
+.PHONY: help setup seed backend frontend dev test typecheck lint check build stop clean
+
+help:
+	@echo "make setup      安装后端(uv)与前端(npm)依赖"
+	@echo "make seed       生成演示知识库（默认 $(BUNDLE)）"
+	@echo "make dev        同时启动前后端（后端自动重载 + 前端 HMR）"
+	@echo "make backend    仅启动后端 http://localhost:8000 (uvicorn --reload)"
+	@echo "make frontend   仅启动前端 http://localhost:5173 (vite HMR)"
+	@echo "make test       运行后端测试"
+	@echo "make check      lint + typecheck + 测试"
+	@echo "make build      构建前端生产包"
+	@echo "make stop       停止占用 8000/5173 的服务"
+	@echo "make clean      删除 .venv / node_modules / dist"
+	@echo ""
+	@echo "知识库默认在 $(BUNDLE)，可用 MYKB_BUNDLE_ROOT 覆盖"
+
+setup:
+	uv venv --python 3.12 .venv
+	uv pip install --python $(PY) -e ".[dev]"
+	cd frontend && npm install --cache $(NPM_CACHE)
+
+seed:
+	$(PY) scripts/seed_demo.py $(BUNDLE)
+
+backend:
+	MYKB_BUNDLE_ROOT=$(BUNDLE) $(PY) -m uvicorn mykb.api.app:app --reload --reload-dir mykb --host 127.0.0.1 --port $${BACKEND_PORT:-8000}
+
+frontend:
+	cd frontend && npm run dev -- --port $${FRONTEND_PORT:-5173}
+
+dev:
+	MYKB_BUNDLE_ROOT=$(BUNDLE) BACKEND_PORT=$${BACKEND_PORT:-8000} FRONTEND_PORT=$${FRONTEND_PORT:-5173} bash scripts/dev.sh
+
+test:
+	$(PY) -m pytest tests/ -q
+
+typecheck:
+	$(PY) -m mypy mykb
+
+lint:
+	$(PY) -m ruff check mykb tests
+
+check: lint typecheck test
+
+build:
+	cd frontend && npm run build
+
+stop:
+	-pkill -f "uvicorn mykb.api.app:app"
+	-pkill -f "vite"
+
+clean:
+	rm -rf .venv frontend/node_modules frontend/dist .npm-cache
