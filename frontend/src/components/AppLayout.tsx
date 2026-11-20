@@ -44,7 +44,7 @@ export default function AppLayout() {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider theme="light" width={220} style={{ borderRight: "1px solid #f0f0f0" }}>
-        <div className="brand">mykb</div>
+        <div className="brand">企业知识管理平台</div>
         <Menu
           mode="inline"
           selectedKeys={[selected]}
@@ -64,7 +64,7 @@ export default function AppLayout() {
             justifyContent: "space-between",
           }}
         >
-          <span className="header-title">企业知识管理平台</span>
+          <span className="header-title">知识库</span>
           <Space>
             <Avatar size="small" icon={<UserOutlined />} />
             <Text>{user?.display_name ?? user?.username ?? ""}</Text>
