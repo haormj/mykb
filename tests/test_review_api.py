@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from mykb.okf.bundle import Bundle
 from mykb.okf.model import Concept
-from tests.helpers import create_kb, register
+from tests.helpers import create_kb, publish_current, register
 
 
 def test_review_flow_list_diff_approve(client):
@@ -55,6 +55,8 @@ def test_review_flow_list_diff_approve(client):
 
     remaining = client.get(f"{base}/drafts", headers=headers).json()["drafts"]
     assert all(d["concept_id"] != draft_id for d in remaining)
+
+    publish_current(client, kb)
 
     hits = client.get(
         f"/kbs/{kb['id']}/retrieve", params={"q": "ltv"}, headers=headers

@@ -37,12 +37,3 @@ def answer(
     service = cache.get(access.kb)
     return {"query": q, "answer": service.answer(q)}
 
-
-@router.post("/index-sync")
-def index_sync(
-    access: KbAccess = Depends(require_kb_role("admin")),
-    cache: RetrievalCache = Depends(get_cache),
-) -> dict:
-    service = cache.rebuild(access.kb)
-    version = getattr(service.engines["knowledge"], "version", None)
-    return {"status": "ok", "version": version}

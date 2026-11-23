@@ -24,6 +24,7 @@ from ..db.session import create_db_engine, create_session_factory
 from ..extraction.queue import recover_processing
 from ..importing.service import mark_stale_running_failed
 from ..kb.context import RetrievalCache
+from ..retrieval.service import build_knowledge_backend
 from .routes import (
     admin,
     auth,
@@ -33,6 +34,7 @@ from .routes import (
     kbs,
     knowledge,
     members,
+    publish,
     retrieval,
     review,
 )
@@ -79,7 +81,9 @@ def create_app(
     app.state.token_service = TokenService(
         resolved.jwt_secret, expires_days=resolved.token_expires_days
     )
-    app.state.retrieval_cache = RetrievalCache()
+    retrieval_backend = build_knowledge_backend(resolved)
+    app.state.retrieval_backend = retrieval_backend
+    app.state.retrieval_cache = RetrievalCache(session_factory, retrieval_backend)
     app.state.converter_service = ConverterService(resolved)
     app.state.import_executor = executor
     app.state.kb_locks = {}
@@ -100,6 +104,7 @@ def create_app(
     app.include_router(members.router)
     app.include_router(knowledge.router)
     app.include_router(retrieval.router)
+    app.include_router(publish.router)
     app.include_router(evaluation.router)
     app.include_router(review.router)
     app.include_router(import_tasks.router)

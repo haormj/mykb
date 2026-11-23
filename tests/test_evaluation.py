@@ -7,7 +7,7 @@ from mykb.okf.model import Concept
 from mykb.retrieval.engines.markdown_rag import LocalMarkdownRAG
 from mykb.retrieval.interface import RetrievalService
 from mykb.retrieval.sync import IndexSync
-from tests.helpers import create_kb, login, register
+from tests.helpers import create_kb, login, publish_current, register
 
 
 def _bundle(tmp_path) -> Bundle:
@@ -132,6 +132,8 @@ def test_api_batch_run_and_result_visibility(client):
     kb_b = create_kb(client, owner, "batch-b")
     _knowledge(Bundle(kb_a["local_path"]), "finance/ltv", body="90 day LTV aggregate")
     _knowledge(Bundle(kb_b["local_path"]), "finance/ltv", body="90 day LTV aggregate")
+    publish_current(client, kb_a)
+    publish_current(client, kb_b)
     set_id = _create_set(client, owner)["id"]
 
     run = client.post(
@@ -172,6 +174,8 @@ def test_api_overview_cross_kb_and_visibility(client):
     kb_b = create_kb(client, owner, "overview-b")
     _knowledge(Bundle(kb_a["local_path"]), "finance/ltv", body="90 day LTV aggregate")
     _knowledge(Bundle(kb_b["local_path"]), "finance/ltv", body="90 day LTV aggregate")
+    publish_current(client, kb_a)
+    publish_current(client, kb_b)
     set_id = _create_set(client, owner)["id"]
     client.post(
         f"/eval/sets/{set_id}/run",

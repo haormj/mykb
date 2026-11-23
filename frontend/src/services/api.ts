@@ -113,6 +113,30 @@ export interface Member {
   role: string;
 }
 
+export interface PublishTask {
+  task_id: string;
+  kb_id: string;
+  status: string;
+  git_commit: string;
+  version_id?: string | null;
+  doc_total: number;
+  doc_completed: number;
+  error?: string | null;
+  created_at?: string | null;
+  finished_at?: string | null;
+}
+
+export interface IndexVersion {
+  id: string;
+  git_commit: string;
+  status: string;
+  doc_total: number;
+  doc_completed: number;
+  created_at?: string | null;
+  ready_at?: string | null;
+  is_active: boolean;
+}
+
 export interface DocumentItem {
   concept_id: string;
   title: string;
@@ -255,6 +279,15 @@ export const api = {
 
   listMembers: async (kbId: string): Promise<Member[]> =>
     (await request<{ members: Member[] }>(`/kbs/${kbId}/members`)).members,
+
+  publishKb: async (kbId: string): Promise<PublishTask> =>
+    request<PublishTask>(`/kbs/${kbId}/publish`, { method: "POST" }),
+
+  getPublishTask: async (kbId: string, taskId: string): Promise<PublishTask> =>
+    request<PublishTask>(`/kbs/${kbId}/publish/${taskId}`),
+
+  listVersions: async (kbId: string): Promise<IndexVersion[]> =>
+    (await request<{ versions: IndexVersion[] }>(`/kbs/${kbId}/versions`)).versions,
 
   // -- documents & import tasks ----------------------------------------
   listDocuments: async (kbId: string): Promise<DocumentItem[]> =>

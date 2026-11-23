@@ -26,10 +26,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-incremental", action="store_true", help="Re-import even unchanged content"
     )
 
-    sync_index = sub.add_parser(
-        "sync-index", help="Versioned sync of verified knowledge into retrieval engines"
-    )
-    sync_index.add_argument("root", help="Bundle root directory")
+    publish = sub.add_parser("publish", help="Publish a knowledge base snapshot")
+    publish.add_argument("kb_id", help="Knowledge base id")
 
     return parser
 
@@ -62,13 +60,49 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0
 
-    if args.command == "sync-index":
-        from .retrieval.service import build_retrieval_service
+    if args.command == "publish":
+        from .config import load_settings
+        from .db.models import KnowledgeBase, PublishTask
+        from .db.session import create_db_engine, create_session_factory
+        from .retrieval.service import build_knowledge_backend
+        from .retrieval.sync import get_head_commit
+        from .retrieval.tasks import run_publish_task
 
-        service = build_retrieval_service(args.root)
-        version = getattr(service.engines["knowledge"], "version", None)
-        print(f"index synced at version {version}")
-        return 0
+        settings = load_settings()
+        engine = create_db_engine(settings.database_url)
+        factory = create_session_factory(engine)
+        backend = build_knowledge_backend(settings)
+        with factory() as session:
+            kb = session.get(KnowledgeBase, args.kb_id)
+            if kb is None:
+                print(f"knowledge base {args.kb_id} not found", file=sys.stderr)
+                return 1
+            task = PublishTask(
+                kb_id=kb.id,
+                git_commit=get_head_commit(kb.local_path) or "unversioned",
+                status="queued",
+            )
+            session.add(task)
+            session.commit()
+            task_id = task.id
+
+        run_publish_task(
+            task_id,
+            session_factory=factory,
+            backend=backend,
+            retention=settings.weknora_retention,
+            sleep=lambda _s: None,
+        )
+        with factory() as session:
+            finished = session.get(PublishTask, task_id)
+            if finished is None:
+                print("publish task disappeared", file=sys.stderr)
+                return 1
+            print(
+                f"publish {finished.status}: doc "
+                f"{finished.doc_completed}/{finished.doc_total}"
+            )
+            return 0 if finished.status == "ready" else 1
 
     return 0
 

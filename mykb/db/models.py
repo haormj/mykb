@@ -100,6 +100,7 @@ class KnowledgeBase(Base):
     owner_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("users.id", ondelete="RESTRICT"), nullable=False
     )
+    active_weknora_version_id: Mapped[str | None] = mapped_column(String(36), index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_now, onupdate=_now
@@ -269,3 +270,79 @@ class EvalCaseResult(Base):
     a_score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
     b_answer: Mapped[str] = mapped_column(Text, default="", nullable=False)
     b_score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+
+
+class WeKnoraIndexVersion(Base):
+    """One immutable WeKnora snapshot for a knowledge base at a git commit."""
+
+    __tablename__ = "weknora_index_versions"
+    __table_args__ = (
+        UniqueConstraint("kb_id", "git_commit", name="uq_weknora_versions_kb_commit"),
+        UniqueConstraint("weknora_kb_id", name="uq_weknora_versions_kb"),
+        Index("ix_weknora_versions_kb_status", "kb_id", "status"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    kb_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("knowledge_bases.id", ondelete="CASCADE"), nullable=False
+    )
+    git_commit: Mapped[str] = mapped_column(String(255), nullable=False)
+    weknora_kb_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[str] = mapped_column(String(24), default="building", nullable=False)
+    doc_total: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    doc_completed: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    error: Mapped[str | None] = mapped_column(String(2048))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    ready_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    concept_maps: Mapped[list[WeKnoraConceptMap]] = relationship(
+        back_populates="version", cascade="all, delete-orphan"
+    )
+
+
+class WeKnoraConceptMap(Base):
+    """Maps a platform concept id to its document id inside one snapshot."""
+
+    __tablename__ = "weknora_concept_map"
+    __table_args__ = (
+        UniqueConstraint(
+            "version_id", "concept_id", name="uq_weknora_concept_version_concept"
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    version_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("weknora_index_versions.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    concept_id: Mapped[str] = mapped_column(String(1024), nullable=False)
+    doc_ref: Mapped[str] = mapped_column(String(1024), nullable=False)
+
+    version: Mapped[WeKnoraIndexVersion] = relationship(back_populates="concept_maps")
+
+
+class PublishTask(Base):
+    """One manual publish request for a knowledge base."""
+
+    __tablename__ = "publish_tasks"
+    __table_args__ = (Index("ix_publish_tasks_kb_created", "kb_id", "created_at"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    kb_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("knowledge_bases.id", ondelete="CASCADE"), nullable=False
+    )
+    git_commit: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[str] = mapped_column(String(24), default="queued", nullable=False)
+    version_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("weknora_index_versions.id", ondelete="SET NULL")
+    )
+    doc_total: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    doc_completed: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    error: Mapped[str | None] = mapped_column(String(2048))
+    created_by: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

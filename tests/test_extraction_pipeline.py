@@ -16,7 +16,7 @@ from mykb.extraction.queue import claim_next, enqueue_item, recover_processing
 from mykb.maintenance.audit import run_audit
 from mykb.okf.bundle import Bundle
 from mykb.okf.model import Concept
-from tests.helpers import create_kb, register
+from tests.helpers import create_kb, publish_current, register
 
 
 def _wait_for_review(client, headers, kb_id: str, timeout: float = 10.0):
@@ -87,6 +87,8 @@ def test_import_review_approve_flow(client):
     assert knowledge and all(c.is_verified_stable() for c in knowledge)
     assert knowledge[0].frontmatter["claims"][0]["sources"] == ["raw/upload/note"]
     assert knowledge[0].frontmatter["x-extraction"]["model"] == "fake-llm"
+
+    publish_current(client, kb)
 
     hits = client.get(
         f"/kbs/{kb['id']}/retrieve", params={"q": "LTV"}, headers=headers

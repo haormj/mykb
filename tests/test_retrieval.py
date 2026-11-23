@@ -6,6 +6,7 @@ import subprocess
 import httpx
 import pytest
 
+from mykb.db.models import WeKnoraIndexVersion
 from mykb.extraction.code_ref import create_code_source
 from mykb.okf.bundle import Bundle
 from mykb.okf.model import Concept
@@ -152,4 +153,15 @@ def test_api_retrieve_uses_unified_interface(client):
         f"/kbs/{kb['id']}/retrieve", params={"q": "ltv"}, headers=headers
     ).json()
     assert body["engine"] == "local-markdown-rag"
-    assert body["hits"][0]["concept_id"] == "knowledge/finance/ltv"
+    assert body["hits"] == []
+
+
+def test_first_retrieval_does_not_publish(client, app):
+    from tests.helpers import create_kb, register
+
+    headers = register(client, "retrieval-no-publish")
+    kb = create_kb(client, headers, "api-no-publish")
+    client.get(f"/kbs/{kb['id']}/retrieve", params={"q": "ltv"}, headers=headers)
+
+    with app.state.session_factory() as session:
+        assert session.query(WeKnoraIndexVersion).count() == 0

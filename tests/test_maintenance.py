@@ -10,8 +10,6 @@ from mykb.maintenance.rollback import IndexRollback
 from mykb.maintenance.staleness import detect_stale_sources, is_expired
 from mykb.okf.bundle import Bundle
 from mykb.okf.model import Concept
-from mykb.retrieval.engines.markdown_rag import LocalMarkdownRAG
-from mykb.retrieval.sync import IndexSync
 
 
 def _bundle(tmp_path) -> Bundle:
@@ -95,10 +93,20 @@ def _commit(root, message):
     )
 
 
-def test_index_rollback_restores_historical_version(tmp_path):
+def test_index_rollback_restores_historical_version(app, tmp_path):
+    from mykb.db.models import KnowledgeBase, User
+    from mykb.retrieval.engines.local import LocalBackend
+    from mykb.retrieval.index import select_indexable_knowledge
+    from mykb.retrieval.publish import SnapshotPublisher
+    from mykb.retrieval.read import SnapshotRetrievalService
+
     bundle = _bundle(tmp_path)
     concept_id = _knowledge(bundle, "k/one", body="v1marker content")
-    subprocess.run(["git", "-C", str(bundle.root), "init", "-b", "main"], check=True, capture_output=True)
+    subprocess.run(
+        ["git", "-C", str(bundle.root), "init", "-b", "main"],
+        check=True,
+        capture_output=True,
+    )
     _commit(bundle.root, "v1")
     v1 = subprocess.run(
         ["git", "-C", str(bundle.root), "rev-parse", "HEAD"],
@@ -107,17 +115,45 @@ def test_index_rollback_restores_historical_version(tmp_path):
         check=False,
     ).stdout.strip()
 
-    engine = LocalMarkdownRAG()
-    IndexSync(bundle, [engine]).sync()
-    assert engine.search("v1marker")
+    factory = app.state.session_factory
+    backend = LocalBackend()
+    publisher = SnapshotPublisher(backend, sleep=lambda _s: None)
+    with factory() as session:
+        user = User(username="maint-owner", display_name="Owner")
+        session.add(user)
+        session.flush()
+        kb = KnowledgeBase(
+            name="maint-kb",
+            slug="maint-kb",
+            local_path=str(bundle.root),
+            owner_id=user.id,
+        )
+        session.add(kb)
+        session.flush()
+        kb_id = kb.id
+        publisher.publish(
+            session,
+            kb_id=kb_id,
+            concepts=select_indexable_knowledge(bundle),
+            git_commit=v1,
+        )
 
-    bad = bundle.read_concept(concept_id)
-    bad.body = "badmarker content"
-    bundle.save_concept(bad)
-    _commit(bundle.root, "v2-bad")
-    IndexSync(bundle, [engine]).sync()
-    assert engine.search("badmarker")
+        bad = bundle.read_concept(concept_id)
+        bad.body = "badmarker content"
+        bundle.save_concept(bad)
+        _commit(bundle.root, "v2-bad")
+        publisher.publish(
+            session,
+            kb_id=kb_id,
+            concepts=select_indexable_knowledge(bundle),
+            git_commit="v2",
+        )
 
-    IndexRollback(bundle, [engine]).rollback(v1)
-    assert engine.search("v1marker")
-    assert engine.search("badmarker") == []
+        service = SnapshotRetrievalService(
+            backend=backend, session_factory=factory, kb_id=kb_id
+        )
+        assert service.search("badmarker").hits
+
+        IndexRollback(bundle, backend).rollback(session, kb_id=kb_id, version=v1)
+        assert service.search("v1marker").hits
+        assert service.search("badmarker").hits == []

@@ -12,7 +12,7 @@ from mykb.db.bootstrap import bootstrap
 from mykb.db.models import User
 from mykb.okf.bundle import Bundle
 from mykb.okf.model import Concept
-from tests.helpers import auth, create_kb, register
+from tests.helpers import auth, create_kb, publish_current, register
 
 
 def test_unique_constraints_and_bootstrap_idempotent(app):
@@ -216,6 +216,9 @@ def test_kb_scoped_isolation(client):
         "knowledge",
         "topic/b",
     )
+
+    publish_current(client, first)
+    publish_current(client, second)
 
     hits_a = client.get(
         f"/kbs/{first['id']}/retrieve", params={"q": "alpha"}, headers=headers

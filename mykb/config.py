@@ -33,6 +33,11 @@ class Settings:
     conversion_max_markdown_bytes: int = 10 * 1024 * 1024
     kb_asset_quota_bytes: int = 512 * 1024 * 1024
     extraction_enabled: bool = True
+    weknora_url: str | None = None
+    weknora_key: str | None = None
+    weknora_tenant_id: str | None = None
+    weknora_timeout: float = 30.0
+    weknora_retention: int = 3
 
     @property
     def is_sqlite(self) -> bool:
@@ -97,6 +102,9 @@ def load_settings(env: Mapping[str, str] | None = None) -> Settings:
         "no",
         "off",
     )
+    weknora_url = source.get("MYKB_WEKNORA_URL") or None
+    weknora_key = source.get("MYKB_WEKNORA_KEY") or None
+    weknora_tenant_id = source.get("MYKB_WEKNORA_TENANT_ID") or None
     return Settings(
         database_url=source["DATABASE_URL"],
         jwt_secret=source["JWT_SECRET"],
@@ -121,4 +129,9 @@ def load_settings(env: Mapping[str, str] | None = None) -> Settings:
             "MYKB_KB_ASSET_QUOTA_BYTES", 512 * 1024 * 1024
         ),
         extraction_enabled=extraction_enabled,
+        weknora_url=weknora_url,
+        weknora_key=weknora_key,
+        weknora_tenant_id=weknora_tenant_id,
+        weknora_timeout=_float("MYKB_WEKNORA_TIMEOUT", 30.0),
+        weknora_retention=_positive_int("MYKB_WEKNORA_RETENTION", 3),
     )

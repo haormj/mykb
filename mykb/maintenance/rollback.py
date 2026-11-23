@@ -1,20 +1,22 @@
-"""Index rollback to a historical knowledge version (git commit)."""
+"""Rollback to a historical knowledge version (git commit) via snapshots."""
 
 from __future__ import annotations
 
 import subprocess
 from pathlib import Path
 
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from ..db.models import WeKnoraIndexVersion
 from ..okf.bundle import Bundle
 from ..okf.model import Concept
-from ..retrieval.index import select_code_sources
-from ..retrieval.interface import RetrievalEngine
-from ..retrieval.sync import IndexSync, IndexVersion
-from ..util import now_iso
+from ..retrieval.backend import READY
+from ..retrieval.publish import ActiveResolver, SnapshotPublisher
 
 
 class RollbackError(RuntimeError):
-    """Raised when a git operation for rollback fails."""
+    """Raised when a git operation or rollback target is invalid."""
 
 
 def _git(root: Path, *args: str) -> str:
@@ -44,38 +46,36 @@ def concepts_at_commit(bundle: Bundle, commit: str) -> list[Concept]:
 
 
 class IndexRollback:
-    """Re-indexes engines from a historical commit and records the rollback."""
+    """Restore a knowledge base to a historical snapshot.
 
-    def __init__(
-        self,
-        bundle: Bundle,
-        knowledge_engines: list[RetrievalEngine],
-        *,
-        code_engine: RetrievalEngine | None = None,
-        state_dir: str | Path | None = None,
-    ) -> None:
+    A ready snapshot inside the retention window is activated by pointer only.
+    Otherwise the concepts are rebuilt from the git commit into a new snapshot.
+    """
+
+    def __init__(self, bundle: Bundle, backend, *, retention: int = 3) -> None:
         self.bundle = bundle
-        self.knowledge_engines = knowledge_engines
-        self.code_engine = code_engine
-        self.sync = IndexSync(
-            bundle, knowledge_engines, code_engine=code_engine, state_dir=state_dir
-        )
+        self.backend = backend
+        self.retention = retention
 
-    def rollback(self, version: str) -> IndexVersion:
-        concepts = concepts_at_commit(self.bundle, version)
-        for engine in self.knowledge_engines:
-            engine.index(concepts, version=version)
-        if self.code_engine is not None:
-            self.code_engine.index(select_code_sources(self.bundle), version=version)
-        names = [engine.name for engine in self.knowledge_engines]
-        if self.code_engine is not None:
-            names.append(self.code_engine.name)
-        record = IndexVersion(
-            version=version,
-            created_at=now_iso(),
-            knowledge_ids=[concept.id or "" for concept in concepts],
-            code_ids=[],
-            engines=names,
+    def rollback(
+        self, session: Session, *, kb_id: str, version: str
+    ) -> WeKnoraIndexVersion:
+        existing = session.scalar(
+            select(WeKnoraIndexVersion).where(
+                WeKnoraIndexVersion.kb_id == kb_id,
+                WeKnoraIndexVersion.git_commit == version,
+                WeKnoraIndexVersion.status == READY,
+            )
         )
-        self.sync.mark_version(record)
-        return record
+        if existing is not None:
+            ActiveResolver().activate(session, kb_id, existing)
+            session.commit()
+            return existing
+
+        concepts = concepts_at_commit(self.bundle, version)
+        if not concepts:
+            raise RollbackError(f"no verified knowledge at commit {version}")
+        publisher = SnapshotPublisher(self.backend, retention=self.retention)
+        return publisher.publish(
+            session, kb_id=kb_id, concepts=concepts, git_commit=version
+        )

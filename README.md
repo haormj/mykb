@@ -47,10 +47,23 @@ Postgres                          git repo per knowledge base
 | `MYKB_CONVERSION_MAX_MARKDOWN_BYTES` | 否 | 单文档 markdown 大小上限，默认 10 MiB |
 | `MYKB_KB_ASSET_QUOTA_BYTES` | 否 | 每个知识库资产总量上限，默认 512 MiB |
 | `MYKB_EXTRACTION_ENABLED` | 否 | 是否在导入后自动触发知识提取，默认 `true` |
+| `MYKB_WEKNORA_URL` | 否 | 自部署 WeKnora API 地址（如 `http://weknora:8080`）；为空时使用本地内存检索引擎 |
+| `MYKB_WEKNORA_KEY` | 配 WeKnora 时 | workspace 级 API Key（`X-API-Key`），需 `retrieve`+`ingest`+`manage_kbs` 能力 |
+| `MYKB_WEKNORA_TENANT_ID` | 否 | 专用租户 ID（`X-Tenant-ID`） |
+| `MYKB_WEKNORA_TIMEOUT` | 否 | 调用 WeKnora 超时秒数，默认 30 |
+| `MYKB_WEKNORA_RETENTION` | 否 | 保留最近多少个已发布快照，默认 3 |
 | `MYKB_LLM_BASE_URL` / `MYKB_LLM_API_KEY` / `MYKB_LLM_MODEL` | 否 | OpenAI 兼容提取端点；未配置时使用确定性离线 FakeLLM |
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | 引导时 | 首个平台管理员 |
 
 缺失必需变量时服务启动会直接报错。
+
+## 检索后端（WeKnora）
+
+- 未配置 `MYKB_WEKNORA_URL` 时，检索使用进程内内存引擎（开发/测试默认），无外部依赖。
+- 配置后，知识库详情页的「发布」会把当前 `verified && stable` 业务知识全量物化为一个**新的 WeKnora 知识库快照**；全部文档解析完成后原子切换 active 指针，发布期间检索继续服务上一个快照。只有手动发布，合入不会自动发布。
+- 需要自部署开源 WeKnora（v0.9+），并准备一个专用租户与 **workspace 级** API Key，至少具备 `retrieve`、`ingest`、`manage_kbs` 能力。不要用带 `knowledge_base_ids` 白名单的受限 Key——白名单会挡住每次发布新建的库。
+- 每条业务知识概念对应快照中的一条 Markdown 文档；平台以 `knowledge_id` 把检索命中还原为概念标识。
+- 每个知识库保留最近 `MYKB_WEKNORA_RETENTION`（默认 3）个快照用于秒级回滚；更早版本可由对应 git commit 重新发布得到。
 
 ## 快速开始
 
@@ -133,7 +146,9 @@ POST /kbs/{kb_id}/remote               owner 补绑远程
 GET|POST|PATCH|DELETE /kbs/{kb_id}/members
 POST /kbs/{kb_id}/members/{user_id}/transfer
 GET  /kbs/{kb_id}/retrieve | /answer
-POST /kbs/{kb_id}/index-sync           admin
+POST /kbs/{kb_id}/publish              admin/owner，202 返回发布任务（并发返回 409）
+GET  /kbs/{kb_id}/publish/{task_id}    viewer，发布进度（status/doc_completed/doc_total/error）
+GET  /kbs/{kb_id}/versions             viewer，快照版本列表（含 is_active）
 POST|GET /eval/sets                    平台级评测集（创建者拥有，他人可读可跑）
 GET|PATCH|DELETE /eval/sets/{set_id}   创建者可改删
 POST /eval/sets/{set_id}/run           对目标库运行（逐库 editor，全有或全无）

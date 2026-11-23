@@ -88,7 +88,7 @@ def main() -> int:
         title="财务基础",
     )
 
-    run = EvalRunner(bundle, build_retrieval_service(root)).run("finance-basics")
+    run = EvalRunner(bundle, build_retrieval_service(root, sync=True)).run("finance-basics")
     print(f"seeded {root}")
     print("  knowledge: finance/ltv, sales/orders; draft: finance/ltv-v2")
     print(f"  eval finance-basics: A={run.a_score:.3f} B={run.b_score:.3f}")
