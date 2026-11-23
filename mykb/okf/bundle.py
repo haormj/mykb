@@ -7,15 +7,25 @@ three-level layout (``raw`` / ``knowledge`` / ``evals``), the bundle-root
 
 from __future__ import annotations
 
-from collections.abc import Iterator
+import shutil
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Protocol
 
 from .model import Concept, FrontmatterError, parse, serialize
 
 RESERVED_FILENAMES = {"index.md", "log.md"}
 LEVELS: tuple[str, ...] = ("raw", "knowledge", "evals")
 DEFAULT_OKF_VERSION = "0.3"
+
+
+class AssetLike(Protocol):
+    @property
+    def name(self) -> str: ...
+
+    @property
+    def data(self) -> bytes: ...
 
 
 @dataclass
@@ -109,9 +119,56 @@ class Bundle:
     def save_concept(self, concept: Concept) -> str:
         """Persist an existing concept back to the path named by its id."""
         if not concept.id:
-            raise ValueError("concept has no id; use write_concept to place a new concept")
+            raise ValueError("concept has no id; use write_concept to place a new one")
         concept.to_file(self.path_for_id(concept.id))
         return concept.id
+
+    # -- derived assets ---------------------------------------------------
+    def asset_dir_for(self, level: str, relative_concept_path: str) -> Path:
+        """Return the sibling ``<concept>.assets`` directory for a concept."""
+        tail = relative_concept_path.replace("\\", "/").lstrip("/")
+        tail = tail.removesuffix(".md")
+        directory = self.level_dir(level) / f"{tail}.assets"
+        resolved = directory.resolve()
+        root = self.root.resolve()
+        if root not in resolved.parents and resolved != root:
+            raise ValueError("asset directory escapes the bundle root")
+        return directory
+
+    def write_assets(
+        self, level: str, relative_concept_path: str, assets: Iterable[AssetLike]
+    ) -> list[str]:
+        """Write prepared assets and return links relative to the concept file."""
+        directory = self.asset_dir_for(level, relative_concept_path)
+        alias = Path(relative_concept_path).stem
+        directory.mkdir(parents=True, exist_ok=True)
+        links: list[str] = []
+        for asset in assets:
+            name = asset.name
+            data = asset.data
+            if name in ("", ".", "..") or Path(name).name != name or "\\" in name:
+                raise ValueError(f"unsafe asset name: {name!r}")
+            (directory / name).write_bytes(data)
+            links.append(f"{alias}.assets/{name}")
+        return links
+
+    def remove_assets(self, level: str, relative_concept_path: str) -> None:
+        """Delete a concept's asset directory if it exists."""
+        shutil.rmtree(self.asset_dir_for(level, relative_concept_path), ignore_errors=True)
+
+    def asset_bytes(self) -> int:
+        """Total bytes of derived asset files in this bundle."""
+        total = 0
+        for path in self.root.rglob("*"):
+            if not path.is_file() or ".git" in path.parts:
+                continue
+            if any(part.endswith(".assets") for part in path.parts):
+                try:
+                    total += path.stat().st_size
+                except OSError:
+                    continue
+        return total
+
 
     def iter_concepts(self, level: str | None = None) -> Iterator[tuple[str, Concept]]:
         """Yield ``(concept_id, concept)`` for every non-reserved markdown file."""

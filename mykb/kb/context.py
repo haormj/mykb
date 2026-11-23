@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from ..db.models import KnowledgeBase
 from ..okf.bundle import Bundle
 from ..retrieval.interface import RetrievalService
 from ..retrieval.service import build_retrieval_service
-from ..db.models import KnowledgeBase
 
 
 def bundle_for(kb: KnowledgeBase) -> Bundle:

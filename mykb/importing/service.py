@@ -16,14 +16,28 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from ..config import Settings
 from ..connectors.upload import UploadDirConnector
+from ..conversion import (
+    ConversionError,
+    ConversionLimitError,
+    ConversionUnavailableError,
+    ConverterService,
+)
+from ..conversion.assets import rewrite_asset_links
+from ..conversion.base import SUPPORTED_SUFFIXES, RawDocument
+from ..conversion.service import (
+    asset_quota_exceeded,
+    concept_alias,
+    concept_relative_path,
+)
 from ..db.models import ImportTask, KnowledgeBase
 from ..kb import gitops
 from ..kb.context import RetrievalCache
 from ..kb.service import remote_credential
 from ..okf.bundle import Bundle
+from .concepts import build_source_concept
 
-ALLOWED_EXTENSIONS = {".md", ".markdown", ".zip"}
-MARKDOWN_EXTENSIONS = {".md", ".markdown"}
+ALLOWED_EXTENSIONS = SUPPORTED_SUFFIXES | {".zip"}
+ARCHIVE_EXTENSIONS = SUPPORTED_SUFFIXES
 
 
 class UploadError(ValueError):
@@ -61,7 +75,7 @@ def safe_extract_zip(data: bytes, target: Path, settings: Settings) -> None:
                 or ":" in parts[0]
             ):
                 raise UploadError("zip archive contains an unsafe path")
-            if Path(parts[-1]).suffix.lower() not in MARKDOWN_EXTENSIONS:
+            if Path(parts[-1]).suffix.lower() not in ARCHIVE_EXTENSIONS:
                 continue
             destination = target.joinpath(*parts)
             destination.parent.mkdir(parents=True, exist_ok=True)
@@ -97,7 +111,8 @@ def prepare_upload(
                 raise UploadError("file name is required")
             extension = Path(safe_name).suffix.lower()
             if extension not in ALLOWED_EXTENSIONS:
-                raise UploadError(f"unsupported file type: {safe_name}")
+                allowed = ", ".join(sorted(ALLOWED_EXTENSIONS))
+                raise UploadError(f"unsupported file type: {safe_name}; allowed: {allowed}")
             total_bytes += len(data)
             if total_bytes > settings.upload_max_bytes:
                 raise UploadError("upload exceeds size limit")
@@ -159,6 +174,62 @@ def task_payload(task: ImportTask) -> dict[str, Any]:
     }
 
 
+def _import_document(
+    *,
+    bundle: Bundle,
+    document: RawDocument,
+    connector: UploadDirConnector,
+    converter: ConverterService,
+    task: ImportTask,
+    settings: Settings,
+) -> bool:
+    """Convert and write one document; return whether a concept already existed."""
+    result = converter.convert(document)
+    relative = concept_relative_path(document.key)
+    alias = concept_alias(relative)
+    result.markdown = rewrite_asset_links(result.markdown, result.assets, alias)
+
+    if result.assets and not gitops.has_git_lfs():
+        raise ConversionUnavailableError(
+            "git-lfs is required to store converted image assets; install git-lfs first"
+        )
+    if result.assets and asset_quota_exceeded(
+        bundle, result.assets, settings.kb_asset_quota_bytes
+    ):
+        raise ConversionLimitError("knowledge base asset quota exceeded")
+
+    concept = build_source_concept(
+        result=result,
+        document=document,
+        connector_name=connector.name,
+        source_type=connector.source_type,
+        resource=connector.resource_for(document.key),
+        task_id=task.id,
+    )
+    concept_id = bundle.concept_id(f"raw/{connector.name}/{relative}")
+    existed = bundle.path_for_id(concept_id).exists()
+
+    level_relative = f"{connector.name}/{relative}"
+    asset_dir = bundle.asset_dir_for("raw", level_relative)
+    backup = asset_dir.with_name(f"{asset_dir.name}.bak")
+    if backup.exists():
+        shutil.rmtree(backup, ignore_errors=True)
+    if asset_dir.exists():
+        shutil.move(str(asset_dir), str(backup))
+    try:
+        if result.assets:
+            bundle.write_assets("raw", level_relative, result.assets)
+        bundle.write_concept(concept, "raw", level_relative)
+    except Exception:
+        shutil.rmtree(asset_dir, ignore_errors=True)
+        if backup.exists():
+            shutil.move(str(backup), str(asset_dir))
+        raise
+    else:
+        shutil.rmtree(backup, ignore_errors=True)
+    return existed
+
+
 def run_import_task(
     task_id: str,
     *,
@@ -168,10 +239,12 @@ def run_import_task(
     locks: dict[str, threading.Lock],
     lock_guard: threading.Lock,
     on_item: Callable[[ImportTask], None] | None = None,
+    converter: ConverterService | None = None,
 ) -> None:
     """Execute one queued import task under the knowledge base's serial lock."""
     session = session_factory()
     temp_dir = settings.tmp_root / task_id
+    converter = converter or ConverterService(settings)
     try:
         task = session.get(ImportTask, task_id)
         if task is None:
@@ -196,34 +269,43 @@ def run_import_task(
             bundle = Bundle(Path(kb.local_path))
             connector = UploadDirConnector(temp_dir, base_uri=f"upload://{task.id}")
             try:
-                items = connector.sync()
+                documents = connector.sync()
             except Exception as exc:  # unreadable staging directory
                 raise RuntimeError(f"failed to read uploaded content: {exc}") from exc
 
-            task.total = len(items)
+            task.total = len(documents)
             session.commit()
 
             errors: list[str] = []
-            for item in items:
+            fatal: Exception | None = None
+            for document in documents:
                 session.refresh(task)
                 if task.status == "cancelled":
                     break
                 if on_item is not None:
                     on_item(task)
                 try:
-                    concept = connector.normalize([item])[0]
-                    concept.frontmatter["x-import-task"] = task.id
-                    relative = item.key if item.key.endswith(".md") else f"{item.key}.md"
-                    concept_id = bundle.concept_id(f"raw/{connector.name}/{relative}")
-                    existed = bundle.path_for_id(concept_id).exists()
-                    bundle.write_concept(concept, "raw", f"{connector.name}/{relative}")
+                    existed = _import_document(
+                        bundle=bundle,
+                        document=document,
+                        connector=connector,
+                        converter=converter,
+                        task=task,
+                        settings=settings,
+                    )
                     if existed:
                         task.updated += 1
                     else:
                         task.added += 1
+                except ConversionUnavailableError as exc:
+                    fatal = exc
+                    break
+                except ConversionError as exc:
+                    task.failed += 1
+                    errors.append(f"{document.key}: {exc}")
                 except Exception as exc:  # noqa: BLE001 - count and continue per item
                     task.failed += 1
-                    errors.append(f"{item.key}: {exc}")
+                    errors.append(f"{document.key}: {exc}")
                 session.commit()
 
             if task.added or task.updated:
@@ -233,7 +315,11 @@ def run_import_task(
 
             session.refresh(task)
             if task.status != "cancelled":
-                task.status = "partial" if task.failed else "succeeded"
+                if fatal is not None:
+                    task.status = "failed"
+                    errors.append(str(fatal))
+                else:
+                    task.status = "partial" if task.failed else "succeeded"
             task.finished_at = _now()
             task.error = "\n".join(errors)[:2048] or None
             session.commit()

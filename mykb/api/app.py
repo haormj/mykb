@@ -18,6 +18,7 @@ from fastapi import FastAPI
 
 from ..auth.tokens import TokenService
 from ..config import Settings, load_settings
+from ..conversion import ConverterService
 from ..db import Base
 from ..db.session import create_db_engine, create_session_factory
 from ..importing.service import mark_stale_running_failed
@@ -77,6 +78,7 @@ def create_app(
         resolved.jwt_secret, expires_days=resolved.token_expires_days
     )
     app.state.retrieval_cache = RetrievalCache()
+    app.state.converter_service = ConverterService(resolved)
     app.state.import_executor = executor
     app.state.kb_locks = {}
     app.state.kb_locks_guard = threading.Lock()

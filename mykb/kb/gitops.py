@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import shutil
 import subprocess
 from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
@@ -10,6 +11,13 @@ from ..okf.bundle import Bundle
 
 AUTHOR_NAME = "mykb-agent"
 AUTHOR_EMAIL = "agent@mykb.local"
+LFS_ATTRIBUTES = (
+    "*.png filter=lfs diff=lfs merge=lfs -text",
+    "*.jpg filter=lfs diff=lfs merge=lfs -text",
+    "*.jpeg filter=lfs diff=lfs merge=lfs -text",
+    "*.gif filter=lfs diff=lfs merge=lfs -text",
+    "*.webp filter=lfs diff=lfs merge=lfs -text",
+)
 
 
 class GitError(RuntimeError):
@@ -57,6 +65,43 @@ def _has_commit(path: Path) -> bool:
     return bool(_git("rev-parse", "--verify", "HEAD", cwd=path, check=False))
 
 
+def has_git_lfs() -> bool:
+    """Return whether the git-lfs extension is available on this host."""
+    return shutil.which("git-lfs") is not None
+
+
+def ensure_lfs(path: Path) -> bool:
+    """Configure standard Git LFS for a knowledge-base repository.
+
+    Without the ``git-lfs`` binary we skip configuration entirely: adding the
+    filter attributes would make ``git add`` of binary assets fail, while
+    markdown-only imports must keep working in reduced environments.
+    """
+    if not has_git_lfs():
+        return False
+    attributes = path / ".gitattributes"
+    existing = attributes.read_text(encoding="utf-8").splitlines() if attributes.exists() else []
+    missing = [line for line in LFS_ATTRIBUTES if line not in existing]
+    if missing:
+        content = "\n".join([*existing, *missing]) + "\n"
+        attributes.write_text(content, encoding="utf-8")
+    _git("lfs", "install", "--local", cwd=path)
+    return True
+
+
+def probe_remote_lfs(path: Path, remote: str) -> bool:
+    """Probe whether a remote exposes the Git LFS batch/locks API."""
+    try:
+        _git("lfs", "locks", "--remote", remote, cwd=path)
+    except GitError:
+        return False
+    return True
+
+
+def _is_http(url: str) -> bool:
+    return urlsplit(url).scheme in ("http", "https")
+
+
 def _commit_all(path: Path, message: str) -> None:
     _git("add", "-A", cwd=path)
     if _git("status", "--porcelain", cwd=path):
@@ -68,6 +113,7 @@ def init_local_repo(path: Path, *, title: str) -> None:
     path.mkdir(parents=True, exist_ok=False)
     _git("init", "-b", "main", cwd=path)
     Bundle(path).ensure_layout(title=title)
+    ensure_lfs(path)
     _commit_all(path, "chore: init bundle")
 
 
@@ -91,6 +137,7 @@ def clone_or_init_with_remote(
         else:
             _git("checkout", "-B", branch, cwd=path)
     Bundle(path).ensure_layout(title=title)
+    ensure_lfs(path)
     _commit_all(path, "chore: init bundle layout")
     _git("push", "-u", "origin", branch, cwd=path)
 
@@ -111,6 +158,16 @@ def bind_remote(
     if remote_has_commits(git_url, token):
         raise GitError("remote already contains commits; only empty remotes can be bound")
     remote = inject_credential(git_url, token)
+    if _is_http(git_url):
+        if not has_git_lfs():
+            raise GitError(
+                "git-lfs is required to bind an HTTPS remote; install git-lfs first"
+            )
+        ensure_lfs(path)
+        if not probe_remote_lfs(path, remote):
+            raise GitError(
+                "remote does not support Git LFS; derived assets cannot be pushed"
+            )
     _git("remote", "remove", "origin", cwd=path, check=False)
     _git("remote", "add", "origin", remote, cwd=path)
     _git("push", "-u", "origin", branch, cwd=path)
@@ -122,4 +179,5 @@ def push(path: Path, branch: str, token: str | None = None) -> None:
 
 def commit_all(path: Path, message: str) -> None:
     """Public wrapper: stage and commit every change in ``path``."""
+    ensure_lfs(path)
     _commit_all(path, message)

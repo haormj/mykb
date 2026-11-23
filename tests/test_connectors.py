@@ -6,6 +6,7 @@ from mykb.connectors import create_connector, list_connectors
 from mykb.connectors.base import Connector
 from mykb.connectors.markdown_dir import MarkdownDirConnector
 from mykb.connectors.sync import Importer
+from mykb.connectors.upload import UploadDirConnector
 from mykb.okf.bundle import Bundle
 
 
@@ -73,3 +74,24 @@ def test_incremental_sync_skips_unchanged_and_updates_changed(tmp_path):
     assert third.added == []
     assert third.updated == ["raw/markdown-dir/a"]
     assert "Changed content" in bundle.read_concept("raw/markdown-dir/a").body
+
+
+def test_upload_connector_yields_raw_bytes_for_binary_formats(tmp_path):
+    src = tmp_path / "upload"
+    src.mkdir()
+    (src / "note.docx").write_bytes(b"PK\x03\x04\x00\xffbinary")
+    (src / "readme.md").write_text("# Readme\n", encoding="utf-8")
+    (src / "ignored.pdf").write_bytes(b"%PDF-1.7")
+
+    connector = UploadDirConnector(src, base_uri="upload://task")
+    documents = connector.sync()
+
+    assert {document.key for document in documents} == {"note.docx", "readme.md"}
+    docx = next(document for document in documents if document.key == "note.docx")
+    assert docx.data == b"PK\x03\x04\x00\xffbinary"
+    assert docx.name == "note.docx"
+    assert docx.suffix == ".docx"
+    assert docx.mime == (
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
+    assert connector.resource_for("note.docx") == "upload://task/note.docx"

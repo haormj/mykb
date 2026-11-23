@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import io
 import subprocess
 import threading
@@ -8,12 +9,25 @@ import uuid
 import zipfile
 from pathlib import Path
 
+import pytest
+
+from mykb.conversion import (
+    Asset,
+    ConversionResult,
+    ConversionUnavailableError,
+    ConverterService,
+    MarkdownPassthroughConverter,
+    RawDocument,
+)
 from mykb.db.models import ImportTask
 from mykb.importing.service import mark_stale_running_failed, run_import_task
+from mykb.kb import gitops
 from mykb.okf.bundle import Bundle
 from tests.helpers import create_kb, register
 
 TERMINAL = {"succeeded", "partial", "failed", "cancelled"}
+DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+PNG = b"\x89PNG\r\n\x1a\nfake-image"
 
 
 def _wait_task(client, headers, kb_id: str, task_id: str, timeout: float = 10.0) -> dict:
@@ -32,6 +46,53 @@ def _zip(name: str, content: str) -> bytes:
     with zipfile.ZipFile(buffer, "w") as archive:
         archive.writestr(name, content)
     return buffer.getvalue()
+
+
+def _zip_entries(entries: dict[str, bytes]) -> bytes:
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w") as archive:
+        for name, content in entries.items():
+            archive.writestr(name, content)
+    return buffer.getvalue()
+
+
+def _git_files(path: Path) -> list[str]:
+    return subprocess.run(
+        ["git", "-C", str(path), "ls-files"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.splitlines()
+
+
+class _StubConverter:
+    name = "stub"
+
+    def __init__(self, *, fail_unavailable: bool = False) -> None:
+        self.fail_unavailable = fail_unavailable
+
+    def supports(self, suffix: str, mime: str) -> bool:
+        return suffix == ".docx"
+
+    def convert(self, document: RawDocument) -> ConversionResult:
+        if self.fail_unavailable:
+            raise ConversionUnavailableError("conversion service unavailable")
+        return ConversionResult(
+            markdown="# Converted\n\n![img](img-1.png)",
+            title="Converted",
+            assets=[Asset(name="img-1.png", data=PNG, source_name="img-1.png")],
+            producer="stub@1",
+        )
+
+
+def _use_stub_converter(client, *, fail_unavailable: bool = False) -> None:
+    client.app.state.converter_service = ConverterService(
+        client.app.state.settings,
+        converters=[
+            MarkdownPassthroughConverter(),
+            _StubConverter(fail_unavailable=fail_unavailable),
+        ],
+    )
 
 
 def test_upload_markdown_creates_raw_document(client):
@@ -64,6 +125,14 @@ def test_upload_markdown_creates_raw_document(client):
 
     concept = Bundle(path).read_concept("raw/upload/note")
     assert concept.type == "源数据"
+    assert concept.frontmatter["x-source-format"] == "md"
+    assert concept.frontmatter["x-original-name"] == "note.md"
+    assert concept.frontmatter["x-original-sha256"] == hashlib.sha256(
+        b"# Note\n\nalpha content"
+    ).hexdigest()
+    assert concept.frontmatter["x-original-size"] == len(b"# Note\n\nalpha content")
+    assert concept.frontmatter["x-parsed-by"] == "passthrough"
+    assert concept.frontmatter["x-import-task"] == task["id"]
 
     after = subprocess.run(
         ["git", "-C", str(path), "rev-list", "--count", "HEAD"],
@@ -99,12 +168,17 @@ def test_unsupported_type_and_oversize_rejected(client):
     headers = register(client, "limit-owner")
     kb = create_kb(client, headers, "limit-kb")
 
-    bad_type = client.post(
-        f"/kbs/{kb['id']}/import-tasks",
-        files=[("files", ("a.exe", b"binary", "application/octet-stream"))],
-        headers=headers,
-    )
-    assert bad_type.status_code == 400
+    for name, content in (
+        ("a.exe", b"binary"),
+        ("a.pdf", b"%PDF-1.7"),
+        ("a.doc", b"\xd0\xcf\x11\xe0"),
+    ):
+        bad_type = client.post(
+            f"/kbs/{kb['id']}/import-tasks",
+            files=[("files", (name, content, "application/octet-stream"))],
+            headers=headers,
+        )
+        assert bad_type.status_code == 400
 
     original = client.app.state.settings.upload_max_bytes
     client.app.state.settings = client.app.state.settings.__class__(
@@ -322,3 +396,186 @@ def test_same_kb_imports_are_serialized(client):
 
     tasks = client.get(f"/kbs/{kb['id']}/import-tasks", headers=headers).json()["tasks"]
     assert all(task["status"] == "succeeded" for task in tasks)
+
+
+def test_upload_docx_converts_with_assets_and_provenance(client, monkeypatch):
+    headers = register(client, "docx-owner")
+    kb = create_kb(client, headers, "docx-kb")
+    path = Path(kb["local_path"])
+    _use_stub_converter(client)
+    monkeypatch.setattr(gitops, "has_git_lfs", lambda: True)
+    monkeypatch.setattr(gitops, "ensure_lfs", lambda _path: True)
+    data = b"PK\x03\x04docx-binary"
+
+    response = client.post(
+        f"/kbs/{kb['id']}/import-tasks",
+        files=[("files", ("report.docx", data, DOCX_MIME))],
+        headers=headers,
+    )
+    assert response.status_code == 201, response.text
+    task = _wait_task(client, headers, kb["id"], response.json()["id"])
+    assert task["status"] == "succeeded", task
+    assert task["total"] == 1 and task["added"] == 1
+
+    concept = Bundle(path).read_concept("raw/upload/report.docx")
+    frontmatter = concept.frontmatter
+    assert frontmatter["title"] == "Converted"
+    assert frontmatter["x-source-format"] == "docx"
+    assert frontmatter["x-original-name"] == "report.docx"
+    assert frontmatter["x-original-sha256"] == hashlib.sha256(data).hexdigest()
+    assert frontmatter["x-original-size"] == len(data)
+    assert frontmatter["x-parsed-by"] == "stub@1"
+    assert frontmatter["x-import-task"] == task["id"]
+    assert str(frontmatter["resource"]).startswith("upload://")
+
+    assert "report.docx.assets/" in concept.body
+    asset_name = concept.body.split("report.docx.assets/", 1)[1].split(")", 1)[0]
+    asset = path / "raw" / "upload" / "report.docx.assets" / asset_name
+    assert asset.read_bytes() == PNG
+
+    files = _git_files(path)
+    assert "raw/upload/report.docx" not in files
+    assert not any(name.endswith(".docx") for name in files)
+    assert not (client.app.state.settings.tmp_root / task["id"]).exists()
+
+
+def test_docx_without_parser_is_partial_and_keeps_markdown(client):
+    headers = register(client, "no-parser-owner")
+    kb = create_kb(client, headers, "no-parser-kb")
+    path = Path(kb["local_path"])
+
+    response = client.post(
+        f"/kbs/{kb['id']}/import-tasks",
+        files=[
+            ("files", ("note.md", b"# Note", "text/markdown")),
+            ("files", ("report.docx", b"PK\x03\x04binary", DOCX_MIME)),
+        ],
+        headers=headers,
+    )
+    task = _wait_task(client, headers, kb["id"], response.json()["id"])
+    assert task["status"] == "partial", task
+    assert task["added"] == 1 and task["failed"] == 1
+    assert "not configured" in (task["error"] or "")
+
+    bundle = Bundle(path)
+    assert bundle.path_for_id("raw/upload/note").exists()
+    assert not bundle.path_for_id("raw/upload/report.docx").exists()
+
+
+def test_unavailable_parser_fails_task_without_half_written_docx(client):
+    headers = register(client, "unavailable-owner")
+    kb = create_kb(client, headers, "unavailable-kb")
+    path = Path(kb["local_path"])
+    _use_stub_converter(client, fail_unavailable=True)
+
+    response = client.post(
+        f"/kbs/{kb['id']}/import-tasks",
+        files=[
+            ("files", ("a.md", b"# A", "text/markdown")),
+            ("files", ("b.docx", b"PK\x03\x04binary", DOCX_MIME)),
+        ],
+        headers=headers,
+    )
+    task = _wait_task(client, headers, kb["id"], response.json()["id"])
+    assert task["status"] == "failed", task
+    assert task["added"] == 1
+    assert "unavailable" in (task["error"] or "")
+
+    bundle = Bundle(path)
+    assert bundle.path_for_id("raw/upload/a").exists()
+    assert not bundle.path_for_id("raw/upload/b.docx").exists()
+
+
+def test_zip_with_mixed_markdown_and_docx_entries(client, monkeypatch):
+    headers = register(client, "mixed-zip-owner")
+    kb = create_kb(client, headers, "mixed-zip-kb")
+    path = Path(kb["local_path"])
+    _use_stub_converter(client)
+    monkeypatch.setattr(gitops, "has_git_lfs", lambda: True)
+    monkeypatch.setattr(gitops, "ensure_lfs", lambda _path: True)
+    archive = _zip_entries(
+        {
+            "docs/a.md": b"# A\n\nmarkdown",
+            "docs/b.docx": b"PK\x03\x04binary",
+        }
+    )
+
+    response = client.post(
+        f"/kbs/{kb['id']}/import-tasks",
+        files=[("files", ("docs.zip", archive, "application/zip"))],
+        headers=headers,
+    )
+    task = _wait_task(client, headers, kb["id"], response.json()["id"])
+    assert task["status"] == "succeeded", task
+    assert task["total"] == 2 and task["added"] == 2 and task["failed"] == 0
+
+    bundle = Bundle(path)
+    assert bundle.path_for_id("raw/upload/docs/a").exists()
+    assert bundle.path_for_id("raw/upload/docs/b.docx").exists()
+    assert (path / "raw" / "upload" / "docs" / "b.docx.assets").is_dir()
+
+
+
+def test_asset_quota_failure_keeps_existing_content(client, monkeypatch):
+    headers = register(client, "quota-owner")
+    kb = create_kb(client, headers, "quota-kb")
+    path = Path(kb["local_path"])
+    _use_stub_converter(client)
+    monkeypatch.setattr(gitops, "has_git_lfs", lambda: True)
+    monkeypatch.setattr(gitops, "ensure_lfs", lambda _path: True)
+    settings = client.app.state.settings
+    client.app.state.settings = settings.__class__(
+        **{**settings.__dict__, "kb_asset_quota_bytes": 1}
+    )
+
+    response = client.post(
+        f"/kbs/{kb['id']}/import-tasks",
+        files=[("files", ("report.docx", b"PK\x03\x04binary", DOCX_MIME))],
+        headers=headers,
+    )
+    task = _wait_task(client, headers, kb["id"], response.json()["id"])
+    assert task["status"] == "partial", task
+    assert task["failed"] == 1 and task["added"] == 0
+    assert "quota" in (task["error"] or "")
+
+    bundle = Bundle(path)
+    assert not bundle.path_for_id("raw/upload/report.docx").exists()
+    assert not (path / "raw" / "upload" / "report.docx.assets").exists()
+
+
+@pytest.mark.skipif(not gitops.has_git_lfs(), reason="git-lfs is not installed")
+def test_docx_assets_are_committed_as_lfs_pointers(client):
+    headers = register(client, "lfs-owner")
+    kb = create_kb(client, headers, "lfs-kb")
+    path = Path(kb["local_path"])
+    _use_stub_converter(client)
+
+    response = client.post(
+        f"/kbs/{kb['id']}/import-tasks",
+        files=[("files", ("report.docx", b"PK\x03\x04binary", DOCX_MIME))],
+        headers=headers,
+    )
+    task = _wait_task(client, headers, kb["id"], response.json()["id"])
+    assert task["status"] == "succeeded", task
+
+    concept = Bundle(path).read_concept("raw/upload/report.docx")
+    asset_name = concept.body.split("report.docx.assets/", 1)[1].split(")", 1)[0]
+    relative = f"raw/upload/report.docx.assets/{asset_name}"
+    assert (path / relative).read_bytes() == PNG
+
+    attributes = (path / ".gitattributes").read_text(encoding="utf-8")
+    assert "*.png filter=lfs diff=lfs merge=lfs -text" in attributes
+    blob = subprocess.run(
+        ["git", "-C", str(path), "show", f"HEAD:{relative}"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
+    assert blob.startswith("version https://git-lfs.github.com/spec/v1")
+    lfs_files = subprocess.run(
+        ["git", "-C", str(path), "lfs", "ls-files"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
+    assert relative in lfs_files

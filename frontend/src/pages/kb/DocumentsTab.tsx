@@ -215,10 +215,10 @@ export default function DocumentsTab() {
         destroyOnClose
       >
         <Space direction="vertical" size={8} style={{ width: "100%" }}>
-          <Text type="secondary">支持 Markdown（.md/.markdown）或包含 Markdown 的 zip。</Text>
+          <Text type="secondary">支持 Markdown（.md/.markdown）、Word（.docx）或包含它们的 zip。</Text>
           <Upload
             multiple
-            accept=".md,.markdown,.zip"
+            accept=".md,.markdown,.docx,.zip"
             beforeUpload={() => false}
             fileList={fileList}
             onChange={({ fileList: next }) => setFileList(next)}

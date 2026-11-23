@@ -75,6 +75,7 @@ async def create_import_task(
         cache=request.app.state.retrieval_cache,
         locks=request.app.state.kb_locks,
         lock_guard=request.app.state.kb_locks_guard,
+        converter=request.app.state.converter_service,
     )
     return task_payload(task)
 
