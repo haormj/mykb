@@ -52,7 +52,8 @@ Postgres                          git repo per knowledge base
 | `MYKB_WEKNORA_TENANT_ID` | 否 | 专用租户 ID（`X-Tenant-ID`） |
 | `MYKB_WEKNORA_TIMEOUT` | 否 | 调用 WeKnora 超时秒数，默认 30 |
 | `MYKB_WEKNORA_RETENTION` | 否 | 保留最近多少个已发布快照，默认 3 |
-| `MYKB_LLM_BASE_URL` / `MYKB_LLM_API_KEY` / `MYKB_LLM_MODEL` | 否 | OpenAI 兼容提取端点；未配置时使用确定性离线 FakeLLM |
+| `MYKB_WEKNORA_EMBEDDING_MODEL_ID` | 配 WeKnora 时 | 发布快照使用的 WeKnora embedding 模型 ID；WeKnora 建库不会自动取租户默认，留空会导致文档解析失败 |
+| `MYKB_LLM_BASE_URL` / `MYKB_LLM_API_KEY` / `MYKB_LLM_MODEL` | 否 | OpenAI 兼容提取端点；未配置时使用确定性离线 FakeLLM（如 DeepSeek：`https://api.deepseek.com` + `deepseek-chat`） |
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | 引导时 | 首个平台管理员 |
 
 缺失必需变量时服务启动会直接报错。
@@ -63,7 +64,9 @@ Postgres                          git repo per knowledge base
 - 配置后，知识库详情页的「发布」会把当前 `verified && stable` 业务知识全量物化为一个**新的 WeKnora 知识库快照**；全部文档解析完成后原子切换 active 指针，发布期间检索继续服务上一个快照。只有手动发布，合入不会自动发布。
 - 需要自部署开源 WeKnora（v0.9+），并准备一个专用租户与 **workspace 级** API Key，至少具备 `retrieve`、`ingest`、`manage_kbs` 能力。不要用带 `knowledge_base_ids` 白名单的受限 Key——白名单会挡住每次发布新建的库。
 - 每条业务知识概念对应快照中的一条 Markdown 文档；平台以 `knowledge_id` 把检索命中还原为概念标识。
+- 发布前需在 WeKnora 为该租户配置 embedding 模型，并把其模型 ID 填入 `MYKB_WEKNORA_EMBEDDING_MODEL_ID`；WeKnora 建库不会自动取租户默认，留空会导致文档解析报 `model ID cannot be empty`。
 - 每个知识库保留最近 `MYKB_WEKNORA_RETENTION`（默认 3）个快照用于秒级回滚；更早版本可由对应 git commit 重新发布得到。
+- `make backend` / `make dev` 会透传 `MYKB_WEKNORA_*` 与 `MYKB_LLM_*` 环境变量。
 
 ## 快速开始
 

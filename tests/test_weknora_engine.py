@@ -129,6 +129,22 @@ def test_backend_create_snapshot_uploads_and_polls_ready():
     assert set(progress.concept_docs) == {"knowledge/a", "knowledge/b"}
 
 
+def test_backend_create_snapshot_passes_embedding_model_id():
+    fake = FakeWeKnora()
+    backend = WeKnoraBackend(_client(fake), embedding_model_id="emb-1")
+    backend.create_snapshot([_concept("knowledge/a")], label="c1")
+    call = next(c for c in fake.calls if c["path"] == "/api/v1/knowledge-bases")
+    assert call["body"]["embedding_model_id"] == "emb-1"
+
+
+def test_backend_create_snapshot_omits_empty_embedding_model_id():
+    fake = FakeWeKnora()
+    backend = WeKnoraBackend(_client(fake))
+    backend.create_snapshot([_concept("knowledge/a")], label="c1")
+    call = next(c for c in fake.calls if c["path"] == "/api/v1/knowledge-bases")
+    assert "embedding_model_id" not in call["body"]
+
+
 def test_backend_search_maps_knowledge_id_to_doc_ref():
     fake = FakeWeKnora()
     backend = WeKnoraBackend(_client(fake))

@@ -36,6 +36,7 @@ class Settings:
     weknora_url: str | None = None
     weknora_key: str | None = None
     weknora_tenant_id: str | None = None
+    weknora_embedding_model_id: str | None = None
     weknora_timeout: float = 30.0
     weknora_retention: int = 3
 
@@ -105,6 +106,7 @@ def load_settings(env: Mapping[str, str] | None = None) -> Settings:
     weknora_url = source.get("MYKB_WEKNORA_URL") or None
     weknora_key = source.get("MYKB_WEKNORA_KEY") or None
     weknora_tenant_id = source.get("MYKB_WEKNORA_TENANT_ID") or None
+    weknora_embedding_model_id = source.get("MYKB_WEKNORA_EMBEDDING_MODEL_ID") or None
     return Settings(
         database_url=source["DATABASE_URL"],
         jwt_secret=source["JWT_SECRET"],
@@ -132,6 +134,7 @@ def load_settings(env: Mapping[str, str] | None = None) -> Settings:
         weknora_url=weknora_url,
         weknora_key=weknora_key,
         weknora_tenant_id=weknora_tenant_id,
+        weknora_embedding_model_id=weknora_embedding_model_id,
         weknora_timeout=_float("MYKB_WEKNORA_TIMEOUT", 30.0),
         weknora_retention=_positive_int("MYKB_WEKNORA_RETENTION", 3),
     )

@@ -26,7 +26,10 @@ def build_knowledge_backend(settings=None) -> RetrievalBackend:
             tenant_id=getattr(settings, "weknora_tenant_id", None),
             timeout=getattr(settings, "weknora_timeout", 30.0),
         )
-        return WeKnoraBackend(client)
+        return WeKnoraBackend(
+            client,
+            embedding_model_id=getattr(settings, "weknora_embedding_model_id", None),
+        )
     return LocalBackend()
 
 

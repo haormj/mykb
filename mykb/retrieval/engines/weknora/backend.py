@@ -24,10 +24,15 @@ class WeKnoraBackend:
     capabilities = Capabilities(async_ingest=True)
 
     def __init__(
-        self, client: WeKnoraClient, *, kb_name_prefix: str = "mykb-index"
+        self,
+        client: WeKnoraClient,
+        *,
+        kb_name_prefix: str = "mykb-index",
+        embedding_model_id: str | None = None,
     ) -> None:
         self.client = client
         self.kb_name_prefix = kb_name_prefix
+        self.embedding_model_id = embedding_model_id
         self._docs: dict[str, dict[str, str]] = {}
 
     def create_snapshot(
@@ -37,6 +42,7 @@ class WeKnoraBackend:
         kb = self.client.create_knowledge_base(
             name=f"{self.kb_name_prefix}-{suffix}",
             description="mykb published snapshot",
+            embedding_model_id=self.embedding_model_id,
         )
         kb_id = str(kb["id"])
         docs: dict[str, str] = {}

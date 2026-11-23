@@ -216,8 +216,8 @@ def delete_branch(path: Path, branch: str) -> None:
 
 
 def changed_files_vs(path: Path, base: str, branch: str) -> list[str]:
-    output = _git("diff", "--name-only", f"{base}...{branch}", cwd=path)
-    return [line for line in output.splitlines() if line.strip()]
+    output = _git("diff", "--name-only", "-z", f"{base}...{branch}", cwd=path)
+    return [item for item in output.split("\x00") if item]
 
 
 def diff_text(path: Path, base: str, branch: str) -> str:
