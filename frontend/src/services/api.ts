@@ -155,6 +155,13 @@ export interface KnowledgeItem {
   sources: string[];
 }
 
+export interface ConceptContent {
+  concept_id: string;
+  level: "raw" | "knowledge";
+  title?: string | null;
+  body: string;
+}
+
 export interface ImportTask {
   id: string;
   kb_id: string;
@@ -307,6 +314,28 @@ export const api = {
 
   listKnowledge: async (kbId: string): Promise<KnowledgeItem[]> =>
     (await request<{ knowledge: KnowledgeItem[] }>(`/kbs/${kbId}/knowledge`)).knowledge,
+
+  getConceptContent: async (kbId: string, conceptId: string): Promise<ConceptContent> =>
+    request<ConceptContent>(
+      `/kbs/${kbId}/concepts/content?concept_id=${encodeURIComponent(conceptId)}`,
+    ),
+
+  fetchConceptAsset: async (kbId: string, conceptId: string, name: string): Promise<Blob> => {
+    const search = new URLSearchParams({ concept_id: conceptId, name });
+    const headers = new Headers();
+    const token = getToken();
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+    const res = await fetch(`/kbs/${kbId}/concepts/asset?${search.toString()}`, { headers });
+    if (res.status === 401) {
+      clearToken();
+    }
+    if (!res.ok) {
+      throw new Error(`${res.status} ${await res.text()}`);
+    }
+    return res.blob();
+  },
 
   // -- knowledge-base settings -----------------------------------------
   bindRemote: async (

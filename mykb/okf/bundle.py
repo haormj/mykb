@@ -8,6 +8,7 @@ Evaluation data is platform metadata and is never stored in a bundle.
 
 from __future__ import annotations
 
+import mimetypes
 import shutil
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
@@ -156,6 +157,44 @@ class Bundle:
     def remove_assets(self, level: str, relative_concept_path: str) -> None:
         """Delete a concept's asset directory if it exists."""
         shutil.rmtree(self.asset_dir_for(level, relative_concept_path), ignore_errors=True)
+
+    def split_concept_id(self, concept_id: str) -> tuple[str, str]:
+        """Split a concept id into ``(level, path-relative-to-level)``."""
+        cid = concept_id.lstrip("/").removesuffix(".md")
+        level, sep, tail = cid.partition("/")
+        if not sep or level not in LEVELS or not tail:
+            raise ValueError(f"concept id must live under one of {LEVELS}: {concept_id!r}")
+        return level, tail
+
+    def read_asset(self, concept_id: str, name: str) -> tuple[bytes, str]:
+        """Read one asset from a concept's sibling ``.assets/`` directory.
+
+        Returns ``(data, mime_type)``. Raises ``ValueError`` for an unsafe or
+        escaping name, and ``FileNotFoundError`` when the asset is missing or is
+        an un-smudged Git LFS pointer.
+        """
+        if (
+            not name
+            or name in (".", "..")
+            or "/" in name
+            or "\\" in name
+            or Path(name).name != name
+        ):
+            raise ValueError(f"unsafe asset name: {name!r}")
+        level, tail = self.split_concept_id(concept_id)
+        directory = self.asset_dir_for(level, tail)
+        try:
+            resolved_dir = directory.resolve(strict=True)
+        except OSError as exc:
+            raise FileNotFoundError(name) from exc
+        target = (directory / name).resolve()
+        if target.parent != resolved_dir or not target.is_file():
+            raise FileNotFoundError(name)
+        data = target.read_bytes()
+        if data.startswith(b"version https://git-lfs"):
+            raise FileNotFoundError(name)
+        mime = mimetypes.guess_type(name)[0] or "application/octet-stream"
+        return data, mime
 
     def asset_bytes(self) -> int:
         """Total bytes of derived asset files in this bundle."""

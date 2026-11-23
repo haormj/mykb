@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Empty, Space, Table, Tag, Typography, message } from "antd";
-import { ReloadOutlined } from "@ant-design/icons";
+import { Button, Card, Drawer, Empty, Space, Spin, Table, Tag, Typography, message } from "antd";
+import { EyeOutlined, ReloadOutlined } from "@ant-design/icons";
 import { useOutletContext } from "react-router-dom";
+import MarkdownView from "@/components/MarkdownView";
 import { api, type KnowledgeItem } from "@/services/api";
 import type { KbOutletContext } from "./context";
 
@@ -18,6 +19,32 @@ export default function KnowledgeTab() {
   const { kb } = useOutletContext<KbOutletContext>();
   const [items, setItems] = useState<KnowledgeItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [preview, setPreview] = useState<{
+    conceptId: string;
+    title: string;
+    markdown: string;
+  } | null>(null);
+
+  const openPreview = async (item: KnowledgeItem) => {
+    setPreviewOpen(true);
+    setPreviewLoading(true);
+    setPreview(null);
+    try {
+      const content = await api.getConceptContent(kb.id, item.concept_id);
+      setPreview({
+        conceptId: item.concept_id,
+        title: item.title,
+        markdown: content.body,
+      });
+    } catch (error) {
+      message.error(String(error));
+      setPreviewOpen(false);
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
 
   const refresh = async () => {
     setLoading(true);
@@ -82,9 +109,42 @@ export default function KnowledgeTab() {
                   </Space>
                 ),
             },
+            {
+              title: "操作",
+              key: "actions",
+              render: (_value: unknown, item: KnowledgeItem) => (
+                <Button
+                  size="small"
+                  icon={<EyeOutlined />}
+                  onClick={() => void openPreview(item)}
+                >
+                  预览
+                </Button>
+              ),
+            },
           ]}
         />
       )}
+
+      <Drawer
+        title={preview?.title ?? "知识预览"}
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        width={860}
+        destroyOnClose
+      >
+        {previewLoading || !preview ? (
+          <div style={{ padding: 48, textAlign: "center" }}>
+            <Spin />
+          </div>
+        ) : (
+          <MarkdownView
+            kbId={kb.id}
+            conceptId={preview.conceptId}
+            markdown={preview.markdown}
+          />
+        )}
+      </Drawer>
     </Card>
   );
 }

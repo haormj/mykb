@@ -2,9 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 import {
   Button,
   Card,
+  Drawer,
   Empty,
   Modal,
   Space,
+  Spin,
   Table,
   Tag,
   Typography,
@@ -14,11 +16,13 @@ import {
 import type { UploadFile } from "antd";
 import {
   DeleteOutlined,
+  EyeOutlined,
   ReloadOutlined,
   StopOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
 import { useOutletContext } from "react-router-dom";
+import MarkdownView from "@/components/MarkdownView";
 import {
   api,
   isActiveTask,
@@ -52,6 +56,13 @@ export default function DocumentsTab() {
   const [importOpen, setImportOpen] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [preview, setPreview] = useState<{
+    conceptId: string;
+    title: string;
+    markdown: string;
+  } | null>(null);
 
   const hasActive = tasks.some(isActiveTask) || mrs.some((mr) => mr.status === "reviewing");
 
@@ -120,6 +131,25 @@ export default function DocumentsTab() {
     }
   };
 
+  const openPreview = async (document: DocumentItem) => {
+    setPreviewOpen(true);
+    setPreviewLoading(true);
+    setPreview(null);
+    try {
+      const content = await api.getConceptContent(kb.id, document.concept_id);
+      setPreview({
+        conceptId: document.concept_id,
+        title: document.title,
+        markdown: content.body,
+      });
+    } catch (error) {
+      message.error(String(error));
+      setPreviewOpen(false);
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
   const deleteDoc = async (conceptId: string) => {
     Modal.confirm({
       title: "删除文档？",
@@ -178,24 +208,31 @@ export default function DocumentsTab() {
                 render: (value: string | null) =>
                   value ? <Text code>{value.slice(0, 8)}</Text> : "-",
               },
-              ...(canWrite
-                ? [
-                    {
-                      title: "操作",
-                      key: "actions",
-                      render: (_value: unknown, document: DocumentItem) => (
-                        <Button
-                          size="small"
-                          danger
-                          icon={<DeleteOutlined />}
-                          onClick={() => void deleteDoc(document.concept_id)}
-                        >
-                          删除
-                        </Button>
-                      ),
-                    },
-                  ]
-                : []),
+              {
+                title: "操作",
+                key: "actions",
+                render: (_value: unknown, document: DocumentItem) => (
+                  <Space size={4}>
+                    <Button
+                      size="small"
+                      icon={<EyeOutlined />}
+                      onClick={() => void openPreview(document)}
+                    >
+                      预览
+                    </Button>
+                    {canWrite && (
+                      <Button
+                        size="small"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={() => void deleteDoc(document.concept_id)}
+                      >
+                        删除
+                      </Button>
+                    )}
+                  </Space>
+                ),
+              },
             ]}
           />
         )}
@@ -342,6 +379,26 @@ export default function DocumentsTab() {
           </Upload>
         </Space>
       </Modal>
+
+      <Drawer
+        title={preview?.title ?? "文档预览"}
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        width={860}
+        destroyOnClose
+      >
+        {previewLoading || !preview ? (
+          <div style={{ padding: 48, textAlign: "center" }}>
+            <Spin />
+          </div>
+        ) : (
+          <MarkdownView
+            kbId={kb.id}
+            conceptId={preview.conceptId}
+            markdown={preview.markdown}
+          />
+        )}
+      </Drawer>
     </Card>
   );
 }

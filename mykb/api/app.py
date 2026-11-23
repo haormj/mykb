@@ -28,6 +28,7 @@ from ..retrieval.service import build_knowledge_backend
 from .routes import (
     admin,
     auth,
+    concepts,
     documents,
     evaluation,
     import_tasks,
@@ -109,6 +110,7 @@ def create_app(
     app.include_router(review.router)
     app.include_router(import_tasks.router)
     app.include_router(documents.router)
+    app.include_router(concepts.router)
     return app
 
 
