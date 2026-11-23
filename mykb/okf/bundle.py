@@ -1,8 +1,9 @@
 """OKF bundle layout and IO.
 
 A bundle is a directory tree of markdown files. This module owns the platform's
-three-level layout (``raw`` / ``knowledge`` / ``evals``), the bundle-root
+two-level knowledge layout (``raw`` / ``knowledge``), the bundle-root
 ``index.md`` metadata, and the read/write helpers used across the platform.
+Evaluation data is platform metadata and is never stored in a bundle.
 """
 
 from __future__ import annotations
@@ -16,7 +17,7 @@ from typing import Protocol
 from .model import Concept, FrontmatterError, parse, serialize
 
 RESERVED_FILENAMES = {"index.md", "log.md"}
-LEVELS: tuple[str, ...] = ("raw", "knowledge", "evals")
+LEVELS: tuple[str, ...] = ("raw", "knowledge")
 DEFAULT_OKF_VERSION = "0.3"
 
 

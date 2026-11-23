@@ -85,8 +85,9 @@ def test_local_kb_lifecycle(client):
 
     assert path.is_dir()
     assert (path / ".git").is_dir()
-    for level in ("raw", "knowledge", "evals"):
+    for level in ("raw", "knowledge"):
         assert (path / level / "index.md").exists()
+    assert not (path / "evals").exists()
     head = subprocess.run(
         ["git", "-C", str(path), "rev-parse", "HEAD"], capture_output=True, text=True, check=True
     )
@@ -226,9 +227,11 @@ def test_kb_scoped_isolation(client):
     assert hits_b == []
 
 
-def test_legacy_global_routes_removed(client):
-    for path in ("/retrieve", "/answer", "/eval/sets", "/review/drafts", "/index-sync"):
+def test_legacy_scoped_routes_removed(client):
+    for path in ("/retrieve", "/answer", "/review/drafts", "/index-sync"):
         assert client.get(path).status_code == 404
+    # Evaluation is now a platform-level resource; unauthenticated access is 401.
+    assert client.get("/eval/sets").status_code == 401
 
 
 def _user_id(members: list[dict], username: str) -> str:

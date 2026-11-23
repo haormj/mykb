@@ -70,7 +70,7 @@ class GitReview:
         if not self._git("rev-parse", "--verify", "HEAD", check=False):
             layout_files = [
                 name
-                for name in ("index.md", "raw/index.md", "knowledge/index.md", "evals/index.md")
+                for name in ("index.md", "raw/index.md", "knowledge/index.md")
                 if (self.bundle.root / name).exists()
             ]
             self._git("add", *layout_files)

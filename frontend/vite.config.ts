@@ -19,6 +19,8 @@ export default defineConfig({
       "/auth": backend,
       "/admin": backend,
       "/kbs": backend,
+      // Only forward the /eval API, not the /evals SPA route.
+      "^/eval(?:/|$)": backend,
     },
   },
 });

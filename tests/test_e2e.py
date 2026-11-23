@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from mykb.connectors.markdown_dir import MarkdownDirConnector
 from mykb.connectors.sync import Importer
-from mykb.evaluation.evalset import EvalCase, EvalSetManager
 from mykb.evaluation.runner import EvalRunner
-from mykb.evaluation.scoreboard import Scoreboard
+from mykb.evaluation.types import CaseData
 from mykb.extraction.drafter import Drafter
 from mykb.extraction.llm import FakeLLM
 from mykb.extraction.review import GitReview
@@ -45,27 +44,22 @@ def test_full_knowledge_lifecycle_loop(tmp_path):
     service = RetrievalService(knowledge_engine=engine)
     assert service.search("ltv").hits
 
-    # 5. Run an eval set (A = knowledge quality, B = end-to-end).
-    EvalSetManager(bundle).create(
-        "finance",
+    # 5. Run eval cases (A = knowledge quality, B = end-to-end).
+    result = EvalRunner(bundle, service).run(
         [
-            EvalCase(
+            CaseData(
                 question="ltv",
                 reference_answer="90 day LTV per customer",
                 expected_concept=draft_id,
                 domain="finance",
                 difficulty="easy",
             )
-        ],
+        ]
     )
-    run = EvalRunner(bundle, service).run("finance")
-    assert run.a_score == 1.0
-    assert 0.0 <= run.b_score <= 1.0
+    assert result.a_score == 1.0
+    assert 0.0 <= result.b_score <= 1.0
 
-    # 6. Scores persist as a trend.
-    assert len(Scoreboard(bundle).trend("finance")) == 1
-
-    # 7. A source goes stale -> trace dependents -> mark needs-review.
+    # 6. A source goes stale -> trace dependents -> mark needs-review.
     source = bundle.read_concept(source_id)
     source.frontmatter["stale_after"] = "2000-01-01T00:00:00Z"
     bundle.save_concept(source)

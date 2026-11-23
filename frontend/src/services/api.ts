@@ -6,25 +6,58 @@ export interface EvalCase {
   difficulty?: string;
 }
 
+export interface EvalCaseRow extends EvalCase {
+  id: string;
+  position: number;
+}
+
 export interface EvalSetInput {
   name: string;
   title?: string;
+  description?: string;
   cases: EvalCase[];
 }
 
+export interface EvalSetSummary {
+  id: string;
+  name: string;
+  title?: string | null;
+  description?: string | null;
+  owner_user_id: string;
+  case_count: number;
+  created_at?: string | null;
+  updated_at?: string | null;
+}
+
+export interface EvalSetDetail extends EvalSetSummary {
+  cases: EvalCaseRow[];
+}
+
 export interface TrendPoint {
-  created_at: string;
+  created_at?: string | null;
   a_score: number;
   b_score: number;
-  knowledge_version?: string;
+  coverage: number;
+  knowledge_version?: string | null;
 }
 
 export interface EvalRun {
-  set_name: string;
+  id: string;
+  set_id: string;
+  target_kb_id: string;
+  triggered_by?: string | null;
+  knowledge_version?: string | null;
+  case_count: number;
+  coverage: number;
   a_score: number;
   b_score: number;
-  created_at: string;
-  knowledge_version?: string;
+  created_at?: string | null;
+}
+
+export interface EvalOverview {
+  sets: { id: string; name: string; title?: string | null }[];
+  kbs: { id: string; name: string; my_role: string }[];
+  runs: EvalRun[];
 }
 
 export interface Draft {
@@ -275,28 +308,51 @@ export const api = {
     await request<unknown>(`/kbs/${kbId}/members/${userId}/transfer`, { method: "POST" });
   },
 
-  // -- scoped evaluation ------------------------------------------------
-  listEvalSets: async (kbId: string): Promise<string[]> =>
-    (await request<{ sets: string[] }>(`/kbs/${kbId}/eval/sets`)).sets,
+  // -- platform-level evaluation ---------------------------------------
+  listEvalSets: async (): Promise<EvalSetSummary[]> =>
+    (await request<{ sets: EvalSetSummary[] }>("/eval/sets")).sets,
 
-  createEvalSet: async (kbId: string, input: EvalSetInput): Promise<void> => {
-    await request<unknown>(`/kbs/${kbId}/eval/sets`, {
-      method: "POST",
-      body: jsonBody(input),
-    });
+  getEvalSet: async (setId: string): Promise<EvalSetDetail> =>
+    request<EvalSetDetail>(`/eval/sets/${setId}`),
+
+  createEvalSet: async (input: EvalSetInput): Promise<EvalSetDetail> =>
+    request<EvalSetDetail>("/eval/sets", { method: "POST", body: jsonBody(input) }),
+
+  updateEvalSet: async (setId: string, input: EvalSetInput): Promise<EvalSetDetail> =>
+    request<EvalSetDetail>(`/eval/sets/${setId}`, { method: "PATCH", body: jsonBody(input) }),
+
+  deleteEvalSet: async (setId: string): Promise<void> => {
+    await request<unknown>(`/eval/sets/${setId}`, { method: "DELETE" });
   },
 
-  runEval: async (kbId: string, name: string): Promise<EvalRun> =>
-    request<EvalRun>(`/kbs/${kbId}/eval/run?name=${encodeURIComponent(name)}`, {
-      method: "POST",
-    }),
+  runEvalSet: async (setId: string, targetKbIds: string[]): Promise<EvalRun[]> =>
+    (
+      await request<{ runs: EvalRun[] }>(`/eval/sets/${setId}/run`, {
+        method: "POST",
+        body: jsonBody({ target_kb_ids: targetKbIds }),
+      })
+    ).runs,
 
-  trend: async (kbId: string, name: string): Promise<TrendPoint[]> =>
+  listEvalRuns: async (
+    params: { kbId?: string; setId?: string } = {},
+  ): Promise<EvalRun[]> => {
+    const search = new URLSearchParams();
+    if (params.kbId) search.set("kb_id", params.kbId);
+    if (params.setId) search.set("set_id", params.setId);
+    const suffix = search.toString();
+    return (
+      await request<{ runs: EvalRun[] }>(`/eval/runs${suffix ? `?${suffix}` : ""}`)
+    ).runs;
+  },
+
+  evalTrend: async (setId: string, kbId: string): Promise<TrendPoint[]> =>
     (
       await request<{ trend: TrendPoint[] }>(
-        `/kbs/${kbId}/eval/sets/${encodeURIComponent(name)}/trend`,
+        `/eval/sets/${setId}/trend?kb_id=${encodeURIComponent(kbId)}`,
       )
     ).trend,
+
+  evalOverview: async (): Promise<EvalOverview> => request<EvalOverview>("/eval/overview"),
 
   // -- scoped review ----------------------------------------------------
   listDrafts: async (kbId: string): Promise<Draft[]> =>

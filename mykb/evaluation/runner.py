@@ -1,15 +1,16 @@
-"""Evaluation runner producing knowledge-quality (A) and end-to-end (B) scores."""
+"""Evaluation runner producing knowledge-quality (A) and end-to-end (B) scores.
+
+The runner is pure scoring: it receives plain case data plus a knowledge-base
+bundle and retrieval service, and never touches the database or any bundle's
+eval storage. Persistence lives in :mod:`mykb.evaluation.store`.
+"""
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
-
 from ..okf.bundle import Bundle
 from ..retrieval.engines.markdown_rag import tokens
-from ..retrieval.interface import RetrievalService
-from ..util import now_iso_us
-from .evalset import EvalCase, EvalSetManager
-from .scoreboard import Scoreboard
+from ..retrieval.interface import Answerer, RetrievalService
+from .types import COVERAGE_STATUSES, CaseData, CaseResult, EvalResult
 
 
 def similarity(a: str, b: str) -> float:
@@ -26,93 +27,74 @@ def similarity(a: str, b: str) -> float:
     return 2 * precision * recall / (precision + recall)
 
 
-@dataclass
-class CaseResult:
-    question: str
-    expected_concept: str | None
-    a_hit: bool
-    a_score: float
-    b_answer: str
-    b_score: float
-
-    def to_dict(self) -> dict:
-        return asdict(self)
-
-
-@dataclass
-class EvalRunResult:
-    set_name: str
-    knowledge_version: str | None
-    created_at: str
-    a_score: float
-    b_score: float
-    cases: list[CaseResult] = field(default_factory=list)
-
-    def to_dict(self) -> dict:
-        payload = asdict(self)
-        payload["cases"] = [case.to_dict() for case in self.cases]
-        return payload
-
-
 class EvalRunner:
-    """Runs an eval set against the unified retrieval interface."""
+    """Runs eval cases against a single knowledge base via the retrieval interface."""
 
     def __init__(
         self,
         bundle: Bundle,
         service: RetrievalService,
         *,
-        answerer=None,
-        scoreboard: Scoreboard | None = None,
+        answerer: Answerer | None = None,
     ) -> None:
         self.bundle = bundle
         self.service = service
         self.answerer = answerer
-        self.scoreboard = scoreboard or Scoreboard(bundle)
 
-    def run(self, set_name: str, *, top_k: int = 5) -> EvalRunResult:
-        eval_set = EvalSetManager(self.bundle).load(set_name)
+    def run(self, cases: list[CaseData], *, top_k: int = 5) -> EvalResult:
         results: list[CaseResult] = []
-        for case in eval_set.cases:
-            a_score = self._score_knowledge(case, top_k=top_k)
+        for case in cases:
+            status, a_score = self._score_knowledge(case, top_k=top_k)
             b_score, b_answer = self._score_e2e(case, top_k=top_k)
             results.append(
                 CaseResult(
                     question=case.question,
                     expected_concept=case.expected_concept,
-                    a_hit=a_score >= 1.0,
+                    status=status,
                     a_score=a_score,
                     b_answer=b_answer,
                     b_score=b_score,
+                    case_id=case.case_id,
                 )
             )
 
-        count = len(results)
-        run = EvalRunResult(
-            set_name=set_name,
+        with_expected = [r for r in results if r.status != "b_only"]
+        denominator = len(with_expected)
+        a_score = (
+            sum(r.a_score for r in with_expected) / denominator if denominator else 0.0
+        )
+        coverage = (
+            sum(1 for r in with_expected if r.status in COVERAGE_STATUSES) / denominator
+            if denominator
+            else 0.0
+        )
+        b_score = sum(r.b_score for r in results) / len(results) if results else 0.0
+
+        return EvalResult(
+            a_score=a_score,
+            b_score=b_score,
+            coverage=coverage,
+            case_count=len(results),
             knowledge_version=getattr(self.service.engines["knowledge"], "version", None),
-            created_at=now_iso_us(),
-            a_score=sum(r.a_score for r in results) / count if count else 0.0,
-            b_score=sum(r.b_score for r in results) / count if count else 0.0,
             cases=results,
         )
-        self.scoreboard.save(run)
-        return run
 
-    def _score_knowledge(self, case: EvalCase, *, top_k: int) -> float:
-        """A score: expected concept exists, is verified/stable, and is retrieved."""
+    def _score_knowledge(self, case: CaseData, *, top_k: int) -> tuple[str, float]:
+        """Classify missing -> unverified -> not_retrieved -> hit (or b_only)."""
         if not case.expected_concept:
-            return 0.0
+            return "b_only", 0.0
         try:
             concept = self.bundle.read_concept(case.expected_concept)
         except FileNotFoundError:
-            return 0.0
+            return "missing", 0.0
         if not concept.is_verified_stable():
-            return 0.0
+            return "unverified", 0.0
         hits = self.service.search(case.question, kind="knowledge", top_k=top_k).hits
-        return 1.0 if any(hit.concept_id == case.expected_concept for hit in hits) else 0.0
+        if any(hit.concept_id == case.expected_concept for hit in hits):
+            return "hit", 1.0
+        return "not_retrieved", 0.0
 
-    def _score_e2e(self, case: EvalCase, *, top_k: int) -> tuple[float, str]:
+    def _score_e2e(self, case: CaseData, *, top_k: int) -> tuple[float, str]:
         """B score: full question->retrieve->generate->answer compared to reference."""
         answer = self.service.answer(case.question, answerer=self.answerer, top_k=top_k)
         return similarity(answer, case.reference_answer), answer

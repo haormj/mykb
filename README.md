@@ -6,7 +6,8 @@
 Postgres                          git repo per knowledge base
   users / roles / tokens            raw/        源数据（文档）
   knowledge_bases / kb_members      knowledge/  业务知识（审核后）
-  (import_tasks, next phase)        evals/      评测集
+  import_tasks / extraction_items
+  eval_sets / eval_cases / eval_runs / eval_case_results   评测（平台级，不进入 git 仓库）
 ```
 
 ## 能力
@@ -14,7 +15,7 @@ Postgres                          git repo per knowledge base
 - 本地账号体系：注册、登录、登出、当前用户；JWT + 服务端 token 白名单；预留 SSO 字段。
 - 两级授权：平台角色（`admin` / `user`）+ 知识库成员角色（`owner` / `admin` / `editor` / `viewer`）。
 - 知识库注册：名称/slug/本地路径唯一；创建时初始化独立 git 仓库与 OKF 布局；远程仓库可选。
-- 知识库作用域接口：检索、评测、草稿审核均在 `/kbs/{kb_id}` 下。
+- 知识库作用域接口：检索、草稿审核在 `/kbs/{kb_id}` 下；评测是平台级 `/eval/*`，题集可复用、运行绑定目标库并跨库对比。
 - AI 知识提取：导入的源文档自动触发提取，AI 独占撰写 `knowledge/`，人工按"文档级 MR"评审源与结果后合入检索。
 
 ## 环境要求
@@ -133,7 +134,12 @@ GET|POST|PATCH|DELETE /kbs/{kb_id}/members
 POST /kbs/{kb_id}/members/{user_id}/transfer
 GET  /kbs/{kb_id}/retrieve | /answer
 POST /kbs/{kb_id}/index-sync           admin
-GET|POST /kbs/{kb_id}/eval/*
+POST|GET /eval/sets                    平台级评测集（创建者拥有，他人可读可跑）
+GET|PATCH|DELETE /eval/sets/{set_id}   创建者可改删
+POST /eval/sets/{set_id}/run           对目标库运行（逐库 editor，全有或全无）
+GET  /eval/runs | /eval/runs/{run_id}  结果按目标库成员可见
+GET  /eval/sets/{set_id}/trend         按目标库看趋势
+GET  /eval/overview                    看板：可见库范围内的运行聚合
 GET  /kbs/{kb_id}/review/drafts|diff
 POST /kbs/{kb_id}/review/approve       admin
 GET  /kbs/{kb_id}/review/mrs           待审文档级 MR
@@ -147,7 +153,7 @@ GET  /kbs/{kb_id}/import-tasks         列表/详情
 POST /kbs/{kb_id}/import-tasks/{id}/cancel
 ```
 
-旧的全局路由（`/retrieve`、`/eval/*`、`/review/*` 等）已移除，返回 404。
+旧的全局内容路由（`/retrieve`、`/review/*`、`/index-sync` 等）已移除，返回 404。评测不再是知识库作用域的子路由：原 `/kbs/{kb_id}/eval/*` 已移除，统一走平台级 `/eval/*`。
 
 ## 测试与检查
 
@@ -162,18 +168,24 @@ cd frontend && npm test   # 前端权限逻辑测试
 
 ## 界面结构
 
-应用外壳：左上角为平台名「企业知识管理平台」，顶部标题为「知识库」，左侧边栏保留一个「知识库」入口（在列表与详情页均保持高亮）。
+应用外壳：左上角为平台名「企业知识管理平台」；顶部工作栏为一级菜单「知识库 / 知识评测 / 知识维护」，左侧边栏显示当前一级菜单的子菜单：
 
-登录后进入「知识库」大页面查看知识库列表，点击某个知识库进入其工作台：
+- 知识库：左侧仅「知识库列表」入口；列表页右上角可「新建」，点击具体知识库进入其详情页。
+- 知识评测：看板、评测集。
+- 知识维护：占位（暂无页面）。
 
 ```
+/kbs                   知识库列表
 /kbs/:kbId/documents   文档导入与导入任务
 /kbs/:kbId/knowledge   业务知识（只读，含状态与血缘）
-/kbs/:kbId/evals       评测集与运行
 /kbs/:kbId/review      草稿审核（admin+）
-/kbs/:kbId/scores      分数看板
 /kbs/:kbId/settings    基础设置、远程仓库、成员管理（admin+）
+
+/scores                知识评测 › 看板（按可见库范围、同题集跨库对比）
+/evals                 知识评测 › 评测集（管理与选库运行，可多选目标库）
+/maintenance           知识维护（占位，暂无页面）
 ```
 
-- viewer 只读；editor 可导入、起草、评测；admin 可审核、设置与成员管理；owner 还可删除/转让/修改远程。
+- 知识库内：viewer 只读；editor 可导入、起草、并在该库上运行评测；admin 可审核、设置与成员管理；owner 还可删除/转让/修改远程。
+- 评测集为平台级共享资源：创建者可改删，他人可读可运行；运行结果仅目标库成员与平台管理员可见。
 - 深链访问无权知识库或页面会显示 403 提示。

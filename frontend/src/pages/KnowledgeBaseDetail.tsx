@@ -65,9 +65,7 @@ export default function KnowledgeBaseDetail() {
   const allTabs = [
     { key: "documents", label: "文档", visible: true },
     { key: "knowledge", label: "知识", visible: true },
-    { key: "evals", label: "评测", visible: true },
     { key: "review", label: "审核", visible: canAdmin },
-    { key: "scores", label: "看板", visible: true },
     { key: "settings", label: "设置", visible: canAdmin },
   ];
   const tabs = allTabs.filter((tab) => tab.visible);

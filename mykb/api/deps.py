@@ -89,8 +89,44 @@ def require_platform_admin(user: AuthUser = Depends(get_current_user)) -> AuthUs
     return user
 
 
+def ensure_kb_role(
+    *,
+    session: Session,
+    user: AuthUser,
+    kb_id: str,
+    min_role: str,
+) -> KbAccess:
+    """Load the knowledge base and enforce a minimum role, or raise ``HTTPException``.
+
+    Shared by the ``require_kb_role`` dependency and multi-target code paths
+    (such as running an eval set against several knowledge bases at once) that
+    cannot rely on a single ``kb_id`` path parameter.
+    """
+    if min_role not in KB_ROLE_RANK:
+        raise ValueError(f"unknown kb role '{min_role}'")
+    kb = session.get(KnowledgeBase, kb_id)
+    if kb is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Knowledge base not found")
+    if user.is_platform_admin:
+        return KbAccess(kb=kb, role="owner", is_platform_admin=True)
+    member = session.get(KbMember, (kb_id, user.id))
+    if member is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Not a knowledge base member"
+        )
+    if KB_ROLE_RANK.get(member.role, 0) < KB_ROLE_RANK[min_role]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Requires at least '{min_role}' role",
+        )
+    return KbAccess(kb=kb, role=member.role, is_platform_admin=False)
+
+
 def require_kb_role(min_role: str):
-    """Build a dependency that loads the knowledge base and enforces a minimum role."""
+    """Build a dependency that loads the knowledge base and enforces a minimum role.
+
+    ``min_role`` is validated eagerly so a typo fails at import time.
+    """
     if min_role not in KB_ROLE_RANK:
         raise ValueError(f"unknown kb role '{min_role}'")
 
@@ -99,21 +135,6 @@ def require_kb_role(min_role: str):
         user: AuthUser = Depends(get_current_user),
         session: Session = Depends(get_session),
     ) -> KbAccess:
-        kb = session.get(KnowledgeBase, kb_id)
-        if kb is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Knowledge base not found")
-        if user.is_platform_admin:
-            return KbAccess(kb=kb, role="owner", is_platform_admin=True)
-        member = session.get(KbMember, (kb_id, user.id))
-        if member is None:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN, detail="Not a knowledge base member"
-            )
-        if KB_ROLE_RANK.get(member.role, 0) < KB_ROLE_RANK[min_role]:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Requires at least '{min_role}' role",
-            )
-        return KbAccess(kb=kb, role=member.role, is_platform_admin=False)
+        return ensure_kb_role(session=session, user=user, kb_id=kb_id, min_role=min_role)
 
     return dependency

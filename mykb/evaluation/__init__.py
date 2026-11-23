@@ -1,15 +1,12 @@
-"""Evaluation: curated eval sets, dual scoring, and score trends."""
+"""Evaluation: platform-level eval sets, dual scoring, and score trends."""
 
-from .evalset import EvalCase, EvalSet, EvalSetManager
-from .runner import EvalRunner, EvalRunResult, similarity
-from .scoreboard import Scoreboard
+from .runner import EvalRunner, similarity
+from .types import CaseData, CaseResult, EvalResult
 
 __all__ = [
-    "EvalCase",
-    "EvalRunResult",
+    "CaseData",
+    "CaseResult",
+    "EvalResult",
     "EvalRunner",
-    "EvalSet",
-    "EvalSetManager",
-    "Scoreboard",
     "similarity",
 ]

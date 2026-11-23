@@ -69,10 +69,10 @@ export default function KnowledgeBases() {
   return (
     <Space direction="vertical" size={16} style={{ width: "100%" }}>
       <Card
-        title="知识库"
+        title="知识库列表"
         extra={
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpen(true)}>
-            新建知识库
+            新建
           </Button>
         }
       >

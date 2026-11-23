@@ -12,9 +12,10 @@ def _bundle(tmp_path):
 
 def test_ensure_layout_creates_levels_and_root_index(tmp_path):
     bundle = _bundle(tmp_path)
-    for level in ("raw", "knowledge", "evals"):
+    for level in ("raw", "knowledge"):
         assert (bundle.root / level).is_dir()
         assert (bundle.root / level / "index.md").exists()
+    assert not (bundle.root / "evals").exists()
     frontmatter, _ = bundle.root_index()
     assert frontmatter["okf_version"] == "0.3"
     assert frontmatter["title"] == "Acme KB"

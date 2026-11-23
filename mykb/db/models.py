@@ -14,14 +14,16 @@ from typing import Any
 from sqlalchemy import (
     JSON,
     DateTime,
+    Float,
     ForeignKey,
     Index,
     Integer,
     String,
+    Text,
     UniqueConstraint,
 )
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 
@@ -171,3 +173,99 @@ class ExtractionItem(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_now, onupdate=_now
     )
+
+
+class EvalSet(Base):
+    """A platform-level, reusable evaluation set owned by a single user."""
+
+    __tablename__ = "eval_sets"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    owner_user_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    title: Mapped[str | None] = mapped_column(String(512))
+    description: Mapped[str | None] = mapped_column(String(2048))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_now, onupdate=_now
+    )
+
+    cases: Mapped[list[EvalCase]] = relationship(
+        back_populates="eval_set",
+        cascade="all, delete-orphan",
+        order_by="EvalCase.position",
+    )
+
+
+class EvalCase(Base):
+    """One question inside an :class:`EvalSet`."""
+
+    __tablename__ = "eval_cases"
+    __table_args__ = (Index("ix_eval_cases_set_position", "set_id", "position"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    set_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("eval_sets.id", ondelete="CASCADE"), nullable=False
+    )
+    position: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    question: Mapped[str] = mapped_column(Text, nullable=False)
+    reference_answer: Mapped[str] = mapped_column(Text, nullable=False)
+    expected_concept: Mapped[str | None] = mapped_column(String(1024))
+    domain: Mapped[str | None] = mapped_column(String(128))
+    difficulty: Mapped[str | None] = mapped_column(String(64))
+
+    eval_set: Mapped[EvalSet] = relationship(back_populates="cases")
+
+
+class EvalRun(Base):
+    """One run of an eval set against a single target knowledge base."""
+
+    __tablename__ = "eval_runs"
+    __table_args__ = (
+        Index("ix_eval_runs_kb_created", "target_kb_id", "created_at"),
+        Index("ix_eval_runs_set_created", "set_id", "created_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    set_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("eval_sets.id", ondelete="CASCADE"), nullable=False
+    )
+    target_kb_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("knowledge_bases.id", ondelete="CASCADE"), nullable=False
+    )
+    triggered_by: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="SET NULL")
+    )
+    knowledge_version: Mapped[str | None] = mapped_column(String(128))
+    case_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    coverage: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    a_score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    b_score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+
+class EvalCaseResult(Base):
+    """Per-question snapshot of an :class:`EvalRun`.
+
+    Question text is snapshotted so editing the set later never rewrites the
+    meaning of a historical run.
+    """
+
+    __tablename__ = "eval_case_results"
+    __table_args__ = (Index("ix_eval_case_results_run", "run_id"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    run_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("eval_runs.id", ondelete="CASCADE"), nullable=False
+    )
+    case_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("eval_cases.id", ondelete="SET NULL")
+    )
+    question: Mapped[str] = mapped_column(Text, nullable=False)
+    expected_concept: Mapped[str | None] = mapped_column(String(1024))
+    status: Mapped[str] = mapped_column(String(24), nullable=False)
+    a_score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    b_answer: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    b_score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)

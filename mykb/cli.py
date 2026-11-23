@@ -31,14 +31,6 @@ def build_parser() -> argparse.ArgumentParser:
     )
     sync_index.add_argument("root", help="Bundle root directory")
 
-    eval_run = sub.add_parser("eval-run", help="Run an eval set and print A/B scores")
-    eval_run.add_argument("root", help="Bundle root directory")
-    eval_run.add_argument("name", help="Eval set name")
-
-    eval_trend = sub.add_parser("eval-trend", help="Print the score trend for an eval set")
-    eval_trend.add_argument("root", help="Bundle root directory")
-    eval_trend.add_argument("name", help="Eval set name")
-
     return parser
 
 
@@ -76,27 +68,6 @@ def main(argv: list[str] | None = None) -> int:
         service = build_retrieval_service(args.root)
         version = getattr(service.engines["knowledge"], "version", None)
         print(f"index synced at version {version}")
-        return 0
-
-    if args.command == "eval-run":
-        from .evaluation.runner import EvalRunner
-        from .retrieval.service import build_retrieval_service
-
-        bundle = Bundle(Path(args.root))
-        service = build_retrieval_service(args.root)
-        run = EvalRunner(bundle, service).run(args.name)
-        print(f"A(knowledge)={run.a_score:.3f} B(end-to-end)={run.b_score:.3f}")
-        return 0
-
-    if args.command == "eval-trend":
-        from .evaluation.scoreboard import Scoreboard
-
-        trend = Scoreboard(Bundle(Path(args.root))).trend(args.name)
-        for entry in trend:
-            print(
-                f"{entry['created_at']}  A={entry['a_score']:.3f}  "
-                f"B={entry['b_score']:.3f}  v={entry.get('knowledge_version')}"
-            )
         return 0
 
     return 0
