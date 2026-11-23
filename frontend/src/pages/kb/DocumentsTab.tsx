@@ -12,13 +12,19 @@ import {
   message,
 } from "antd";
 import type { UploadFile } from "antd";
-import { ReloadOutlined, StopOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  ReloadOutlined,
+  StopOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { useOutletContext } from "react-router-dom";
 import {
   api,
   isActiveTask,
   type DocumentItem,
   type ImportTask,
+  type ReviewMr,
 } from "@/services/api";
 import type { KbOutletContext } from "./context";
 
@@ -27,6 +33,11 @@ const { Text } = Typography;
 const STATUS_COLORS: Record<string, string> = {
   queued: "default",
   running: "processing",
+  converting: "processing",
+  "queued-for-review": "blue",
+  reviewing: "purple",
+  merged: "green",
+  rejected: "default",
   succeeded: "green",
   partial: "orange",
   failed: "red",
@@ -37,19 +48,22 @@ export default function DocumentsTab() {
   const { kb, canWrite } = useOutletContext<KbOutletContext>();
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [tasks, setTasks] = useState<ImportTask[]>([]);
+  const [mrs, setMrs] = useState<ReviewMr[]>([]);
   const [importOpen, setImportOpen] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [uploading, setUploading] = useState(false);
 
-  const hasActive = tasks.some(isActiveTask);
+  const hasActive = tasks.some(isActiveTask) || mrs.some((mr) => mr.status === "reviewing");
 
   const refresh = useCallback(async () => {
-    const [docs, taskList] = await Promise.all([
+    const [docs, taskList, reviewMrs] = await Promise.all([
       api.listDocuments(kb.id),
       api.listImportTasks(kb.id),
+      api.listReviewMrs(kb.id),
     ]);
     setDocuments(docs);
     setTasks(taskList);
+    setMrs(reviewMrs);
   }, [kb.id]);
 
   useEffect(() => {
@@ -94,6 +108,26 @@ export default function DocumentsTab() {
     } catch (error) {
       message.error(String(error));
     }
+  };
+
+  const runMrAction = async (label: string, action: () => Promise<void>) => {
+    try {
+      await action();
+      message.success(label);
+      await refresh();
+    } catch (error) {
+      message.error(String(error));
+    }
+  };
+
+  const deleteDoc = async (conceptId: string) => {
+    Modal.confirm({
+      title: "删除文档？",
+      content: "删除会生成一个待审的文档级变更，合并后才会移除该文档及其受影响的知识。",
+      okText: "生成删除变更",
+      cancelText: "取消",
+      onOk: () => runMrAction("已生成删除变更", () => api.deleteDocument(kb.id, conceptId)),
+    });
   };
 
   return (
@@ -144,9 +178,90 @@ export default function DocumentsTab() {
                 render: (value: string | null) =>
                   value ? <Text code>{value.slice(0, 8)}</Text> : "-",
               },
+              ...(canWrite
+                ? [
+                    {
+                      title: "操作",
+                      key: "actions",
+                      render: (_value: unknown, document: DocumentItem) => (
+                        <Button
+                          size="small"
+                          danger
+                          icon={<DeleteOutlined />}
+                          onClick={() => void deleteDoc(document.concept_id)}
+                        >
+                          删除
+                        </Button>
+                      ),
+                    },
+                  ]
+                : []),
             ]}
           />
         )}
+
+        <Card size="small" title="待审变更（文档级 MR）">
+          {mrs.length === 0 ? (
+            <Empty description="暂无待审变更" />
+          ) : (
+            <Table
+              size="small"
+              rowKey="item_id"
+              pagination={false}
+              dataSource={mrs}
+              columns={[
+                { title: "文档", dataIndex: "concept_id" },
+                {
+                  title: "动作",
+                  dataIndex: "action",
+                  render: (value: string) => <Tag>{value}</Tag>,
+                },
+                {
+                  title: "状态",
+                  dataIndex: "status",
+                  render: (value: string) => (
+                    <Tag color={STATUS_COLORS[value] ?? "default"}>{value}</Tag>
+                  ),
+                },
+                {
+                  title: "操作",
+                  key: "actions",
+                  render: (_value: unknown, mr: ReviewMr) =>
+                    canWrite && mr.status === "reviewing" ? (
+                      <Space size={4}>
+                        <Button
+                          size="small"
+                          type="primary"
+                          onClick={() =>
+                            void runMrAction("已合并", () => api.approveMr(kb.id, mr.item_id, "alice"))
+                          }
+                        >
+                          合并
+                        </Button>
+                        <Button
+                          size="small"
+                          onClick={() =>
+                            void runMrAction("已退回重做", () => api.redraftMr(kb.id, mr.item_id))
+                          }
+                        >
+                          退回重做
+                        </Button>
+                        <Button
+                          size="small"
+                          danger
+                          onClick={() =>
+                            void runMrAction("已拒绝", () => api.rejectMr(kb.id, mr.item_id))
+                          }
+                        >
+                          拒绝
+                        </Button>
+                      </Space>
+                    ) : null,
+                },
+              ]}
+            />
+          )}
+        </Card>
 
         <Card size="small" title="导入任务">
           {tasks.length === 0 ? (

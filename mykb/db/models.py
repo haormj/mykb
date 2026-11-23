@@ -129,7 +129,7 @@ class ImportTask(Base):
     source_config: Mapped[dict[str, Any]] = mapped_column(
         JSONType, default=dict, nullable=False
     )
-    status: Mapped[str] = mapped_column(String(16), default="queued", nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="queued", nullable=False)
     total: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     added: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     updated: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
@@ -142,3 +142,32 @@ class ImportTask(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class ExtractionItem(Base):
+    """One source document waiting for review as a document-level change set."""
+
+    __tablename__ = "extraction_items"
+    __table_args__ = (Index("ix_extraction_items_kb_status", "kb_id", "status", "created_at"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    kb_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("knowledge_bases.id", ondelete="CASCADE"), nullable=False
+    )
+    import_task_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("import_tasks.id", ondelete="CASCADE")
+    )
+    concept_id: Mapped[str] = mapped_column(String(1024), nullable=False)
+    action: Mapped[str] = mapped_column(String(16), default="add", nullable=False)
+    status: Mapped[str] = mapped_column(String(24), default="queued", nullable=False)
+    branch: Mapped[str | None] = mapped_column(String(255))
+    source_hash: Mapped[str | None] = mapped_column(String(64))
+    title: Mapped[str | None] = mapped_column(String(512))
+    error: Mapped[str | None] = mapped_column(String(2048))
+    created_by: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_now, onupdate=_now
+    )

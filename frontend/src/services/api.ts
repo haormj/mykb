@@ -33,6 +33,24 @@ export interface Draft {
   status: string;
 }
 
+export interface ReviewMr {
+  item_id: string;
+  concept_id: string;
+  title?: string | null;
+  action: string;
+  status: string;
+  branch?: string | null;
+  error?: string | null;
+}
+
+export interface ReviewMrDiff {
+  item_id: string;
+  concept_id: string;
+  branch: string;
+  files: string[];
+  diff: string;
+}
+
 export interface CurrentUser {
   id: string;
   username: string;
@@ -84,7 +102,18 @@ export interface ImportTask {
   id: string;
   kb_id: string;
   source_type: string;
-  status: "queued" | "running" | "succeeded" | "partial" | "failed" | "cancelled";
+  status:
+    | "queued"
+    | "running"
+    | "converting"
+    | "queued-for-review"
+    | "reviewing"
+    | "merged"
+    | "rejected"
+    | "succeeded"
+    | "partial"
+    | "failed"
+    | "cancelled";
   total: number;
   added: number;
   updated: number;
@@ -97,7 +126,13 @@ export interface ImportTask {
   finished_at?: string | null;
 }
 
-const ACTIVE_TASK_STATUSES = new Set(["queued", "running"]);
+const ACTIVE_TASK_STATUSES = new Set([
+  "queued",
+  "running",
+  "converting",
+  "queued-for-review",
+  "reviewing",
+]);
 
 export function isActiveTask(task: ImportTask): boolean {
   return ACTIVE_TASK_STATUSES.has(task.status);
@@ -279,5 +314,31 @@ export const api = {
       `/kbs/${kbId}/review/approve?concept_id=${encodeURIComponent(conceptId)}&reviewer=${encodeURIComponent(reviewer)}`,
       { method: "POST" },
     );
+  },
+
+  // -- document-level review MRs ---------------------------------------
+  listReviewMrs: async (kbId: string): Promise<ReviewMr[]> =>
+    (await request<{ mrs: ReviewMr[] }>(`/kbs/${kbId}/review/mrs`)).mrs,
+
+  reviewMrDiff: async (kbId: string, itemId: string): Promise<ReviewMrDiff> =>
+    request<ReviewMrDiff>(`/kbs/${kbId}/review/mrs/${itemId}/diff`),
+
+  approveMr: async (kbId: string, itemId: string, reviewer: string): Promise<void> => {
+    await request<unknown>(
+      `/kbs/${kbId}/review/mrs/${itemId}/approve?reviewer=${encodeURIComponent(reviewer)}`,
+      { method: "POST" },
+    );
+  },
+
+  rejectMr: async (kbId: string, itemId: string): Promise<void> => {
+    await request<unknown>(`/kbs/${kbId}/review/mrs/${itemId}/reject`, { method: "POST" });
+  },
+
+  redraftMr: async (kbId: string, itemId: string): Promise<void> => {
+    await request<unknown>(`/kbs/${kbId}/review/mrs/${itemId}/redraft`, { method: "POST" });
+  },
+
+  deleteDocument: async (kbId: string, conceptId: string): Promise<void> => {
+    await request<unknown>(`/kbs/${kbId}/documents/${conceptId}`, { method: "DELETE" });
   },
 };

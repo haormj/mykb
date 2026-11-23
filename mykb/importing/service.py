@@ -11,7 +11,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import update
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session, sessionmaker
 
 from ..config import Settings
@@ -29,10 +29,12 @@ from ..conversion.service import (
     concept_alias,
     concept_relative_path,
 )
-from ..db.models import ImportTask, KnowledgeBase
+from ..db.models import ExtractionItem, ImportTask, KnowledgeBase
+from ..extraction.pipeline import process_pending
+from ..extraction.queue import STATUS_QUEUED, enqueue_item
+from ..extraction.staging import cleanup_staged, stage_concept
 from ..kb import gitops
 from ..kb.context import RetrievalCache
-from ..kb.service import remote_credential
 from ..okf.bundle import Bundle
 from .concepts import build_source_concept
 
@@ -174,16 +176,22 @@ def task_payload(task: ImportTask) -> dict[str, Any]:
     }
 
 
-def _import_document(
+def _stage_document(
     *,
+    session: Session,
     bundle: Bundle,
     document: RawDocument,
     connector: UploadDirConnector,
     converter: ConverterService,
     task: ImportTask,
     settings: Settings,
-) -> bool:
-    """Convert and write one document; return whether a concept already existed."""
+) -> str:
+    """Convert one document and stage it for review.
+
+    Returns ``"added"``, ``"updated"`` or ``"skipped"``. Nothing is written to
+    the knowledge-base git repository here; the extraction worker builds the
+    per-document review branch later.
+    """
     result = converter.convert(document)
     relative = concept_relative_path(document.key)
     alias = concept_alias(relative)
@@ -206,28 +214,29 @@ def _import_document(
         resource=connector.resource_for(document.key),
         task_id=task.id,
     )
-    concept_id = bundle.concept_id(f"raw/{connector.name}/{relative}")
-    existed = bundle.path_for_id(concept_id).exists()
+    concept_id = Bundle.concept_id(f"raw/{connector.name}/{relative}")
+    existing = None
+    if bundle.path_for_id(concept_id).exists():
+        existing = bundle.read_concept(concept_id)
 
-    level_relative = f"{connector.name}/{relative}"
-    asset_dir = bundle.asset_dir_for("raw", level_relative)
-    backup = asset_dir.with_name(f"{asset_dir.name}.bak")
-    if backup.exists():
-        shutil.rmtree(backup, ignore_errors=True)
-    if asset_dir.exists():
-        shutil.move(str(asset_dir), str(backup))
-    try:
-        if result.assets:
-            bundle.write_assets("raw", level_relative, result.assets)
-        bundle.write_concept(concept, "raw", level_relative)
-    except Exception:
-        shutil.rmtree(asset_dir, ignore_errors=True)
-        if backup.exists():
-            shutil.move(str(backup), str(asset_dir))
-        raise
-    else:
-        shutil.rmtree(backup, ignore_errors=True)
-    return existed
+    source_hash = concept.frontmatter.get("x-original-sha256")
+    if existing is not None and existing.frontmatter.get("x-original-sha256") == source_hash:
+        return "skipped"
+
+    action = "modify" if existing is not None else "add"
+    item = enqueue_item(
+        session,
+        kb_id=task.kb_id,
+        import_task_id=task.id,
+        concept_id=concept_id,
+        action=action,
+        source_hash=str(source_hash) if source_hash else None,
+        title=concept.title,
+        created_by=task.created_by,
+    )
+    stage_concept(settings, item.id, concept, result.assets)
+    session.commit()
+    return "added" if action == "add" else "updated"
 
 
 def run_import_task(
@@ -240,8 +249,11 @@ def run_import_task(
     lock_guard: threading.Lock,
     on_item: Callable[[ImportTask], None] | None = None,
     converter: ConverterService | None = None,
+    extraction_locks: dict[str, threading.Lock] | None = None,
+    extraction_guard: threading.Lock | None = None,
+    llm=None,
 ) -> None:
-    """Execute one queued import task under the knowledge base's serial lock."""
+    """Convert an upload into staged review items under the KB's serial lock."""
     session = session_factory()
     temp_dir = settings.tmp_root / task_id
     converter = converter or ConverterService(settings)
@@ -285,7 +297,8 @@ def run_import_task(
                 if on_item is not None:
                     on_item(task)
                 try:
-                    existed = _import_document(
+                    outcome = _stage_document(
+                        session=session,
                         bundle=bundle,
                         document=document,
                         connector=connector,
@@ -293,10 +306,12 @@ def run_import_task(
                         task=task,
                         settings=settings,
                     )
-                    if existed:
+                    if outcome == "added":
+                        task.added += 1
+                    elif outcome == "updated":
                         task.updated += 1
                     else:
-                        task.added += 1
+                        task.skipped += 1
                 except ConversionUnavailableError as exc:
                     fatal = exc
                     break
@@ -308,22 +323,49 @@ def run_import_task(
                     errors.append(f"{document.key}: {exc}")
                 session.commit()
 
-            if task.added or task.updated:
-                gitops.commit_all(Path(kb.local_path), f"import: {task.id}")
-                if kb.git_url:
-                    gitops.push(Path(kb.local_path), kb.git_branch, remote_credential(kb, settings))
-
+            queued = session.scalar(
+                select(ExtractionItem.id)
+                .where(ExtractionItem.import_task_id == task.id)
+                .where(ExtractionItem.status == STATUS_QUEUED)
+                .limit(1)
+            )
             session.refresh(task)
             if task.status != "cancelled":
                 if fatal is not None:
                     task.status = "failed"
                     errors.append(str(fatal))
+                elif queued is None and task.failed:
+                    task.status = "failed"
+                elif queued is None:
+                    task.status = "succeeded"
+                elif task.failed:
+                    task.status = "partial"
                 else:
-                    task.status = "partial" if task.failed else "succeeded"
+                    task.status = "queued-for-review"
+            if fatal is not None:
+                for item in session.scalars(
+                    select(ExtractionItem)
+                    .where(ExtractionItem.import_task_id == task.id)
+                    .where(ExtractionItem.status == STATUS_QUEUED)
+                ).all():
+                    cleanup_staged(settings, item.id)
+                    item.status = "rejected"
             task.finished_at = _now()
             task.error = "\n".join(errors)[:2048] or None
             session.commit()
             cache.invalidate(kb.id)
+
+        should_extract = fatal is None and task.status not in ("failed", "cancelled")
+        if settings.extraction_enabled and should_extract:
+            process_pending(
+                kb.id,
+                session_factory=session_factory,
+                settings=settings,
+                llm=llm,
+                locks=extraction_locks,
+                guard=extraction_guard,
+                cache=cache,
+            )
     except Exception as exc:  # noqa: BLE001 - persist the failure on the task
         session.rollback()
         task = session.get(ImportTask, task_id)

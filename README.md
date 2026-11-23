@@ -15,6 +15,7 @@ Postgres                          git repo per knowledge base
 - 两级授权：平台角色（`admin` / `user`）+ 知识库成员角色（`owner` / `admin` / `editor` / `viewer`）。
 - 知识库注册：名称/slug/本地路径唯一；创建时初始化独立 git 仓库与 OKF 布局；远程仓库可选。
 - 知识库作用域接口：检索、评测、草稿审核均在 `/kbs/{kb_id}` 下。
+- AI 知识提取：导入的源文档自动触发提取，AI 独占撰写 `knowledge/`，人工按"文档级 MR"评审源与结果后合入检索。
 
 ## 环境要求
 
@@ -44,6 +45,8 @@ Postgres                          git repo per knowledge base
 | `MYKB_CONVERSION_MAX_ASSET_BYTES` | 否 | 单文档资产总大小上限，默认 20 MiB |
 | `MYKB_CONVERSION_MAX_MARKDOWN_BYTES` | 否 | 单文档 markdown 大小上限，默认 10 MiB |
 | `MYKB_KB_ASSET_QUOTA_BYTES` | 否 | 每个知识库资产总量上限，默认 512 MiB |
+| `MYKB_EXTRACTION_ENABLED` | 否 | 是否在导入后自动触发知识提取，默认 `true` |
+| `MYKB_LLM_BASE_URL` / `MYKB_LLM_API_KEY` / `MYKB_LLM_MODEL` | 否 | OpenAI 兼容提取端点；未配置时使用确定性离线 FakeLLM |
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | 引导时 | 首个平台管理员 |
 
 缺失必需变量时服务启动会直接报错。
@@ -90,11 +93,22 @@ make dev                  # 后端 :8000 + 前端 :5173
 - 转换产出的图片写入概念同名的 `<concept>.assets/` 目录，由 Git LFS 管理；本期只存储、不提供平台内预览。
 - 原始上传文件（docx/md/zip）**不持久化**：上传内容暂存在 `MYKB_KB_ROOT/.tmp/<task_id>`，任务进入终态（成功、失败、取消）后删除。仓库只保留转换后的 markdown 与派生资产。
 - 源数据 frontmatter 记录 `x-source-format`、`x-original-name`、`x-original-sha256`、`x-original-size`、`x-parsed-by`、`x-import-task`；`resource` 是逻辑来源标识，不承诺可回取。
-- 每次上传创建一个持久化的导入任务，状态为 `queued → running → succeeded | partial | failed | cancelled`，计数与错误写回数据库。
-- 单条转换失败只影响该条目（任务 `partial`）；转换服务未配置时该条目失败；转换服务不可达或鉴权失败时任务 `failed` 可重试，不写入半成品。
-- 同一知识库的导入任务串行执行（不同库可并行），转换与写入完成后提交 git；配置了远程则一并推送。
-- 服务重启时会把残留的 `running` 任务标记为 `failed`。
+- 每次上传创建一个持久化的导入任务，状态从 `queued → running` 转换后进入评审流程（`queued-for-review → reviewing → merged | rejected`），转换层失败仍为 `partial | failed | cancelled`，计数与错误写回数据库。
+- 单条转换失败只影响该条目；转换服务未配置时该条目失败；转换服务不可达或鉴权失败时任务 `failed` 可重试，不写入半成品，且不会把已转换条目推入评审。
+- **导入不再直接写入主干**：转换结果暂存到 `MYKB_KB_ROOT/.pending/<item_id>`，由提取 worker 生成文档级评审 MR，合并后才进入 `main`。
+- 同一知识库的导入与提取串行执行（不同库可并行）；重启时残留的 `running` 任务标记为 `failed`，残留 `processing` 的提取项回到队列可续跑。
 - 任务执行器是**进程内**的，因此后端必须以单进程运行（`--workers 1`，`make backend` 已是如此）；多 worker/多实例需要换成外部队列。
+
+## 知识提取与文档级评审
+
+- 导入产生的源数据进入按知识库串行的待审队列；同一库一次只推进一份文档，合并后才生成下一份，避免共享知识页冲突。
+- 每份文档生成一个 `change/doc-<slug>` 分支，内容 = 该文档的 raw 概念 + 受其影响的业务知识变更（`trace_affected`），构成**文档级 MR**。
+- 提取由 LLM 完成，但受 harness 约束：按知识类型套用模板与结构化 JSON schema、概念 id 由主题稳定派生、按 claim 增量幂等合并、写盘前校验 schema/引用/重复实体/断链。
+- `knowledge/` 完全由 AI 撰写，人只评审：合并后为通过的业务知识记录 `verified` 并置 `stable`；只有 `verified && stable` 进入检索。
+- 支持"部分接受"：raw 合格但知识不合格时可"退回重做"，仅重提取该文档的知识并更新同一 MR。
+- 每条断言（claim）记录来源 `sources`；文档修改/删除时按 claim 级血缘修订受影响知识，而不是整页重写或整页删除。
+- 导入任务状态在评审中流转为 `queued-for-review → reviewing → merged | rejected`。
+- 未合并的 MR 不影响主干、不进入检索；`main` 恒为已审内容。
 
 ## 文档转换 sidecar
 
@@ -122,7 +136,11 @@ POST /kbs/{kb_id}/index-sync           admin
 GET|POST /kbs/{kb_id}/eval/*
 GET  /kbs/{kb_id}/review/drafts|diff
 POST /kbs/{kb_id}/review/approve       admin
+GET  /kbs/{kb_id}/review/mrs           待审文档级 MR
+GET  /kbs/{kb_id}/review/mrs/{id}/diff admin
+POST /kbs/{kb_id}/review/mrs/{id}/approve|reject|redraft  admin
 GET  /kbs/{kb_id}/documents            viewer
+DELETE /kbs/{kb_id}/documents/{concept_id}  editor（生成删除变更）
 GET  /kbs/{kb_id}/knowledge            业务知识只读投影
 POST /kbs/{kb_id}/import-tasks         editor（multipart: files）
 GET  /kbs/{kb_id}/import-tasks         列表/详情

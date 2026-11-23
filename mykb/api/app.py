@@ -21,6 +21,7 @@ from ..config import Settings, load_settings
 from ..conversion import ConverterService
 from ..db import Base
 from ..db.session import create_db_engine, create_session_factory
+from ..extraction.queue import recover_processing
 from ..importing.service import mark_stale_running_failed
 from ..kb.context import RetrievalCache
 from .routes import (
@@ -65,6 +66,7 @@ def create_app(
     @asynccontextmanager
     async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
         mark_stale_running_failed(session_factory)
+        recover_processing(session_factory)
         try:
             yield
         finally:
@@ -82,6 +84,8 @@ def create_app(
     app.state.import_executor = executor
     app.state.kb_locks = {}
     app.state.kb_locks_guard = threading.Lock()
+    app.state.extraction_locks = {}
+    app.state.extraction_locks_guard = threading.Lock()
 
     if create_tables:
         Base.metadata.create_all(engine)

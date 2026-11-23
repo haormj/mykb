@@ -181,3 +181,52 @@ def commit_all(path: Path, message: str) -> None:
     """Public wrapper: stage and commit every change in ``path``."""
     ensure_lfs(path)
     _commit_all(path, message)
+
+
+def current_branch(path: Path) -> str:
+    return _git("rev-parse", "--abbrev-ref", "HEAD", cwd=path)
+
+
+def has_branch(path: Path, branch: str) -> bool:
+    ref = _git("rev-parse", "--verify", f"refs/heads/{branch}", cwd=path, check=False)
+    return bool(ref)
+
+
+def checkout(path: Path, branch: str) -> None:
+    _git("checkout", branch, cwd=path)
+
+
+def checkout_new_branch(path: Path, branch: str, *, base: str = "main") -> None:
+    """Create/reset ``branch`` at ``base`` and check it out."""
+    if current_branch(path) != base:
+        checkout(path, base)
+    _git("checkout", "-B", branch, base, cwd=path)
+
+
+def merge_branch(path: Path, branch: str, message: str) -> None:
+    if current_branch(path) != "main":
+        checkout(path, "main")
+    _git("merge", "--no-ff", branch, "-m", message, cwd=path, with_author=True)
+
+
+def delete_branch(path: Path, branch: str) -> None:
+    if current_branch(path) == branch:
+        checkout(path, "main")
+    _git("branch", "-D", branch, cwd=path, check=False)
+
+
+def changed_files_vs(path: Path, base: str, branch: str) -> list[str]:
+    output = _git("diff", "--name-only", f"{base}...{branch}", cwd=path)
+    return [line for line in output.splitlines() if line.strip()]
+
+
+def diff_text(path: Path, base: str, branch: str) -> str:
+    return _git("diff", f"{base}...{branch}", cwd=path)
+
+
+def reset_hard(path: Path) -> None:
+    _git("reset", "--hard", cwd=path)
+
+
+def force_checkout(path: Path, branch: str) -> None:
+    _git("checkout", "-f", branch, cwd=path)

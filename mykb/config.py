@@ -32,6 +32,7 @@ class Settings:
     conversion_max_asset_bytes: int = 20 * 1024 * 1024
     conversion_max_markdown_bytes: int = 10 * 1024 * 1024
     kb_asset_quota_bytes: int = 512 * 1024 * 1024
+    extraction_enabled: bool = True
 
     @property
     def is_sqlite(self) -> bool:
@@ -40,6 +41,11 @@ class Settings:
     @property
     def tmp_root(self) -> Path:
         return self.kb_root / ".tmp"
+
+    @property
+    def pending_root(self) -> Path:
+        """Staging area for documents awaiting extraction review (outside repos)."""
+        return self.kb_root / ".pending"
 
     @property
     def parse_cache_root(self) -> Path:
@@ -85,6 +91,12 @@ def load_settings(env: Mapping[str, str] | None = None) -> Settings:
     kb_root = Path(source.get("MYKB_KB_ROOT", "~/.mykb/kbs")).expanduser()
     parser_url = source.get("MYKB_PARSER_URL") or None
     parser_token = source.get("MYKB_PARSER_TOKEN") or None
+    extraction_enabled = source.get("MYKB_EXTRACTION_ENABLED", "true").strip().lower() not in (
+        "0",
+        "false",
+        "no",
+        "off",
+    )
     return Settings(
         database_url=source["DATABASE_URL"],
         jwt_secret=source["JWT_SECRET"],
@@ -108,4 +120,5 @@ def load_settings(env: Mapping[str, str] | None = None) -> Settings:
         kb_asset_quota_bytes=_positive_int(
             "MYKB_KB_ASSET_QUOTA_BYTES", 512 * 1024 * 1024
         ),
+        extraction_enabled=extraction_enabled,
     )
