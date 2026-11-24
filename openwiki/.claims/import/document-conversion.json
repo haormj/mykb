@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:37d0152f6b45f2b065618cb492fb46b2ad4cdb479addb7d0ef22ac56ee18a330",
+  "claims": [
+    {
+      "id": "claim_601da08725014e68af21233b15182c75",
+      "statement": "支持 .md/.markdown/.docx，转换器通过 register_converter 注册并由 select_converter 按后缀/MIME 选择，默认 passthrough 在前 MinerU 在后。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/conversion/base.py#L13-L15",
+          "version": "repo-lines-v1:sha256:b4655fedd503149da0088c2ade5892bc46e3b9f21d63af1f5ddb3ee6bdcecbde:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWQwMzYwZjE4Y2U2YzkzYTFkYTQ3MGZiMGNhZDYzZjk4OWE5NmU2ZGQwMzE3M2U3ZDM5ZmJlMjZlZDYzMGZkMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGYzMjQ1ZTRlYmU3Y2M2MjU2ZjQ0MTUxY2IwZTdlMGM5ZWVjNmMwNmJmMWExZjRlMmFjM2FjYmJmODJmZTA2MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDgwYmQxNmNiMzMxYzRkMTVhN2QxZTM1MTFlYWFjZWQzMTQxNjQzM2YwN2Q5NDVkMGQxZDY0MmQ1MGMxYTk1ZiJ9"
+        },
+        {
+          "resource": "repo://mykb/conversion/registry.py#L20-L35",
+          "version": "repo-lines-v1:sha256:33a966a58e4c12c7cb56bb1440865e6458a06d8eee74a60268b739784fca63c3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY2MzU2YzFkNWIxMTM0ODFjOGU5MDg2YWY3MDQ3ZjdiY2FkZWE0YzZmMDk4YTJjMjZiMGFjMTc3MDEyNDgxZDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1OWM4NTBhMjJlZGY5MTNkY2I3OWFjNGZjZGFmZmY2OWJkMjMyNWRlMDBlNTMwYWE2OThjZDQ2ZGYzOTY0MWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_69dbf783b8834314b8e75c25546a3c8a",
+      "statement": "Markdown 直通要求 UTF-8，保留合法 frontmatter，标题优先取 frontmatter title 否则文件名主干，producer 为 passthrough。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/conversion/passthrough.py#L16-L40",
+          "version": "repo-lines-v1:sha256:74e02ecb761559c35c839fc200ee7efad514cd745e106c636b80dd7edefeff73:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhZmJhMDUyN2MzOTUzYzRiNmUwZTViNTczOWJhODM2MTJmODA1M2JjZGM5NDY2NzMwMTkzY2QxZDU5MGI0MDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5OThiMjhhODljMTc3MTY1YmIyYzgxNmViNjI2NTA0NTllNzZkNWE0OWJhNzAxMTJiMmQ1NDE4Y2RhZWM3OWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmYjMyNmVjZWIwMWQyYmE4ZjAyZDcwNjkzYTFmNmJkYTU5NGU5YWRkOTY3MjNiZWEwOGZkZWU3MzJjYTdjMTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmZGQ1YjM3MzQ0Mjg3Y2VmYTQ3NzlmMTMwNWUyM2RlZDMyMWYwOWZmMjg1MTAwNDU4N2NkYjJhOTRmMjA2ZDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8de5b0af9f4b44ee8e079d0ab076bf58",
+      "statement": "docx 通过 POST MYKB_PARSER_URL 的 multipart（file 与 tier）调用内部 MinerU sidecar，可选 Bearer token，响应包含 markdown/title/parser_version/warnings/assets。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/conversion/mineru.py#L1-L60",
+          "version": "repo-lines-v1:sha256:569ab2d7898e7e08aeacfbb6c2f1ae29da7ab74072b680b9f10dab5b03f89054:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1YmQxMDRiMzA0NmM2M2M5NzdiN2Y1YzdlNzRmMWZiZDQ4NmYwZDUzMWNjZTkzMTRlN2I4MzQ4MGU1ZDhhZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1NmViZGY5MmQwZGY4ZDAwZDg2Y2M4MGNlZWNhZWRjMzU2ZjIyMDExMDA4ZTk2ODhhNjkwZDk3Nzg1YzBkYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjNzg4ZDA1NzhkNmI3ZjE5MjViMDBiNTIwY2E0ZWU2NTIxZjI1ZmQwNWIwZTU3ZmVmNjU0ZmE3NzNhOGFkZTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f46387593a104152a0eb21f0ad53c26a",
+      "statement": "sidecar 错误按类型映射：未配置为 ConversionNotConfiguredError，超时/网络/5xx 为 ConversionUnavailableError，401/403 为 ConversionAuthError，其它 4xx 为 ConversionError，非法响应为 Unavailable 或 Conversion。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/conversion/mineru.py#L71-L133",
+          "version": "repo-lines-v1:sha256:98c7d045af9afa3366ad7b77179a0532669cc5fc08ac7e8220e5efacaeb9d7e6:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MDMyZTk2NGQwOTMyMzUxZTVkMTg1MjY5MjgxYjE3MWEzYTA5YjA4YjI4NmU2NjFlYTQ3MDMyM2M4MmViNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0YzA1MTkxNjZhYTJlOTgwOTQ4YmJiNzFhYTIxZThmOWJhNjZhNmM0NTZmODNmNGM0ODI1NWI1NWU5YmQ4ZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlMzE2YjZhNTZjMjYwMzg1NGQyMjcwMGY1ZjA5MWI4ZTZmZGYzZDdkOWZjNGE5Y2Q4ZmZlMWQ4ODhjMGFhZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUyMjA4NTYzZjNkODYxNzkzMzRiZThmZmVhNzRlNjhkMGUzNWEwMjViOTZmNGZlOThlNTJlNDkxYzE0ZjZkMTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ac7d767de0e4449db6de558214da14cf",
+      "statement": "producer 记录为 mineru@<parser_version>，无版本时为 mineru，最终进入源概念的 x-parsed-by。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/conversion/mineru.py#L133-L142",
+          "version": "repo-lines-v1:sha256:11fa7466751ed26f239504eb3972a60f3db87945a21ce78cc4a540730052eda9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0YzA1MTkxNjZhYTJlOTgwOTQ4YmJiNzFhYTIxZThmOWJhNjZhNmM0NTZmODNmNGM0ODI1NWI1NWU5YmQ4ZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyMGM3YzcwM2YzYzdiOGFiZDYxMThjZjc1MWM0NzU5MmU2NzBjZDljY2MwMGIyYTI1MjkxNjlhMzY2ZTI0NzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a68bbfd36500437abfb879510a211e3c",
+      "statement": "直通不缓存；其它格式以内容 SHA-256 为键查 .cache/parse 缓存，未命中则在 Semaphore(parser_concurrency) 限流下调用并按配置限额校验后写缓存。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/conversion/service.py#L40-L70",
+          "version": "repo-lines-v1:sha256:4780ad16880d2e8a4b9330c6791f2b9f389ed7bb50770c487869206fd120b3c3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmMWU0ZDIxOTZlMTE5YzA0MmM3ZTIxNTQ4ZmY4NjA3ZmQ4OTBmYTE2NmY0YWNkOGM3MDhkY2YxNGU2MDA4OGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNmYzc2ZGU5NmZiNDJlZjdkMDhmNjhiOWZkMzgzMTRhODE5Njk5MDM2ZGYzNzU3ZjJlNGJiZDM0ZTFmZjdlMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcwZjJiOGFkN2E3NTc5ZDIxZWUwMjdhMjk2ZjM0YmRhNzNhM2I5OTAyZGFjMjhmNjE1MjJkNWFkZDQ5ZTkxZjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bd4515865d06468bb1797e3f1773662c",
+      "statement": "转换后 markdown 字节数、单文档图片数、资产总大小超过配置上限时抛 ConversionLimitError。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/conversion/service.py#L56-L70",
+          "version": "repo-lines-v1:sha256:9b503e52f1e435d7bf4af6a9eeda0a80f6546e9f82bb441abfc3464190754da2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmMWU0ZDIxOTZlMTE5YzA0MmM3ZTIxNTQ4ZmY4NjA3ZmQ4OTBmYTE2NmY0YWNkOGM3MDhkY2YxNGU2MDA4OGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0YmYwYzlmYmQ1Nzc3Y2Q4NmMxNTNkYWMyMjEzMWY0Zjk5MWVkMzk2NzU2ZTdlMzM1N2IyYTA5ZjRlNmU4MzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcwZjJiOGFkN2E3NTc5ZDIxZWUwMjdhMjk2ZjM0YmRhNzNhM2I5OTAyZGFjMjhmNjE1MjJkNWFkZDQ5ZTkxZjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b49c03a15fda4af395822438912b3ed7",
+      "statement": "prepare_assets 只保留位图后缀，丢弃其它资产并告警，资产名重写为序号加内容摘要，避免路径穿越和不稳定命名。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/conversion/assets.py#L13-L36",
+          "version": "repo-lines-v1:sha256:2c56c5b4771fcf990a86b694d3d21db6492253e0c495848f1d95aa3f2163d098:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiNTdiMzNmZWZlNmJiNmQ0NTVkZWQxOTkwZDI1ZmU0OGYxM2ZiZDMyNTk5M2IxNzU2OWY5OGUwMGQzYmVjYWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmNWE2ZjlhMDMyYWMyNjhmZGU4YjA3MTAzYmM5NTcyZmYzMjc0ODE0ZGY3OWY3YWQ4YjUwOWMyOGNiNDdiYTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMWE0NDc0YzgzODEwMWNiMDk1NmM2Y2U5MmJmOThhMDM0ZWQxZWNlNzExNTJhNDk5MjAyMTFjZTk0YzY4ZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3YWVlNDc5YzI2Y2NjMmVlYzg1YTY0NTdiYzBlMWFjN2E0MGQ1OGUwMjA5MzM2ODM4ZjFiOGYyM2YyMmM5NGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a061edd736494c3facf74a6fb7b7ce9a",
+      "statement": "rewrite_asset_links 将 markdown 图片链接改写为 <concept_alias>.assets/<name>，与概念同级资产目录一致。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/conversion/assets.py#L37-L60",
+          "version": "repo-lines-v1:sha256:8d319de68884362d9f757be7ebde64a6afe3101e699b0a7ac8825f7b36bacf3d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyMzg5YWNmMjcyOWJkM2I1ZmQ3ZmZjZWI5ZjIyOTQ0Y2U1ZmZjOTU0Mjg5MTQyM2IxM2Y2MWE2MDcxZDA2MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxZDY4NDVlYzE2NmUwZmZkZWE3ZmE5YmQyMmQxYjBjZTdmZjAxZjE1MjMyZGZkODZkYmU3NGMyMjQ3Yzg0ZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2Y2FlYWU2MDZjZjQ4MGU4MzA3MGU0NDIzZGVjMTc5MTIwNTVmMGYxNGRlMGQ2MDc0NjQ3NWQzMjZhNzM3ZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyOTIxYzlmNDAzYzViZGVkYzlkZTYwZjA1NWQ0YTNlZmMwNDk0NDgwOGVmMzRhMzEzNzY0Y2VkYWQ5NWYwYTYifQ"
+        },
+        {
+          "resource": "repo://mykb/conversion/service.py#L100-L108",
+          "version": "repo-lines-v1:sha256:86a3a85e79320702e1c21475dc6315009eeae46bf0d2b2bffb887371e5466270:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWRmMmY5YTM4MjQzNjkwNTQ3ZjJmMTNjNjY0NTE1MWQyNzQ2ZDFkMWM4NTNkMzAyZDBiNDE1OGYzMTFmNjk5ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTYyOTdlZGNhZmYyOWZkZGJjZmQwNGJhNThiY2UyOTI3ZDg2YzEzNDA1YmYyZjk5NmFiY2Y4NGQxOTE2ZGNiMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWI1MjZkYmUwYWEyYWI2NTg4NzkxOWI2YzU3NjM3YzU1YmY3MmRiODJjYjkzYTIzYjQ2M2I0Y2QyODk0ZmU1NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDZjOWI0MDhkZTc3MjE4MGExOTE0MGZmNjcxODhjMjNmZjk1YTE2YWVhZWFkNDM4MjM3MWVmYmE5YTFiZTk3OCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_846afd6ca1264fde86faef55905f9ded",
+      "statement": "导入阶段转换后改写链接，有资产但无 git-lfs 或超配额时报错，然后构建源概念、按 x-original-sha256 判断跳过并暂存到 .pending。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/importing/service.py#L186-L253",
+          "version": "repo-lines-v1:sha256:4018f747cb21e434d7c89350446c43fd3de020efdfbb8913a73250a131a79c62:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0ZGYyYjJiMDEyNzc1ZDA0YWE3OTA1MzY2ZTczMTU3NTFhYmYyZmRlZmMwYjQ4OGRhODQ5MjA2YjJjNTgxYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxYWM0OWU5MDg3NzQ1NWQxODJiZDJlNmEyMTk1ZTU0NjY2YTBmYWRmMTljZjRmNjY2MmIxNTY2Nzg5ZGRjMTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxZDZlMjRkYzRhZDcyYmY1M2Q4YjM5NjFkMzBhZjMzN2IzMTAzZGY3ZTI0Y2JhZjhmMzI4MjA1M2YxMDYzY2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyNjIwOWI0NmM1NDhiOTMxNzU3YWU3OWE1N2IzZDRmYTBiNDFjZTk5NzAxZTQ0MjNjMTMzZTAxMTRjN2U5N2QifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_738a8b58a4c74c3db12aa21ec245b365",
+      "statement": "单条 ConversionError 仅使该条目失败并继续，ConversionUnavailableError 是致命错误会停止并把任务标记 failed，同时清理未处理项的暂存。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/importing/service.py#L295-L345",
+          "version": "repo-lines-v1:sha256:355ba53197da61154b667abd32296e18d10a8f641f7cb0a3fdc9b71259a080a1:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmZjZmZjEyY2YzM2UzMTBlNjI5MDU0MmI3MzUxM2E0Y2UwYzE0MmM3YjBiMjRjM2ZlZjZlNjgxMTFhNjcyZGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzODE4NjI1MWJjN2NlMGQ3ZjQ4NDJkZTk2ZjgzMGVmZWE4MWRiYmI5ZTE0MzIzNGU4MTdmNDZhMTRkOGI2NDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyOWQ2M2U4ZDI1ZDRjNjY5Y2YzMzc1ZmEzMjY0NzM5OWRlZDM0MDdhNjRmMzU2ZmIyMWY5NGE1OTQ1YWMwN2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRlYWM4OTYwM2E1OTM3OGE3Y2E0M2NkZDM4YzY2YjYzYjU5OGNkNmE2MDUxMTkzMGQwZDQ2MTAwZmQ5YjFiZGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0651c47f2214412f9c0c6de1279f9567",
+      "statement": "sidecar 只允许部署在内网、容器不得出网、禁用 MinerU 的 --remote、预置模型与固定 tag，并让解析并发不超过 sidecar 能力。",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L130-L138",
+          "version": "repo-lines-v1:sha256:07793b398a959a79a299b95a2597d4eaf15648eb7acb06a795e1d5a5bc00b73f:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWYyYzAzYWFjYzBkMjliOWJiYzM3NWEyMDljNTQxZWM2NDczNmVmNDJhNWRlOTMzNzFmYmM1MjgxYzBlYmY4MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTViMWQzY2Y5OTljY2VlMDI5MjY3MjY0NmFlMDhmNzRiZWRmMmM1YWUxNzIyNmZkY2RhYWVjMzFkZTA4NDAxYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTc4ZTUwMTRlMjViOGZmMmViNWMwM2IwMjg2NTcwMzBkMjcyNzJlNTNlM2ZhMGMxNGM2NzY0ODQxMGQ3OWJkZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2M3MTU5MGJhMDQyNmIzMWIzYTA3NGJiNzQyNjk2NTM3ODRjOGQ1ZjY0NzMxYTJhMDNkMjdlYjRmZTZjYTU3MyJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-24T04:03:55.323Z"
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:fc9b99c9fa808d7cc088b97643b07f88ae640c85a9fbe9b7026b282c3f665c1a",
+  "claims": [
+    {
+      "id": "claim_2618ea6f89534b1b8d4c105afe58374d",
+      "statement": "load_settings 在缺少 DATABASE_URL、JWT_SECRET 或 MYKB_SECRET_KEY 时抛 ConfigError 直接阻止启动。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/config.py#L70-L76",
+          "version": "repo-lines-v1:sha256:62f8fd732114c8ccb416c329858e1b356e1c9849b7a404be1a47a6e4e2e0f1a5:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzdiMDgwZWRkMDViNmQ4Yjg4NmMxYjgwNDlhMWYzOTViNWViMTU3YTcyYmZhNzI1MmJjZjQ0YjVjMDkxN2ZkNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2JlM2I2NmI3MjcwN2RiMjhmMmU0MmI3MmRjZmU0OWNmMDVhOGNmMmZjOWJiYzhjZjBiZGZiNzQwNjNkMzUwYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWJlNTVhOWM2ODQ2OGY0NDUzMmUzMjNiNzk4MDcxMzg5ZjRlYWM3M2JhMTZmZGVkNTc4ZWQ5YzhlM2E5ZGNiMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4464ac4b4cfb4925be8791d87ad4e0cd",
+      "statement": "数值型配置由 _int/_positive_int/_float 校验，非法值抛 ConfigError；Settings 派生 .tmp/.pending/.cache/parse 路径。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/config.py#L48-L58",
+          "version": "repo-lines-v1:sha256:ee0e298f7dc5c3e3b0cc7b0fbe25f43188057edb9898ef1d23b60944a2e9fb33:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxZDBiNjc3NGI3MWRiOGZhZjlkNTBlNDllNmNiNDE5MzI2YzcxMzljMmNjMTIxYzIwMDhlYzEzMDI3YWZkNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3YTQ3YjEzZDg5N2M3YWZjOGU0ODIxMWJiZWI0MmMwNjFhNDU3ZGY2YTljNmFlYzdmMzcwODk3YmU1ODliNjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiOWU4NTc3YzAwZWFkMzkzMTUwNDE5ZjhlMWQ2ZWY0YmJjYWQ1NjM0MzNhZTRjMDY5MTA3NGIwNmI0YzM3OGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2MGVlMTEwN2ViZjNiMWQ0NGRlMzIzZDk5YWZlN2ZlNzE0MGM5N2Q3ODYwYzdmOTNhYmYzM2ZiYzY3YjVkMDYifQ"
+        },
+        {
+          "resource": "repo://mykb/config.py#L77-L100",
+          "version": "repo-lines-v1:sha256:70aaa0392588a2085a64c3ad9b7934295514fb08fd3bc794bc769d23dfac4e51:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3NjExNTllMWViMmRhM2UxMGUyZmYxYTIwMTdlMmZjZWQyZGJkNjAwNjQyYTEyNGY0MjlmNjg1MzY0NDU2ODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3Y2YxMjk1ZTBlYWQ3YmZlODFkZGRmOTdhOGFmNjEwMzJjMmFjNjAyOTk5Zjk1YzcyYzMzMmE1MzQ4ZTMwMDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgzZDZhNjc5YWRkMjM5M2Q0NDI3ZTlmZGYyYjJhNDkxOWYxNDg5MDBmN2QzOTA1NGYxNjhkOWY0ODZiOTg1ZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwNzAzMDIwY2IzNTEyYjZmZGYxOTRjZDFhZDkwOGJhMDcyMjc0ZDNmYTViNmQzODdjNjVjNGFlZDkwYjBjMzEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_58d8f902ba0448108e8a3cbb17d2d68e",
+      "statement": "Alembic 从 DATABASE_URL 读取连接串并注册全部模型，SQLite 下启用 render_as_batch。",
+      "evidence": [
+        {
+          "resource": "repo://migrations/env.py#L1-L24",
+          "version": "repo-lines-v1:sha256:53b251c7c5c6ee1dce6278f660ff8053bc9db4992504170878ea9a7b2779dcb0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1NmQ5Y2JiZjUzYjM5NjZiNDY1ZjkwZDY1NjgxYWYyNzBkYmZkOTY3N2JkMGUzMWRhODU2NGE3NGMzY2NjMWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1YzIxMjU5OTYwOGRlYWFhNjc5NDkyYjg3NWE1Nzg1ZTIzYmViYjczM2RmZTYzODU5ZWZlNjNlNGY2MDI5MTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4cb26d8e07f5464582286856aab39c95",
+      "statement": "Alembic 脚本目录为 migrations，并提供一个默认 Postgres 连接串可在无 DATABASE_URL 时使用。",
+      "evidence": [
+        {
+          "resource": "repo://alembic.ini",
+          "version": "repo-file-v1:sha256:c9a2c88f789b230fc50bf4e8446af9a142f4b39017bdbf5790da76014e5eeecd"
+        }
+      ]
+    },
+    {
+      "id": "claim_9ff2d221d931440f8f10f858e07c5833",
+      "statement": "迁移按域拆为 0001 到 0006 的线性链。",
+      "evidence": [
+        {
+          "resource": "repo://migrations/versions/0001_platform_foundation.py",
+          "version": "repo-file-v1:sha256:bd79f4af160fb6f5163ef8157914c546ceeee7c7dbd51d82345d9fec3f09597d"
+        },
+        {
+          "resource": "repo://migrations/versions/0006_publish_tasks.py",
+          "version": "repo-file-v1:sha256:31131cd22cf84c8c840eca53f8e6ae45edf95068aaf8872898c8778265830286"
+        }
+      ]
+    },
+    {
+      "id": "claim_aa72dc641e7941359c7b383dd9b528a6",
+      "statement": "bootstrap 幂等创建 admin/user 角色并在提供凭据时创建首个管理员，已存在账号不被覆盖。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/db/bootstrap.py#L68-L92",
+          "version": "repo-lines-v1:sha256:a2c6bdcf772349b1928629040cbe965a49d78ae784db573f5d6403a3778c0bef:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxNDNhODMyYjI2MTJlMzZkZGYxOWYyM2NhOGZkNzFhYTRjYTE4NjViOWVjNDI4NWEwNGJjODEwNDA5NTU0ZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxNGMyMjk1YmMxYjc3Y2JmYmU5MzZhZTRlZjhhNjA4MDBiNWMxZjc3NTc5ZWIwOTdmODZjZWQ1NWFiM2EwZjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxZDVjZjFjZGYwNzI1NWY3OTU4MTdiNTc5YmRlZTc0M2U0NDZmMWI0YThmMWY4NzJlZTI1NmFkOTQ1NDc1ZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1NzIyYjhjNGYyODMxYTA4YTZmZjE2OGQxNjUxMTRiNmZkYmFjZjk4NDIxNTM2NjI3NzY5M2JkY2IzYmQwMjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9feb942b6da14b74a627a47e85ec8ab4",
+      "statement": "Makefile 提供 setup/migrate/bootstrap/backend/frontend/dev/test/lint/typecheck/check/build/seed/stop/clean 目标。",
+      "evidence": [
+        {
+          "resource": "repo://Makefile#L30-L88",
+          "version": "repo-lines-v1:sha256:581a412b20c70a3c3fd478020a97cd44c7a2c58655c5d4a3af7816e6f3d4cb9c:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzNWE3MWVlMmFmZmI4Y2Y4OTc2NjYxZTc5MmNhYjhiNzQwODU0YjZlYThlNTcxMzhkMzA1NjYzYzk2ODk2NGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwNjZmZTE4ZjI0ZTRmNzc3NjExYjE4ODY0Yjg4Mzg0YzNmMGVmYmJlMDg4ODcwZjExYmJiMDYxNjk2Yjk2NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiNDMzZTg5OTgzYmFlNGI3NGIyYjdhYTc2ZTM5NDc3MTIxOThmZjI0MGIyOTI0OGI4OGM3NDY2MTY4YTFlZWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_692c365c8f94407eb143e2a741ce7ac0",
+      "statement": "测试在导入期设置临时 SQLite 环境默认值，每个测试用 create_tables=True 创建临时库并 bootstrap root 管理员，不依赖 Postgres。",
+      "evidence": [
+        {
+          "resource": "repo://tests/conftest.py#L1-L37",
+          "version": "repo-lines-v1:sha256:4fdd14308f97acabf6dad1cd6b692afa6725de8ad5e5eefde99bb8cee2c8aab3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzODRiZmRiMmRmMzgwYjY1NTdjYzdhNzFkMTY4OTE0MTViY2NhYTg3Njk5NDA2ZTIzNmY3NTJjNjQxNTM4OWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmMTk4YzFkNGVlMTBmOWVmMDYwNzZhODViZDAzZGVmMzE3OTc2NzNhYjMxZDVjZmYzOGRhZmNmNThjOGVlNDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ab2debf4f0b34cd1bd4739c87fd7ee85",
+      "statement": "测试辅助提供 register/login/create_kb 与直接调用 SnapshotPublisher 的 publish_current。",
+      "evidence": [
+        {
+          "resource": "repo://tests/helpers.py#L1-L42",
+          "version": "repo-lines-v1:sha256:06a0fff8cb55c221bf39f8258fdf0578b709d9fd4e11420cdcb441a4286ce77a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzODRiZmRiMmRmMzgwYjY1NTdjYzdhNzFkMTY4OTE0MTViY2NhYTg3Njk5NDA2ZTIzNmY3NTJjNjQxNTM4OWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwZDUyM2RjYzcyMjNmYzY0MTU4ZGJjMTE2MGNmODYwMDY4YjcwNTU3M2VjMjg5NjQxOWY3MDg4YWQxNjRiNGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4NjkzMzE3MWNhYjgwOGQ4NGUwYWMyNWYwMTExNTJmZWI5ZWI4NjRmYzcxNzVjYjIxNWU3NDQzMDhkNzQ0YTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3234b5c3175e4677857f08811e3ae780",
+      "statement": "pytest 配置 testpaths=tests、asyncio_mode=auto；ruff 行宽 100 并忽略 B008。",
+      "evidence": [
+        {
+          "resource": "repo://pyproject.toml#L34-L44",
+          "version": "repo-lines-v1:sha256:2add58916816f204020b7c72f182c3defe2c256b10addae5cc16bf5ecf615e12:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2NzZlNjQxNDY1YTY1NTFlOWU5Y2ZmZDdmYWExZTZhNDJmOWI3MjQ4MDk4MTNjOTAzZDdlZGNiNTJmMzAwNmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0OTg0MjRkMzBlYmZkZWE3MDExZjQ1YzlmMDgyNTQwMGRiZDJhNzRjYjc2OGUyNjY3OTMyOTkzOWYyZjQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjNTIzMmYzMDFhYTJkMjRjNmMxYWJmNzRkNDRlMWRjODhiNWJhZDBkZGY0YWRjMzg2M2RkZTY0NWZiYmRmNGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_eb5650858feb4a7ead55bc8bde0be21a",
+      "statement": "dev.sh 要求 .venv、node_modules 与三个必需环境变量，并用进程组与 kill -- -PID 在 Ctrl-C 时杀掉整棵进程树。",
+      "evidence": [
+        {
+          "resource": "repo://scripts/dev.sh#L1-L45",
+          "version": "repo-lines-v1:sha256:cc9b0dfe49262a8d5298a3db5903558104e1208db6fc657c7f615e0ad7909097:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkOTVmYzA0YTgwYzk1MmY0OWNlNDE4ODYyN2M1M2IwZmJlOGM0NDA0MWI5NTJkNTkyYWNkMWRlOTk4NjE0NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwZDU5ZjNlM2RmZDhjNGM1MWE0NzgzOTE4OGM4ZjBlNzA0MzUyNjEwZDZmYWE2ZTQxODMzNDM5ZmU3MDBhNTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlZDZkNmQ1NGRlYWZlODc4ZDFlN2M1MDIzZDdjMDdiYWVlYmVkMWE5YzNiYjg0MjIxZTIwNTQ2NmFiNjMwY2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0180b3d591e2446b8b39ba77f0af50e2",
+      "statement": "seed_demo.py 仍导入不存在的 mykb.evaluation.evalset，因此 make seed 会因导入失败而报错。",
+      "evidence": [
+        {
+          "resource": "repo://scripts/seed_demo.py#L20-L20",
+          "version": "repo-lines-v1:sha256:6474ee75e68fa3376c36cddc5d8097b028b3d33214bb029c0a84df41e0f6b74f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjQ3NGVlNzVlNjhmYTMzNzZjMzZjZGRjNWQ4MDk3YjAyOGIzZDMzMjE0YmIwMjljMGE4NGRmNDFlMGY2Yjc0ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjQ3NGVlNzVlNjhmYTMzNzZjMzZjZGRjNWQ4MDk3YjAyOGIzZDMzMjE0YmIwMjljMGE4NGRmNDFlMGY2Yjc0ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzJjZWE0YzdjYWUyZGM4ZWZiYzZiMjRiMDQ2YzhkMmI3MzJiYmRlYjJiMGUyYzdiNGVmZGJjZDhiNmY4MDdkMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmRjMzYwMDhlZDZiMGY1MzMzODI0NjlmOWFjYjYxMWM4MWM2N2Q2MGI1MzU0ZjlhNzYyNzQ2ZWU1MjJhNzY0NyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d5d8802bd8004c21bfd8c43bbb4545ce",
+      "statement": "任务执行器是进程内的，所以部署必须单进程，多 worker 需要外部队列。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/api/app.py#L58-L84",
+          "version": "repo-lines-v1:sha256:9c7e55b7318724fad2976d9905493ee64e7809f43c2e6b1df1b6cc1e4f928002:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3OTc3YjQ5NGVlYzgzODY2NmU1ODc2ODBkYjFhZDBlMjRjOWFiZjI3YTJlM2ExZDdmZWRmZjcyMDE5NTJkMjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyNDU2OTRjZGYzZWZlNzdmNzA5Mjg4MzgzYjY0ZDU3ZWQ2N2ViZTI1OGMwYjkwN2M5ZWI4MTcyY2U0N2FlZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ODYzYjhlNjgxOGM4ZmJhODZlYzJlNjE2ZGUzYmUwNWNjMTRlMTI5Y2RkNGMwNzUwY2ZhNDYyZmIwZDcwNTcifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-24T04:03:55.323Z"
+  }
+}

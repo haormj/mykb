@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:3be42acde24d6ba8046e7c220642c399d02ef9202b6c490022156d810d70c7d6",
+  "claims": [
+    {
+      "id": "claim_c3e5e289708a4a909e376a5f9bb49af6",
+      "statement": "配置 MYKB_WEKNORA_URL 时构造 WeKnoraClient 与 WeKnoraBackend，否则使用 LocalBackend。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/retrieval/service.py#L13-L30",
+          "version": "repo-lines-v1:sha256:25383e1a477524f3079b1e5f96c7362aa5bede7fed6a43c1ce599f06be30a13d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0NmQ0NDViOTgzOGY4ODEyYWVhMTc3ZDVlYTY0MWFiZDAwZjdhZjhlMTUxZWU3NWMzNGUwZDUxYjI5NGZkMmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViMjZiYjg0MDNhNThmNWE4ZmQyOTAyMWQwZTQ3MmVmMzFlMzA2NGJiMGQ1NTYzMjU3Mjk5YTE4NmQzYjU0ZWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmMmJkODA4YjM2NjRmMGQ1MmIyZjk5NTliM2NkN2E5ZWFmOTNiNjc4MmFiNDRhY2JkMmY5YmQ1MjY3ZGY2ZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4Y2JjMWEzZTM2OTU3MzVjNTAyNDBlOGQwYWYxOTQ1YzU0ZDkxYWEwNTE4ZTE2NzRlMmMzN2YxOTNkYTQ2Y2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_63b6922847d94e07b65ea4f4c02e5c71",
+      "statement": "客户端用 X-API-Key 与可选 X-Tenant-ID 鉴权，HTTP≥400 招错，含 success:false 也招错，含 data 字段则解包。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/retrieval/engines/weknora/client.py#L42-L65",
+          "version": "repo-lines-v1:sha256:ad7350c578b3b4e994435b6d6d6be0fada6dd2bba970b4b507a3a6837b7a2771:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhNTE4NzA0NjNjMThkOTZhNmFjYzExMzFhNDU3NjU4NDViNjcxNzAzMTEzODYyYjgzODY1ZDYwZThkMTA2ZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwMGEzMWVlMzViY2UyODFhOGYzY2RmYjZiOGUwYjI4OTMzOTY3OWJiZThmODUyZjg1YjQ4NjdkMjJmNmEyYmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI3ZmIzNTRmNTExMDQ4YzljZmE3YWY4MTUzZmRlMTYyZDY1YTk2MTM3YWU3ZTBkNDQzM2MyOGQ1OGI4ZjM3MmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4b3fe4720ebf4a278329583c7df7f06b",
+      "statement": "客户端对传输错误与 5xx 最多重试 max_retries（默认 2）次并退避，4xx 立即失败；health 要求 /health 返回 status=ok。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/retrieval/engines/weknora/client.py#L66-L92",
+          "version": "repo-lines-v1:sha256:b95934989d6be8602ae0aac22f701026e517854ba963e12720545832e4001fcb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5NWNiYWVmOGQxMTMwMjYyYWQyYjdmY2Y5OWM5NGMzMmRkZmM1NDA3N2YxZTIxOTc0MmNlYWVkMmJjMmI0YWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmMTFlYTExZWYwMWUyZTk2OWU1ZjRjNjI3MmYzZGI2NmRlNWY4ZTU0ZDFjYWFhNGFmZWYyZDIwYmJhMmVmMjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyNGU3MjY0ZDA0MWNjYzFjMWVlM2NmMTcxZGJhMDY5OTIxMDk4ZTkwNmI2YTg3M2JjMzZhMWY0MzczNGI1ZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5MjE4NjhjZDkyYWY5ZGQ0Y2Y1MmM0N2M1ZTAwMzI2MTU2NDgzNTVjZWNmZDI0NGNmZTViODc4NDE1YTA2YTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_091dc0f52b9f4acf92448bbd0c0b784f",
+      "statement": "客户端方法对应 /api/v1/knowledge-bases、knowledge/manual、knowledge 列表与 /api/v1/knowledge-search 端点。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/retrieval/engines/weknora/client.py#L94-L150",
+          "version": "repo-lines-v1:sha256:8ab2a13c9ee7ee1b7555144b8934e74f6cabe5f7fb3345d32dbe66a1b104641e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiZmZlOWUyNjJiZGIzZWZjMTRjOThlNjUxODYzNmRhODllODgxNmI3Njc1NTllMjhmOGYwNWZlZWNlNDhiZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYWQ4NDk1ZjRhNzMwMGEzNGI5MzRhYWVjZDQ4OTI4MmRiMmRiZGYxYjdhNjNmNWVmNTMxZGVkNDdkYWU2MmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzMThjZTBmNjNlNWI0YmNiNGQ4Yzc0ZmNmNGFlYjU4ODRjZWZiOTgwZWMwZGYzZTYyYzAxZmIyNTA0NTM3ZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyZDBjZTVjMmUyMTAwOGI2NjVkMzAyMWUzMzVlOWQwMTgwN2I5ZjFiMTQ2OWRiZmE4NGRhZmY4YjFiYjYzZGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6cbb931b01d04cff976451dee2dc5a63",
+      "statement": "每个发布快照建一个 WeKnora 知识库，逐概念调 add_manual_knowledge 并以 concept_id 到 doc_id 映射记录，建库时带上 embedding_model_id。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/retrieval/engines/weknora/backend.py#L38-L59",
+          "version": "repo-lines-v1:sha256:522fd3b405891c9b09c69a6918a7df926ecf212a25290977b394abbfc401323e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlZjg1Y2VjM2JkOWY2ZDIxMTY5MDkwMDYyZWYxNjRjNzE3YTk4NDczMGE4MWQ3MGM0NjJkODdmNDk5NzUzYjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExMDdjNWE2OTI0OTk3N2ZlYjE2ZDYwMTc5ZjdiZWQ3NDk3YTkwY2FhM2ViOGUzY2Y0ZWE0OWZlMjgxNzgzYjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiNzY0ZmJjZWMzY2ZjZTQzZTJlYTc3OTAwMmU3NzliYzZhNjU4ZTEzZTVhNThiYjQyY2FjM2U3M2NjM2JhODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3YjMxY2I5ZGM1YTFlNmY4MTMxYjBlNThlMzRjMjhhMWYyNThkMTQ1MGQ3NmRhZjQwMGJmMTQzMjYyNDAyMTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4b0d8789c7d245de857f9cd78cf0ef77",
+      "statement": "建库时必须传 embedding_model_id，否则文档解析会报 model ID cannot be empty；配置需把模型 id 填入 MYKB_WEKNORA_EMBEDDING_MODEL_ID。",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L55-L55",
+          "version": "repo-lines-v1:sha256:9085d634026ba090b37ad894411510d9c60183ea362208f93886d2ae68a3ef47:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTA4NWQ2MzQwMjZiYTA5MGIzN2FkODk0NDExNTEwZDljNjAxODNlYTM2MjIwOGY5Mzg4NmQyYWU2OGEzZWY0NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTA4NWQ2MzQwMjZiYTA5MGIzN2FkODk0NDExNTEwZDljNjAxODNlYTM2MjIwOGY5Mzg4NmQyYWU2OGEzZWY0NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzNlYmM4NGE1YjEyZTFmNTBmM2IzY2EzMGU4OWJlZWY4ZTdhYzVkZWQ0NTY1NTRiZmE1ZDY2NjUzZjg2ZWFhMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTEyMTRkNjc0YmM3MWYzZjdiZWFlODc3YjRjZmY5NDlmYmQ3OTMyYmVjZmM0ZjQ5YThiMzkxOTJmNDJiYjBmYSJ9"
+        },
+        {
+          "resource": "repo://tests/test_weknora_engine.py#L132-L145",
+          "version": "repo-lines-v1:sha256:16ffad8dd2dfc390e3c1ab0852c4326c0790e02ddb307daf9414da4ceb61d527:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1ODljMmMzZGE2NzEyYTgxYjk0YjUyNjdlYzIyZmY5MzE2ZjE3MmZkMjE2ZjVhZTkzMTFkYjMzYmEzZTkxNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmYzIzODU4MWFiODA5NmIwYjNiODBjMDcwZTVlNzBlMjg0NjQzZTAyY2EyYjdlYWUwYTZlOTdiNTVlNzQwMTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxMGVmZDFmNWMyMTczMzE2N2Y5MjhhMjYwNDljMDUyZjlmYWNjMGRkZjFhZTVmOTNkNWU0YWY5YjA3ZmQ0YjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1ZjE0YTRhNjZlNTA1MzQ3ZTgwNDg2YzVjNWYyZGExMDFmODAwODlmMTdmZWRkMzYyM2Y5ZjhjNzgyYmY2ZGQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2ffb508d286a45c9b874995e345b612a",
+      "statement": "WeKnora 的 API Key 必须是 workspace 级并具备 retrieve/ingest/manage_kbs 能力，不能用带 knowledge_base_ids 白名单的受限 Key。",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L65-L65",
+          "version": "repo-lines-v1:sha256:6b39da05c8a9fae2275d354a209af9d8f1c84c8a158b6e9de2de4973415fad24:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmIzOWRhMDVjOGE5ZmFlMjI3NWQzNTRhMjA5YWY5ZDhmMWM4NGM4YTE1OGI2ZTlkZTJkZTQ5NzM0MTVmYWQyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmIzOWRhMDVjOGE5ZmFlMjI3NWQzNTRhMjA5YWY5ZDhmMWM4NGM4YTE1OGI2ZTlkZTJkZTQ5NzM0MTVmYWQyNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODU2MTJhYjI1ODYyZjEyYjQ0NWQ2MDAyMWRhMmYzOTAxZjY4ODM5NjYwNzZkYTNlNmU0OTg0YThmNTUzNTkwMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTU2NGE5YjE1MjA1YTczYjRhODc5NTRmNDQyYmZlY2M2YzYyODhlNWJjYzZmNGNlODE3ZTExMjNkYzY2Y2ViOCJ9"
+        },
+        {
+          "resource": "repo://mykb/retrieval/engines/weknora/client.py#L94-L110",
+          "version": "repo-lines-v1:sha256:87bede200c5d7d514f192fb2df8bd57cd4fc2c09105e2a1ff8cf53e3411f4697:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiZmZlOWUyNjJiZGIzZWZjMTRjOThlNjUxODYzNmRhODllODgxNmI3Njc1NTllMjhmOGYwNWZlZWNlNDhiZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0Njg0MWRiMDIzZjU3ODQ0NWJlMDIxYTMxMDU3MzFmNWZjZTgwMDY0MDY5MzQyNjBiNzc3ZWVhNTlhMjc0YjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzMThjZTBmNjNlNWI0YmNiNGQ4Yzc0ZmNmNGFlYjU4ODRjZWZiOTgwZWMwZGYzZTYyYzAxZmIyNTA0NTM3ZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhYWI5NGY3MWIzZDQyYjhlNTVlNWExODA2ODdkNmFlYjFkMzQ0Y2VmMjg4YzQ2NGQyYjczZDc5YTM0OTNkZmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d97c0424138f48b5af93188ace6e44f0",
+      "statement": "poll 统计文档 parse_status：completed 计入完成、failed 促成 FAILED，全部完成则 READY，并返回 concept_docs 映射。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/retrieval/engines/weknora/backend.py#L61-L83",
+          "version": "repo-lines-v1:sha256:9286d4f4e19fe9789c0bd4e3b613ead87f5c92f93e48a25f782fefcd1a232120:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmZDdhNDg4YjAxMzZlMjZkOGRjOGU3YmJhYTJjNzY4ZTAyOTZiNjlmNDMwOWY5MjE5N2NjNDc3YTE5M2Q3MWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3NWEzZmExZjUyNGZlOGUxNjBjMDc1NmM5MzE2YTQ3ZTI4YzFjZDM3OGY5MGJiODZhMzA0MDk4NGI4MzA5ODEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiOGI1N2YzMDJlZmEyMzVjMTU2MTRjM2NlZGZkZjY2YjU3ZjczOGJmYjRhNzE1MmUxMTY3NDVkYTllZGMxNDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRiNzc0ODk5MDYxMDVkNGUwYjE0YWEzOGI3Mzc2NzAzYjlkNWEzNDkyNDRlZDE0MzBmMmM4MmM5ZTVkNjM2NjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_55bc683a031c49aca7099239609f881e",
+      "statement": "search 以快照知识库 id 搜索并取 knowledge_id 为 doc_ref；读路径再用概念映射把 doc_ref 还原为 concept_id。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/retrieval/engines/weknora/backend.py#L85-L107",
+          "version": "repo-lines-v1:sha256:49efe850a514b76f109d6b5f252e7c8ef9e0a1defc6e3d0783ae0d5f8db77eae:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzMjRkNjUzNTQ1MTQ1YTY3NWYzODMwMWMxMTdjNGI2ZGJmOWQyNDQzMzE4OWZhOGRmNmFiMTBjOGYzYTU4NjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiYThmMjExOGQ0MmRhOTIzNjYzMmY1YjkwM2FmYTNkNGY4YzRhNTE1ZTNlYWQ5MGJlZWQzODk4NzllNzJkN2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyNGYyNmRjOWE0MmExZDMyODhhZjYwOWNhZjIwMTQyYWU3NmY1ZTZjM2JmYTAzZWY3ZTJlOTRkZTAzMjY3MmMifQ"
+        },
+        {
+          "resource": "repo://mykb/retrieval/read.py#L64-L77",
+          "version": "repo-lines-v1:sha256:f93551f28332ed5757be41d9df9b21f35c144a7f38086a3cf63776fecdf43ea7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlNTgxNmIwYzZkYWU4Y2VhNWRjMWMyMmY4MjQ1OWE5ODIxMGI0ZjJlOTk3NGE1ZTFkZjVkYmZiY2Q2ODE1OTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkZWUwMGM2ZDVkZjEwNGMxY2NiYzAyYTM4OWU2NWI1ZDM5YzFjODgwMzZjZTM0NzM3NWUwZTkxYmQxNzVhN2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU3ZjI5YjhlMzRmZjkxM2M3NmYxZTFiMWRiOTQzNTgzODMxNjIzM2RlNGQ3OTBmNWEyYjBlZDRhZjViZTU1YzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2MDAxYmYwODI0MzNmYjlmOTBlM2E2ZGY5ODUyYTU3ZjQyN2Q0M2NjNThjOTEwOGI3NmJiYWU0NjA2ZWIxNjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6b3b3427aef6459a8ac96ec02b0ce3b8",
+      "statement": "发布成功后保留最近 retention 个 ready 版本，更早的置 retired 并调 delete_snapshot 删除对应 WeKnora 知识库。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/retrieval/engines/weknora/backend.py#L108-L113",
+          "version": "repo-lines-v1:sha256:c7e467e39db9def9993c6a691e471a9b0c43d3cf521c08b9526ac701b5e03ba5:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI3MDk0ZTAzYmM3ZWU5OTIwMjE0YjNiNThjZTZlNzY4ZmI5OGUyYTM2NDlkYzI5ZjYxZWZlNWVjOGE5MzdjYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWZmOTE0NmRkMmEyOWU4NmQxNmQ2OTA3ZGU4MjY5YjZiOWVkNzgzNDc1Y2JjZGJjOGJhZGE2ZGI3OTE4MTNjMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDk2OTA3ZWRmNjg3MDUzMmY5MmNhNzQ3NWY0Yzc2YWZkNjAxNzhjMWNkZTRlNzliMDM5NGJhNWM0NTY4NmYyNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://mykb/retrieval/publish.py#L200-L221",
+          "version": "repo-lines-v1:sha256:dd0436a32000d4155d6fddd56ae16096c1a529ba453af78c334625834af9dbe7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiODc0MDY1ZDAxYzA5NGQ0MjliZDM0ZWJhZDY3MTRlOWM4MzQ4MGExY2Q4MzVhOWI1N2U0M2VhN2ZhM2UzNGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MDMyZTk2NGQwOTMyMzUxZTVkMTg1MjY5MjgxYjE3MWEzYTA5YjA4YjI4NmU2NjFlYTQ3MDMyM2M4MmViNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViNzNkMjQwY2VkYTI2NDg2YjUyYmJlMmI2ZmNlZmUzYTc5M2NhYWRlNTk1YWM2NWE2MzYxNjI3ZjYzYmY1NGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a8df513fe0554e10bfd733d3d01cb395",
+      "statement": "LocalBackend 为每个快照建隔离的内存 markdown RAG，poll 立即 ready，概念映射为概念 id 到自身，重启后快照丢失。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/retrieval/engines/local.py#L16-L63",
+          "version": "repo-lines-v1:sha256:5021add91d29191a9e611092db6f66086bbc5e2d62c8c0ff41203b58218e5048:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwZWQ5YjY5NjA5MzEzZWMwZjZhZjY2YzRlN2MyNWY5YjNhYTQzZTAyOWJhYjcyMWEwMTBjNWNjNTg0MjhlYzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMDQyNGJkZTNhZDkxZmY4ZGFlYTgxYTRhYTUwNGIyZmU5ZDM3OTIzZjU5Mzc5MTUyZDU0M2Q3YjRkZWFmNzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4NWJhMzA1MzU1NTI1YjEwODVjZjk2YmU0NjI5NmNiMTgyYzgzZGI1MzU5YjljY2E4NGEyZWMzMjRmODY2OGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6f7ea36757f5452b87bd1322876d7892",
+      "statement": "发布构建期间读路径返回旧 active 快照，新快照 ready 后才看到新知识。",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_weknora_retrieval.py#L203-L282",
+          "version": "repo-lines-v1:sha256:e913d67b603bd02a98c0f06b71ad9d8aee0c01c53106d796a5e2ca22fc236002:eyJzZWxlY3RlZExpbmVDb3VudCI6ODAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwZjJhNjM3YzY3OTZmMDliNmI3MTdlNzgyOTRkNDhlOWMzNGU1NTE1M2EyNzA3NjZkNzg5YzA0ZDRhZjRjMmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyYTQyMTA5ZDkyMjcwMjljODAxMTliNTEzNGM0ZDE4YmFjMDliNGExYjE4MzgzMmY5ZGI0NDc0ZmEwNDY1NzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmOWQ2MDNjZGNmYWY4MTAyNWQwMTg4MmZiZGI5MTgzZTM2NWRmNjJlNGRjYmE0NWZlMjYyNDFiMGI0MTliYWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1OWYxMjA5Mzg1MjA2N2MwMGUzZDNmMTNmYTQ5MTVlZmVhNzlkOWIxYWZjMzdhOWZiYzVmODNiMzBjOTQ4MmEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-24T04:03:55.323Z"
+  }
+}

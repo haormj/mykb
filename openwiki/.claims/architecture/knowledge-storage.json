@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:1a3bef89fad2dc98a3613b02ee0e9e11ad94295d0afe0b999e43a6b16cc696e9",
+  "claims": [
+    {
+      "id": "claim_fdcd904a6d2744c68c39e882b6b7e16d",
+      "statement": "OKF bundle 固定分 raw/ 和 knowledge/ 两级，index.md 与 log.md 为保留文件名不参与概念枚举，根 index.md 记录 okf_version/title/version。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/okf/bundle.py#L1-L8",
+          "version": "repo-lines-v1:sha256:d3395426338caac53539af2bd2e54c43357d59dbeaf5d7dc5257174ca2c5b1c4:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzg2YWE2NzUxZDMzODY4MjM0MjFhNDVlZDMzNDgyNTU0MGY1ZGM0NWZhOGY1ZjkwYWNmODhjNWE5MjQzMDQ1ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDYyYzViNWIzNmFiZDdkYjhhMmU4MDBhNzNlYTg3YmZhY2QxYzA1NTkwY2FhNWQ0NDI0NTU4N2QxZDRkNGYyNSJ9"
+        },
+        {
+          "resource": "repo://mykb/okf/bundle.py#L18-L37",
+          "version": "repo-lines-v1:sha256:47bf34f17519f37a814a637cd83245cf5c4f8d38c7e2249ff4cbfb2379963801:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxOTM0M2VjMDEwMTViNWZlYzg4M2VhNmM5NTE2ZDJhOWFjYzFlMDJhM2EwOWQ0NWQyZWY2Y2JiZWJjNmZkNWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViY2I0MTQ3ZTAyZmVhY2E5ZDQ5OWJhZDk4Y2FlZGRjZmQxOGM2OTUwNzlmZjQ5Zjc1ZDEyOTlhNWY4MzM0NjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1ZWVkMjlhYTA1YTg5M2QwNDdjZmNlYjg2NmVhY2ExYThiNWU3ZTQyODRlN2I2ZTA1ZjcwYWNhNzBkYWM2YWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4YWQ5OGI1MjcwZDkzZjlhODI3ZTAzYTc5YzY0MTQ2NTE5ODhlNGEyZWU4OTQ1NzgyYTliOTMxYTk4YTRiNTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f8834a2cee6b4c90afc9bdc2ebde313f",
+      "statement": "ensure_layout 幂等创建两级目录与索引，概念 id 由相对路径去掉 .md 得到。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/okf/bundle.py#L55-L84",
+          "version": "repo-lines-v1:sha256:d2e43286155f1d6269d40fe2aa5ae6b9755eaea587d50c2eb6ae4a63d8d0f803:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0MTNlOWUzM2I3OGFlMTcxODZlMDNhMDFmNDEwNGMxZjRjMzg5MjQ0ZGM0MjRjZjgwM2NiOGUzZWZjMTVmZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2YWY0ZDg5ZTc5NWQzODI1Y2JlZTNjYTM5NDBiYzM5ODZjMjUzOTc5OGY4MTZiNDJjNjAwOWY2MTgxNGRmZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxMjY4NWZjY2NlZGQ2NjdjMjg0MjcyZTZlZmIyNDQ0ZmM2OGJkZGNiYjBlYjJkN2U3MDcxNzBmYmE4MzE3NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFmMmViOGFhMWJkZGNlMmUxMDFhOTFmMDE1MTRjMDNlZjkxMTU5NDdhYzAzOTlkYmMzMzdmOTBhZjcwNzkzYmQifQ"
+        },
+        {
+          "resource": "repo://mykb/okf/bundle.py#L97-L102",
+          "version": "repo-lines-v1:sha256:2791a88814b09316ebe2972ed61ab4d6f33422c657172ceff9d1ec260af11a3f:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWRjOTM4NmMxNDZkZjgxNTQ0ZDAwMGE2MmUwMDJmYzkyMWRkNWQyZmM2ZmM0OTE0ZWYyNTQ3ZGU3ZTk2Nzk1NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDc2ZDUyMGQ4MjUzOWNmZTM5OGZiNTM0ODU0NGNjM2UwODc4ZTdiMTZiNjUyM2ZkZjY2NWQyMzhlMzQ0N2FjZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTg0NTQyNzU3ZWFiMTc0NGNmZjRhNzE5NTBmMWQ1M2NkYmY2MWRjMzE1OGVjOTdkM2EyNTk0NGViMmM0YzQ1ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjVhYWI0YWE3MWE1ZTQ4NGEzZTdlOTQyMjQwNGY0Y2JmZjM0MjE4Zjk2NDIxZTJmOTY2Y2MwMGI2MDI3M2RkYSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_59ed3671490d41ba8069ae0f51b88063",
+      "statement": "概念是 YAML frontmatter 加 markdown 正文，type 是唯一必填字段，未知 frontmatter 字段在往返时保留。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/okf/model.py#L1-L6",
+          "version": "repo-lines-v1:sha256:786f25b3a8756c10afbf44e3facc26260238796c3409e96d877d42978a4c8b9a:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGI2ODc1ZjM5NzY4ZTViM2ZkZjRmZTFhNDE4NDQzNmFhMTYzYTlkOTcyNWFlOTc4Y2NiZWRiYjU1OTQwMWQ5ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTMwM2VjZGQ0YTRkMTBmMTljNzNmZDQyZmQxMjQzN2ZkMzM1NGE4MjY4MTYwNWRhNTI1NWE5N2EzOTA2OGRiYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTViNmU4NzA2YjQzMDQ3ZjJhNmRiNjdmMTMyNjM4NTk1NjA0ZTY3ZjM2OTY2ODc2Y2UwMTU4ZjAwNTNlNmJkMSJ9"
+        },
+        {
+          "resource": "repo://mykb/okf/model.py#L45-L82",
+          "version": "repo-lines-v1:sha256:232eae2a04c17e04110dd23a082c7888f46b55f2817aade8935b572d3db5989a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2ZmJhZTBiOTFkNDRmYzBkNDlmNWRlNjkxZGE2ZmM0MzFmMjYwMTM0YmY3MzFlMGUyMWY3NjQ4MDk0MzM0Y2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIwMTYwNDRlODY2YjkyNjU1ZmE3OWRhNTg4OTFmZmRmN2VjZjJmZWQwOTNhOGU3MDE4YTYzNjBjMmFlNzEyNWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMDU5ODlhMjU2MDMzMzliMmRhZDA2MDcyYjg0Nzc4NDk3NTIxMGNiNmFlMjM4YjE4OWEyMzVmZjZmNDY1ODkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_264abf63b19546ca8a922bcac5b47007",
+      "statement": "Concept 暴露 type/title/status/resource/sources/verified 等属性，source_ids 从来源条目取 id 或 resource，is_verified_stable 要求 status=stable 且 verified 非空。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/okf/model.py#L92-L160",
+          "version": "repo-lines-v1:sha256:c56404eba33d348fd5e5d733a02759ae92cc10635f48e57bf439b7bdcdef5e70:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjYTcyNDZlZmUxNzY0NDRjZTg2N2U4OTM2NmQ2Y2E2ZDllN2ViMWUyOTEwMzUwZTk1ODMzODIzZDczMGYxODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzYjJjZGI0NDEzNWY1YWZhMzk4OTc5OGE2NGU4MWJjMDE1MGY1OGQxZmQ4NWJjOGQ5OGVhM2JhMTI4NTE5ODQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyMzllMzhjM2IzYWRmYWQwNDgxYjBhYTFlNzRhMzM2NjA5NWUwYzQ1NGU2MWI0YjA0MTQ5NjRlZGRjNGJjMTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4MmFhNTI0MDUzZjg2OTRhZGE1ZTNkNDU0ODM5MDlmNjdjYzcxZjA3YmFmZWVlZjc3ODViZGI2ZGYzNjM2NzEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_47b5a927e4f94d6f8429534a2d9ddfbb",
+      "statement": "源数据概念记录 x-connector、x-import-task、x-source-format、x-original-name、x-original-sha256、x-original-size、x-parsed-by 等溯源字段。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/importing/concepts.py#L9-L37",
+          "version": "repo-lines-v1:sha256:1478891e926ea5c4f5512affb930491db55157d024ea990c6a00eef3784e1579:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5NWIwOGQ2MGM4MDdiYzA3YTg1NzMxMWU0YWUwOTA3NGY4MWMzODhlYTgyZTlhMzhhMTI3NTk3MWIzNDZiYWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkMGRkZjE0OTQxYzVjYmYyZWQ4ODc0MDU2MjcwNjNhNDQzNjczMTMwNDliMjE4YWY2NDE2NzViZmRjMjY0ZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjNWY1YTIwMjBkNzYzZmZlYTA4YzUwZDE0NTg1ZWEzMjhhMThiZGE4Y2Y4YTI5Y2RiYTYxNmNlYWIzNjM2N2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_aa5a95cc9ee0469bbedb3348ad34fa5e",
+      "statement": "序列化使用自定义 SafeDumper 保留键顺序，时间统一渲染为 ISO-8601 字符串以避免往返类型漂移。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/okf/model.py#L28-L43",
+          "version": "repo-lines-v1:sha256:03b8097ba27c18450d95621d4a485860564c117d99bf08f89a54177942b4a825:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxZGVhYTExZTVkNWQ1NzBiNGE5MDk0NGZiZGYwOWEzYzc2NmFhODI3MTkwMWMxZjJhOWQ0OTcwNDk3NjY3M2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiZTIzZmFkM2U1OWRiNjk1NTA5NmMzZGYyMjQ0ZDM1MmYzNDI1MjVjN2MyN2QzM2NjM2VmNDZhODdmMmU2ZDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEwMTBiOTJjOGMyMmNiMDRkY2RlOWI3MDRlNjI2ZGNjNzRhOWE1YTM3ZDg3ZTE4Y2I2MmFiNDVmZTA2ZDFkY2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI5ZWUxOTMyODRlODJmYjc2YWY0ZjRmNTgzZTQzZjA1MDdiNWYxMzJiMTY0ZTZkMzUyM2JhZmI5NGMwYzdiMWUifQ"
+        },
+        {
+          "resource": "repo://mykb/okf/model.py#L67-L75",
+          "version": "repo-lines-v1:sha256:214fb3a0d7ac29041d6a8c5c6325d44b61cd23d1fbfd1324509d2bfe3d62812b:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2QzMWU5OGQxZGVjYjE4NTU5ZGRjN2Q1MzdiMWIyNzcyN2I2MDkzYWRjOTEwYWJkNTlmYWNkY2FhOWQxMjgzNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODQxYjdlYmYwNjg0Y2I3ZDAwNDQzNTBlYWI0YzJhYWFkZGQxYjZlZWZjNjI3ZDYxNDBiNzhjZDM5YWIwZDliMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjg3Mzk3M2ZlNTI0N2JiY2M3Y2VmY2I1MTI1ODQ3YjU0ZDY2MTE2NWNhNmMxZTMyOWU4YmMxYWJiNTY5MTMxMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGJmNGRiYzlhOWQxOWMzMjFlNmJlZGFmNTIyMDNjMGNiZmQzZGQzNzVkMGM4ODgyNTliMWNiYjJjYTE5MDRhMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_36cce0d159a24194947ba8ee276e10a5",
+      "statement": "派生资产写入概念同级 <concept>.assets/ 目录，写前校验目录不逃逸 bundle 根并拒绝不安全资产名。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/okf/bundle.py#L122-L160",
+          "version": "repo-lines-v1:sha256:ca33a08c73894a9069e572b207897b635a28f66e7a9261bbb7bcfb761600b148:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkMjQ4MTM3ZDZjYTE0Zjc0NzA4ZTUzM2JiZjNjYWUzMDVhNGI1MTA4OTIxNTcxZWQyMTYzZjUxYjgyZjhjNTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4OTlhOGJmODM0NWMzZmVlNjFhNjZlZjMwZjY2NzZhZDM0YTkwNTkzOTk2NDVhYjhlOTdmNGVlN2U0YzcxMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ5YTJiMTczNTczMGI5MjY2NDE4OWIzZDc0NjBlMTI4NjNlMmQxNTk0ZmZhNzQ4ZGM1MTlmZTliOWEyNmY2NjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1ea5c2f6f1c645efa90bf5a7573c3931",
+      "statement": "read_asset 要求目标为 .assets 直接子文件，且未拉取的 Git LFS 指针被视为缺失。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/okf/bundle.py#L178-L204",
+          "version": "repo-lines-v1:sha256:75b29a7cf271b3ff79e0c5a562a3ed445c9abb32255805456b4a07d52ee4869d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5MmFhMGIxYmNhYmRlZDk3ZTc0MWU2M2JiZjVhZTVjZjVhNDNkNjQ0MTAzZWI3MjE3MWI1OTVlMzVkNjM0YjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkOGE5ZTljMzI1MjgyMGM2NWE4MTY1MjBiOGRiNDkzMjI4MDg0OWVjOGM3ZDJlYjYyNzJhZmRmZWJlMDU5YzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwNzhlZDYxMWE5NWMwNDdhM2IwZDg5MDM2Mjg4YWNiYjZmNjU1YmRlODhmZTFkYmI4N2E0OWQyNTI5NzU4NzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OWI2MmRlNWJiNzU4YWVhOGU1MjRlMDJlMzcyYzI1ODllMDhmNTZiMmJkZDQ0ODY4MTIxZjA3OThhNzEwYmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d5c8bf747c88480597ed3ad1440bf3f5",
+      "statement": "validate_bundle 检查每个非保留 markdown 是否有合法 frontmatter 和非空 type，CLI 以空列表判定通过。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/cli.py#L25-L31",
+          "version": "repo-lines-v1:sha256:1a46d67c5b4de200c681b33b211a985a56c47799be604c22b3f94dd664778dd4:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDdkOGY0NzEyZTBmZmE4OTg1MDlkZDg1NDM4MzY3MmFlOWZhNTNiMzhhYjIxZjA2MzMzZTBmZGJmN2E3M2RlMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDQxZDk4M2RkZTU0MjUyYWVhOGVmMjhiNzFmMWEzZTFhNzU4M2I1ZWUxMDllODY3ZjExYjYyYzc3MTBiZjdiYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWRkYzg5Mzc1MDE3ZjE4NTU5YWY0MDg2NzYzNTJkNjJhYjQwNjU4NDEzYmExMDJlYzUyY2ZhOWQ2NWQxYmM5NyJ9"
+        },
+        {
+          "resource": "repo://mykb/okf/validate.py#L1-L45",
+          "version": "repo-lines-v1:sha256:3ffd80d60e39459d1f72950c1afba7632c35972bd17b2dd8d704629e0ed35382:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OWYwNjhmYmQyYWEzZDRmNmY0MjEzNDQ5NzllMzRjMGFjMzcyYjExZjcxMjU0NWQ1MzdlNjg3YjQ5MmFjNDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1NWE3ZDI2OThhMWRjODkzZDg1ODNmMzk0ZjEzYTk4Y2Y1MTY5MGFjZTZhMTU4ZjhlYzZhNmNiZWY0MDIyZmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_536fe91a622843018bd9c75f02aae75a",
+      "statement": "git 提交作者固定为 mykb-agent，无 git-lfs 时跳过 LFS 配置以保证纯 Markdown 可用，克隆远程后确保布局并推送。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/kb/gitops.py#L107-L144",
+          "version": "repo-lines-v1:sha256:b128fdf57f015185028bb0ee1d9d837203f137a604ad08e046489a58586301da:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNzI1Njk2ZGE1MGJhZDQ0M2Y4NjgyNmFlMGVkYTU5NGU1NDJiOTcxMzg1MjczNDVkMWEzN2MxMmE1NWE5MTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmZjFhN2NkNWQ2YmY0YmMzYTM4OGU1YjhjODcwODU4MjA4NzFmNDY5MzhlYTMzMTVlODc5ZjRjZTUxOThlMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlYzFlNDA3Njk5ZTg3OThhZDM3ZDdhOTRiNTMxMDBjYzNjYjQyMzRlYWE2ZmY5MzUzNWNiYTA4NzViYmM2OTUifQ"
+        },
+        {
+          "resource": "repo://mykb/kb/gitops.py#L12-L20",
+          "version": "repo-lines-v1:sha256:c05a5041efd7752bbc63cf08e5e436615a5a2a4b4717901fd2abf17e88245128:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmMyZWZjNzRkODI0YTM4NDY0MTA1Njk0NmFhYzRkZWY3NmFiMDdlYTIwYzU3ZWY3YmYzNWU0MWQxN2U2ODU2ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmFmYmEwNTI3YzM5NTNjNGI2ZTBlNWI1NzM5YmE4MzYxMmY4MDUzYmNkYzk0NjY3MzAxOTNjZDFkNTkwYjQwOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTAzNGFkMDdhOGExMmNhMzliMDRjZWFhYzFkMjk3MmY0YmZiZDQ4ODE1YzgyODBiY2Y3M2Q2ZGMzZGQ0ZjQwNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGQwNjM4MGNhN2E0NjVlMWQ0ZTE5OTcxNzFhNWU4MzJmOWViZjVhY2IxYzBkMDg2Yjg5ZTQ1ZjExMmQ3YjQ5YiJ9"
+        },
+        {
+          "resource": "repo://mykb/kb/gitops.py#L68-L92",
+          "version": "repo-lines-v1:sha256:e33a8cf1ced40103fd4da05d97a88e15fd1af4b7e5e8b37e6eb3b015e672c03b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmMzYzMTNhOWM1ZDRkN2U3MjQyNGJlZGIyNjM2NzczODZmN2JiMDJjYWNhMWM0M2Y3ZTYzOTg0OTVmNDhmMmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1ZmU1M2YyYTZiZDE4NzVmYTY5ZDc4OGEzNjFkN2RhN2I0NWQ2NDljYzBhNjAyMjYwOTk4NmU5YWRiNmJiYTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxMWM1ZWNkYmEyZmQ5ZDUxNjA4MDI1ZDQzZjk0ODQ0Njc2MjBiODBjYzBmNzZmOThiNGYyYzE5ZjI5ZmQ2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1MTE3YTQyYTVlMzJjNDQ1ZjA0MTUzZDRjMjMzY2I3OWY2ZWI2MjQ0YTI1MmNmNjgwOGJjNTg5NWI4ZjJjOGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b571d237be814a20a29be22dd27304e9",
+      "statement": "主干为 main，每份待审文档一个 change/doc 分支，合并用 --no-ff，差异用三点 base...branch 计算。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/kb/gitops.py#L166-L186",
+          "version": "repo-lines-v1:sha256:6b3ee171a5862f71b20abb92b29f4065c0393dc4f6bd4624949584d7e98fcae6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1OWI2Njg0NmVhZGE1MDNmODYwZjE2ZGEzYzBkMzFjN2E5NjVhZDdiNzU2MzhjYWZlMzhmOGYyZDExNjJjN2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjYzdkZjk5MDI1MGZjZjRkN2NjYjFhMGQwN2UwNTY1NDBhZjVlMTE1YmJjYmYwOTY0NTRiZjM3MTRiMmEyOTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiN2NjNDAzYjNiZWU1MzIyMmY0ZjVjYmQyYTdlZDkzMzA3ZDBlYzY5MTgyNmUyMGEzMmU1ZTIwN2IwNjg5ODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwZTQ4ZTRkMzY4NTRmZmRkMDhkOTlkYjk3YTAxMTUzODdjYThjYjdkMTEyZmQ2ZjYxZTk4NmJjODc5OTUzZDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_43b21475734f457b9d97f1329b4108a7",
+      "statement": "备份知识库必须包含 .git/lfs/objects 或依赖远程 LFS 对象，否则恢复后图片只剩指针。",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L104-L104",
+          "version": "repo-lines-v1:sha256:ba3f29efc3b125cbbe36dae1c048d8a9ae1e9917dcecbf1262468f1a5616645b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmEzZjI5ZWZjM2IxMjVjYmJlMzZkYWUxYzA0OGQ4YTlhZTFlOTkxN2RjZWNiZjEyNjI0NjhmMWE1NjE2NjQ1YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmEzZjI5ZWZjM2IxMjVjYmJlMzZkYWUxYzA0OGQ4YTlhZTFlOTkxN2RjZWNiZjEyNjI0NjhmMWE1NjE2NjQ1YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmE3ZjRkNWE1N2Q5NDU0NDBlYmUxNWEyNmYxMTQ0NGZjMzRkODEwODk1OGMyZjY2NGFiYTczYmMzZGFkZDljZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGU2MWFjMzkzYzMzYzBmZTYyNmZlNDdjNzI3OWI2MTIwYTZhZWJhNjM5MDJmMTdiZTM1YWRlOGVmZDFmNzYxMyJ9"
+        },
+        {
+          "resource": "repo://mykb/okf/bundle.py#L178-L200",
+          "version": "repo-lines-v1:sha256:ad6fbd8362abed00826ed481a7156706f782e48fc49250da485be280077104a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5MmFhMGIxYmNhYmRlZDk3ZTc0MWU2M2JiZjVhZTVjZjVhNDNkNjQ0MTAzZWI3MjE3MWI1OTVlMzVkNjM0YjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjNjVhNzQwZWE3YTc3ZjNhY2VjOGFjY2NmMDcxYWExNDliOGViOGEwNmNhMzc5Yjc1NTk5ZjQ4NmRlZWE0MWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwNzhlZDYxMWE5NWMwNDdhM2IwZDg5MDM2Mjg4YWNiYjZmNjU1YmRlODhmZTFkYmI4N2E0OWQyNTI5NzU4NzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3YWRiZDg2OGViODgyMGQ2NTFjMTM0Y2MwNWM4YWU2NjkxNWRjZWNjZjhlZTRiZjQzYTlhY2E5ZDI5Mjg3Y2IifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-24T04:03:55.323Z"
+  }
+}

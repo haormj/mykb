@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:6a713d75e3d18a7b26fa3f2c51217402fb1e05e9e38e9ffba3360ab7fd192c0d",
+  "claims": [
+    {
+      "id": "claim_8cbbe88643314cff9f8db03a4984082c",
+      "statement": "maintenance 中只有 trace_affected 被提取流水线接入，审计/陈旧/回滚/生命周期状态未暴露为 API，前端 /maintenance 是占位页。",
+      "evidence": [
+        {
+          "resource": "repo://frontend/src/pages/Maintenance.tsx#L1-L1",
+          "version": "repo-lines-v1:sha256:96c7c46f52456ad515bd2f4dba7c4273a9764f201dc7b39f299749616c118825:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTZjN2M0NmY1MjQ1NmFkNTE1YmQyZjRkYmE3YzQyNzNhOTc2NGYyMDFkYzdiMzlmMjk5NzQ5NjE2YzExODgyNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTZjN2M0NmY1MjQ1NmFkNTE1YmQyZjRkYmE3YzQyNzNhOTc2NGYyMDFkYzdiMzlmMjk5NzQ5NjE2YzExODgyNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTYwYTdkMGYzNmFmYzBmZDkyZGNjNWQ2NWRhYjAwZWMzOTU0MzgzZmU0N2JlMGMwZmRhMjVlODM2ZTkxZDczMCJ9"
+        },
+        {
+          "resource": "repo://mykb/extraction/pipeline.py#L20-L20",
+          "version": "repo-lines-v1:sha256:0aba22ef888c69bc2724c884df565a74105399807de886ed461f211784e5e667:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGFiYTIyZWY4ODhjNjliYzI3MjRjODg0ZGY1NjVhNzQxMDUzOTk4MDdkZTg4NmVkNDYxZjIxMTc4NGU1ZTY2NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGFiYTIyZWY4ODhjNjliYzI3MjRjODg0ZGY1NjVhNzQxMDUzOTk4MDdkZTg4NmVkNDYxZjIxMTc4NGU1ZTY2NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTQwOWM1OGEzZDBjNjdlNjZmZTE0ZWIzODIyOGU1ZmMxZjZmMDAzMDlhZWVhZDgzZTZhMzU3OTViNDVhZjE5MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDI3OTM2M2E5NmUzNDkxMjA2OTc3ZDViMDRkMzZjNDgyZmUzYTM0ZjhiYzNjMTExYWZmNWNlYjI4OWM2ZDlmZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_06f4c12880b34b31b16965ed4e2915dd",
+      "statement": "trace_affected 在 knowledge 概念上做广度前沿扩展，返回传递依赖某源的所有业务知识 id，能到达融合型知识。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/maintenance/lineage_trace.py#L8-L26",
+          "version": "repo-lines-v1:sha256:02cd291c04f96a5ae68b76e7b967f6d6b682ae608b084b6133e553faa426a701:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyMjMyYzE2NjQyNzY4ODQzZDlmYmQ0Yjc1ZjNmM2FjYzBjMGQyMWRjZjExOGNhNWFiMDFiMWI4M2VjYzIyNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzNmJmOGZlOGY5Zjc4YTczZDFiZjRmNmQ4NWU4YWI5NWVlMzFiNWNiMzMzYzJhZjRiYTk0NjMzMjMwZTcyNzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyZTJkMTg5NWMwZmZhOGQyMzVkZGY0NGRhMTYwMjM1YzhjYTg5MjMwYTE4ZDU2MDk4ZWY1NzEyYWMwZDYzNDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_533bc5c69c5149408b1f25edc964e4ea",
+      "statement": "revise_for_removed_source 删除引用被删源的 claim，无 claim 存活则删页，否则保留存活 claim、重算 sources、置 needs-review 并重写要点。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/extraction/harness.py#L234-L258",
+          "version": "repo-lines-v1:sha256:e5584f07b07cd03eb6448156be81ace096a3bb97fd31f648247ec0c66e28c36a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2MDM2OWRmNTNiZjZkNWFjYzJiZGZhNGU0NjY4YzljNjUxYWRjMjVhMjkxMWI3YWMwMjE5NjAyNTQ2ZmM3ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyZmY0OTg0OTNmOGZlNjYzZmQyNDY3ZmZlMjJlYWYzMGZjNzM4NjQwYTVkMjY2NDhhMzhlMDg1ZDViYWVkZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhiYzZkYWM3ZTViMTgzMWNlMjZlOTYwMWNlYzFjN2NiZTJjYTEyOWNmYWU0NTg2YTM4N2M3NjU3N2ZhMjk5ODMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a315442cc63645018e88c9a36ef26c6e",
+      "statement": "is_expired 根据 stale_after 判断过期，detect_stale_sources 遍历 raw 返回 stale_after 或可选 resource_checker 标记的陈旧源。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/maintenance/staleness.py#L1-L50",
+          "version": "repo-lines-v1:sha256:201682181f9a8a57049f2affdd6ff4cca67943eecad5c659c0779ec274d4d988:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4NTE3NjdkZDU0YjRiMWNjZGIxZDUxM2JhZGYxYzkxZTVmMjUxNWIzYjFmYzUwY2RjM2M3YjQwMmRhMWZkNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkMWViMTM5M2JlOWI3NmZhODlhMDI1MWQ3NDRjOTQ2OThhMzkwZmE4NjU3Zjg3MjA5OGY1NjNhNmEwZGFkNTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ac574e8f8c8845259577fcb9e3605414",
+      "statement": "audit_knowledge 对每页做 validate_concept 校验、检测页内重复 claim 与 x-conflicts；run_audit 将受影响页标记 needs-review。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/maintenance/audit.py#L1-L50",
+          "version": "repo-lines-v1:sha256:0d46d43be33b9aa7a5c095b1a58be7b7c7d1eda8552ce5d0fe397c363b1bac5f:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1NTI2MTRhNzJhNjJlYmRiNjQ4OTJlZWRmYmYyNzI3MTQ1NjEzNWQ3ZmQyMTI1MmZiMDBlNjA5MjRlYWU0MGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1NWE3ZDI2OThhMWRjODkzZDg1ODNmMzk0ZjEzYTk4Y2Y1MTY5MGFjZTZhMTU4ZjhlYzZhNmNiZWY0MDIyZmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_72c4540185754b92bbc9b090767147e8",
+      "statement": "lifecycle 提供 mark_needs_review、deprecate（写入 superseded_by）与 re_draft（从原始 sources 重新提取草稿）。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/maintenance/lifecycle.py#L1-L52",
+          "version": "repo-lines-v1:sha256:771517ef34f0887238890c59d7d4759eb8678c3bc2e5e86274a63e4a51a7de0b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzNDNlMzljMTQxZGIyYTVkOTJhMjkzNDAzYTcyZmQ4N2UxYzM2Y2Q1ODVhYmRhNzFiZTYxNzVmZmFhOGMyOTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczYWFhYmZlMGVhNjQ2M2U4OGZlOWMxNmJmZTBjNTczYjBjZGVkNDJkODU3NzhkMTFlZWM3MjlhNzQyYjViM2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_67e67740928243a1b1854f82c88ad12f",
+      "statement": "concepts_at_commit 读指定提交下 verified&&stable 的知识；IndexRollback 若有 READY 快照只移动 active 指针，否则从提交重建并发布新快照。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/maintenance/rollback.py#L1-L81",
+          "version": "repo-lines-v1:sha256:ff1f5b885a3c65f03c0c75f0ff634778e78c2cdd0be3a03c488aad3fb39d93ee:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNzY4YTMyOTFlMGJkYzY0MGYwOWY3NzVlZGQxOTgzNGFiMTA0YTkxODUwMzQwZGJmZmRkZWUzNjhkMjc2NTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_49fc1c9250da4c7581e2b32d7023cdcc",
+      "statement": "离开 stable 状态后知识不再满足 is_verified_stable，因此退出可检索范围。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/okf/model.py#L145-L147",
+          "version": "repo-lines-v1:sha256:3578fbc674e9b5713f9df0e6019195a7e51b2c4a4c6f4219609d914fc849de05:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTA5YjAzYTA5ODA1ZjY2ZDA0ZWZhNmQwNzhiMmI5YjI0MWVkYWE2MjZkZTU0MGZmYmRkZmQxNDllYzhhNTMwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWYzZWY3NGNlZDU2OWYwOWJhNWY1OGIyNTE2YTkxZTY3OGJkYTZjNTdmYjQyNjZmOTJlZTZjODIwMWY2NmFlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTZiZThlY2RhZTI1ODkwYjg2OWFhM2E4MWI1YjBkNzZlYjQyY2U3ODkzMmRhZGE3YWI5NWYwMjViMDI1YzBmYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_f2807c2c6aab4788ad8c80e0abff4079",
+      "statement": "测试覆盖陈旧与变更检测、传递血缘、needs-review 与 re-draft、deprecate、历史回滚以及删除文档时按 claim 修订知识。",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_extraction_pipeline.py#L127-L165",
+          "version": "repo-lines-v1:sha256:64bcae2cf7f41d344c12479edafda28db9840b231d905b7b6ab57237db941bc2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwZDY5M2RkNzkwNjI3OTAxM2M5MmI1ODIzZjM0NTEyYWQ3YjE5NDg1ZDdiMGU1NGFlZWVjMGMyNTA4YjNiOTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkYzc4MjEzZjFhN2UwMTFkODJiMDJmOGViOWUxZjI0MjM0OGMyNzIxODY2ZGY3OTc5MjUzNmUwYmY2YjkxZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjllNmYzNjczNTJiOTY4YThmODg5MDk4ZTU0M2FlZTcxNmRjZTI0YzI4ZWUyYTI4NDAzMmI4YzE1ZTAwMjNiMGYifQ"
+        },
+        {
+          "resource": "repo://tests/test_maintenance.py#L35-L157",
+          "version": "repo-lines-v1:sha256:8759bd8dd4dc991c3ab83f53102847e134c10c5b86352128a11e7eddfafe1a25:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1NDc5N2FjODFjOWQ5NDhhZDJjOWE4ZmE1MGY4YjkzM2U4YzE4ZWRlMzFmNzQ0NDQ2NjY5YzE3ZmExNDMyNWQ0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxNDBkZThhODRkYzlhNThkNjljNjhjYWQ2ZDc0NmQ4YmIxMjI0OTZiYmE5MjUzMzAxZTI5MTZiYTkwNTFjZTc0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3NjZjNDBjNDE3ZmVkODE0NjU4M2MxNDBiZDFmNDhlZGQ4NzZlMDBkYTc1M2YzYjUzMzgzYjQ5YjkxMGE1MDNhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJhMWI1MWEyNTQxOTkyZmY1ZmM2ZWYyZDllYWU1YTYzNTAyNmVlNDBkOTg2YzQzNzM3MGFmYTg5ZDZiMjdmOGZhIn0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-24T04:03:55.323Z"
+  }
+}

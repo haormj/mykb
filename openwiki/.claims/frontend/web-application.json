@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:99ce91d00c3ac735a86fb7f70ee1ca4dbde26fe50db2886d6bf0d2787c9e1e88",
+  "claims": [
+    {
+      "id": "claim_c61878cae32e461ab5fbe02358a0c067",
+      "statement": "前端是 Vite + React 18 + Ant Design 5 的 SPA，构建前先跑 tsc --noEmit；Vite 把 /health /auth /admin /kbs 和 ^/eval(?:/|$) 代理到后端，但不代理 /evals SPA 路由。",
+      "evidence": [
+        {
+          "resource": "repo://frontend/package.json",
+          "version": "repo-file-v1:sha256:048f7c09a3a08f5b4d41b77e2a4435326e9cb998c491d5a4753828d7d3129d90"
+        },
+        {
+          "resource": "repo://frontend/vite.config.ts#L1-L24",
+          "version": "repo-lines-v1:sha256:750d2182f6411abc1c72727663f0e4eb379198a319f676adea2f6ff3ed9dd0b6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0YmFlY2Y5MjdmYjI4NjA1MjMwZjE1ODQyYjAzN2Y3NjVmYTMwODJlZTg0Y2U3YzgwZWM5MTc1ODAzMTRlODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4M2MwM2ZiZGY5YjM0NmFhNTUyNzg2YjVlZWJiM2FhZDRmYWM4M2FiOWU1YzZiNWQ1MTVhM2ViNTljZWVkNTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1da6a4e01c004896986cd5782c643162",
+      "statement": "路由包括 /login、/kbs、/kbs/:kbId 四个标签页、/evals、/scores 与 /maintenance，除登录外都包在 RequireAuth 与 AppLayout 中。",
+      "evidence": [
+        {
+          "resource": "repo://frontend/src/App.tsx#L20-L47",
+          "version": "repo-lines-v1:sha256:7dc320ef6bf331ed5138fe343ad486f2e7d951fe9c88f74952351c01f43c0c8d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4NTcxMjhiMjU2NzBhMDE1OTY1NDliYzRkNmM2YmI2Y2QyMmNhM2I4Mjk1NjZiMTRlZWJjZmUyMWQwNDY4ZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhZTEzOTU5MWEzNWE3MDkwZDZkYTUyZWM3ZTNjNDdjMjdkODljYjUyZmEyYjliYjFiODEzZmJhYWZjMjUwYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiYzExNzgwY2ZkMGYwYmU0YzY2MDY5MWUxMzhkNmNhYWQzZjgzN2M0M2QzYmZmNjMwZGUyYzMxNzA5ZmRlZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjljMGRjOTAwYjJkNzNhYjRhNzdmMGFlMTNiMmMzMzQ4MmRhOWFjMmIzYWNjYjBkM2ZmNmFkZWI5Yjc5NmEzZDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a890359b1f0e499faf0a0e26102b51ca",
+      "statement": "RequireAuth 仅检查 localStorage 中是否有 token，没有则重定向到 /login 并记录来源路径。",
+      "evidence": [
+        {
+          "resource": "repo://frontend/src/components/RequireAuth.tsx#L6-L10",
+          "version": "repo-lines-v1:sha256:a487484e8167cf9e9a1602cdc04980736b43d51e3a1ff1c2cfdcfac16a7cf7c5:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTI1OWUwYzhjMzM1MjllYjAzNjU3NmNlZGMwMWZmMTgwNmQ2YzMwYWM2MTRkYzJhZTczNWFhOGY2MmU0MzNlMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTRmMDY5MzMxZmQ1NzgyZGI3Zjc3YzUzY2MyNjI2NjkzNmQwOGFkYjBhZjI4Nzg4NWFjZjFjNTlmYWRhYTM5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTFkYmY0ZDMzZWE5MWU5NTMyNTcwMTQyOWQwNjNmNGNmNWJlNGM2OTMzYzM2MDQ4YzcyMzlhOTQ0ODhkMWVlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6e96aa7681f54f82a895885813384421",
+      "statement": "AppLayout 提供顶部一级菜单和左侧子菜单，知识维护栏目目前是禁用的占位页。",
+      "evidence": [
+        {
+          "resource": "repo://frontend/src/components/AppLayout.tsx#L19-L47",
+          "version": "repo-lines-v1:sha256:07e00c0df35f980a6bd31f145dfae70627c5f0c7d3f2ff0eb6b24f697e72dfea:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliMDU3ZDZmZTM1ZjI0NmMzMGYwNDVmZmQxY2E0NGUwNzM1YmM0ZmQ3OWQwNThlMWVkMmM3ODZiMDNmMmMxYzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlNDUxYzU3MDIxOTU0YjkzZGFkZTg3YzhmNDViYjBiY2JmNTIwNThjYzcwODMzNDhjYzJjZTg5MGM2ZmQwMzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyNzlmYjQ1MTQ3N2NhNzhjYmZjOWZhMmU1OWU5MDFlY2YyNjllODQ3NzVmMDc4ZWJjZTg1MzY5NjI3MzliMGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b53fb4629cf44564abdad49b922b9e9b",
+      "statement": "前端根据 kb.my_role 计算 canWrite/canAdmin/isOwner，并提供 roleRank/assignableRoles/canManageMember 与后端角色规则一致。",
+      "evidence": [
+        {
+          "resource": "repo://frontend/src/pages/kb/context.ts#L3-L37",
+          "version": "repo-lines-v1:sha256:d83c3c3a2df433af4fdc05897f289eac221d36e2dc531e243f8f940f2a2e3d50:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlZjJjN2ZkNDA0ZWI2YWIxZDM0M2QxMDVkZDRmZTQ5Y2U0OWFmMWZmNDUxYmVhNGFiZDBlZDJkYTJjY2NjMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5OGI1OWJjZjdjOTVmNTZmZGJkODhhMTlmZDE0OTYyYWMwZjIyM2FkM2Y3ZmE3ZDk4OGE2MmQ0NDcxYmU0NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_04ef0942c3dd432984cef74daf0154c0",
+      "statement": "知识库详情页按 canAdmin 过滤标签，审核与设置仅 admin 以上可见，无权路径段回落 documents。",
+      "evidence": [
+        {
+          "resource": "repo://frontend/src/pages/KnowledgeBaseDetail.tsx#L128-L141",
+          "version": "repo-lines-v1:sha256:cf1265b372bb73fbbfd017592018cb123cce659531cdfdb2335e1ecab1f0eede:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyNTg5NDU1MDRjNWZhNzgyZDVhYmEwN2Y0ZjQyNjdjNTFkYWI2MmRmZmZiOTZjZjljMGEzMjM4YmMyMzNkN2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhZGNjOTYwNmE3ZGRiNjRjODJjODMwM2FlMDBkMTA3NGZlY2RkNjk2Yjc5MmQ4NDM1ODVjNzQxYmZiMWQ3NTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkYjNlN2NkMGMzYTYyMzA0NzY2ODE2MWQxMDRlOTlkODYyMDljYTNlNzc1NGEyNWIxMTlhNDkwNzg3ODA0MjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzM2Q5YjAyMjQ0ZGEwZmZmMjFkYThkNmU2Njc0YTgwY2IxNTBmY2QyZmNiMjk5YTFmY2ExOTg3NjIwYWEyNGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5a08d35829734e339e200c0f26892f00",
+      "statement": "发布入口要求 admin，提交后每秒轮询发布进度直到离开活动状态，409 提示已有发布进行中。",
+      "evidence": [
+        {
+          "resource": "repo://frontend/src/pages/KnowledgeBaseDetail.tsx#L45-L99",
+          "version": "repo-lines-v1:sha256:93fb8dec3ed68ab3b8501e497ace362d5c247c0c209abb7381fa78e533773636:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2NGQxMDFjNTkwN2M1OGQ3ZDFlNzg3YzlmNTI0OWY1ZDgxMmEyNGFhOTUzNTEwYzZmNjI1MWViYjU3MWJiMTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhNWE5MWM5YTcyMGQzZmUyY2JiNzlhMjUzNjc2ZTI2MGM0MGI5MTgxOTY3MTczZGI0NjQ1MThlZjBlZWM4YmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2NjE3YzU5NWQxYzc0NjA2MDlmMGMyZGMxMDVlNDg1MmU0OWIwMWY4OWI2NTQzNDhhYWU1YWVmYjE0ODVmYzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxNjY5YTM0ZDRhZTJiM2JhMzNjNWU4YzFiMGQzZGYxMTZmYzNkMmRjNGQ0ZDQ1MjNkMTdlMzA5MDc1ZjE5ODMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a9265a5ab6fb4dd6a627556d95ca4a9a",
+      "statement": "API 服务层把 token 存于 localStorage 的 mykb.token，自动加 Bearer 头，401 时清除 token，非 FormData 请求自动设 JSON Content-Type。",
+      "evidence": [
+        {
+          "resource": "repo://frontend/src/services/api.ts#L207-L250",
+          "version": "repo-lines-v1:sha256:9a3c2d26132f639e000baa2eca3c0fe31921135f6134dc1ffa3b70d1076cb7c7:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0MWZiNTZhYzAyOWMyMDQyZWQ2YTU2YWFhNDJkNDRmNDlkODM0MDI0NTFkNzNhMDlhYWNkM2MxZmZhNWQyMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzY2RiZTczMjEwZGU1ZWZkYTVhMWIwOTk1ZDIzNjRkYTVmOWZlOTA4MDdmNDY0NjMzZTZmNDVlODc3MTBkYTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhMzUxNDkzMGZlZWYyZDJhZDdkZjY0YzRkNmRlZjg2NzJmODMzYWZhZjFlZjEzODM4ZWM0NTFlZWM5YTgzMGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkYjU2NTk4YmVkMjVjMTc3MjkyNTZjY2JiNjBjYmFmZmZhNTAzMDMwNzgxYWIxNzQ1MDVhM2M5YWQ0ODMzMDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7e9aea93f9a84a1ebd89291d21dbeb5d",
+      "statement": "api 对象按身份、知识库、文档与导入、设置、平台级评测、评审、文档级 MR 等域分组封装后端端点。",
+      "evidence": [
+        {
+          "resource": "repo://frontend/src/services/api.ts#L246-L462",
+          "version": "repo-lines-v1:sha256:68c6da81bd75cb93c10a75e61e70f3497f997a65a432075c26d52c185249f50a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjE3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3MWI0OWM0ZjY1OTEwNWQ4OTRjNzg1ZTFjNjgwN2EzZmYyYzZiZTZlMzYxYWVlMzRmNGU2NDhkOTRkOWM3NjE0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmYWU2MTA2OTYyZmM5ZTc1ZjliN2E4ZGRmMjhmY2QzMDhhZTQzMTQwYjhhNWNmNzk1NWE3MzkyYTUwZjkzYWExIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_a156ab2dbee84b7eadb91f509bc4834c",
+      "statement": "MarkdownView 用 Streamdown 渲染并注册 code/mermaid/math/cjk 插件，先剥离 frontmatter，再改写并拉取 .assets/ 资产。",
+      "evidence": [
+        {
+          "resource": "repo://frontend/src/components/MarkdownView.tsx#L1-L10",
+          "version": "repo-lines-v1:sha256:51aebaa28eba53b451331de4a1fe78bfd16d7df9c406f384fcd8131651c0cd38:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjODVlYzBjNTNkNGIzMTJhYzllZTZiMjQwOTM4OGFhZGY4NWZkNTI5NTQzMDExNWM0NTFiZGZhOTg3MjM4ZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhYTgyNGYxNDI1ODc3MjcwOWE1MmJlYWI4MmVjOGQ1YzZiYTFjYTU3MGMyMjU1NDkzOTViYmRiNzQwZjdkZDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY1YWExYzUxZWNiZDRiNGIxMmE1NGY5NGFhYWU4Y2NmNzBkY2U1Zjk4NjUzZWNiNzdjMTliNjllODVmMGI2ZDYifQ"
+        },
+        {
+          "resource": "repo://frontend/src/lib/markdown.ts",
+          "version": "repo-file-v1:sha256:fd5364c83e38afd5b1e06516db58726fd94e2907e389e5d9e7a9515507bb6283"
+        }
+      ]
+    },
+    {
+      "id": "claim_d38ce311638444be97e816c867684ee9",
+      "statement": "tree.ts 把概念 id 路径段建成目录树，目录在前文件在后，同名文件与文件夹区分为不同节点。",
+      "evidence": [
+        {
+          "resource": "repo://frontend/src/lib/tree.ts#L1-L40",
+          "version": "repo-lines-v1:sha256:d2ff5846e55d86b73bd47d0de2b58616e566f2f10ca5cb59ce52524051b94c8e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3ZmYyYzU2YzNhMjE5MWUzMGY4OWVkYTdhYzMyYzhlNzgzZmQ4OGFjMjgyYTkyNjg3YWMyOGJkYzAyMTU4OGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0ZjZkMzRmZDU4OTM0MjUzZDA5NTRiYzg1YjA3OWMwZjcyODcwNzkxYWU0MjlmMTQwNjRjOTUxNGRjMmRhYmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiOTVjNDUwYjgwNzRjNzQ2NWVhNmEzNTQwMGVhNTc3YzlmOWJmZTIzZDkyOGVhNWNiNzU5ZmQxYjVhNGEwMjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_78a70214febb4e969af7104a71a599eb",
+      "statement": "前端测试覆盖角色能力与成员管理、目录树构建与排序、frontmatter 剥离与资产链接解析改写。",
+      "evidence": [
+        {
+          "resource": "repo://frontend/src/lib/markdown.test.ts#L10-L44",
+          "version": "repo-lines-v1:sha256:1e0741c3253232473cbef774a213ef1d9520526987b3d4c613452087d2aae0bb:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2NDE2ODFlNWJkY2RhY2VmZDg0MDg4N2FmMzMzNmIxNjYyYzg1Y2RhOTE0MzBkMzc3MjQ0NTZhYjRlN2JkM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwOWJiNmI1MmM0YzUwOWI2YjNlZGEyNjMxM2I5Y2Y0NDNlYjg1NTFmMjkyOTA2ODg4MjBjMmQ3NTQ3ZmY4MTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4NTY2OGE4NzMwMzc1NWI0NGZlZGI3YjZlODU0ZDVkM2FmZDhiNTVjNGExNzZjMWM3YThlNDUzYmU3NjM3MDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY3MDc4OTYzMGZjYWE0ZDhlZmZmYzNmMTFkZWFjMTg4MWZmN2U3MDdmZjRiMDEzNmJhM2M3Yzk3MjNlOGY2MjEifQ"
+        },
+        {
+          "resource": "repo://frontend/src/lib/tree.test.ts#L15-L80",
+          "version": "repo-lines-v1:sha256:39b8b11e9b08f6c1b93d3ff238ef5ba1efc188f6191df0941a5a31e29a570cc6:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlOWY4MmYxMjg3YjFlYmVmYTNlZDMxMWU5MTk0OGFjYjRiYjIzMjhlMjA4NmIwMjZlNzY2NDk1M2Y4NzQ4NGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkZTAzMDk2YzkyMWU4MTI1YjQ2ZjRkYTA5ZGM4MDMwNmJmNzBjMzRjODFkM2YwNzQyN2IyMmU2ZWU3MGI1YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyOWNhOTQxZGFhM2UxYzRkYTliMDBjNDkxNjgyNTdlZDc0ZDQ4MWFkMGY1NzI2MjRkMGE3YWMyZmNhNWRkNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFkZThkOGNkN2QzNjQzM2ZhNzE2NDVhMWQ5MzJhYTQzNDk0YjM3ZDkwMTE3NzE1ODM5OTJlZDM2N2JlNzViMWUifQ"
+        },
+        {
+          "resource": "repo://frontend/src/pages/kb/context.test.ts#L9-L78",
+          "version": "repo-lines-v1:sha256:18ab9cba44386dea5d315ebf9ad02a3e72d349f2ab03932c306f87d812396b7a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkMmY5YTdmMmMzOTgwZjJmNmZjNGI2NjJjNmMyOTBlMjRjYzFiY2I4OTU4MzRmNGIxMjgwNTgyNDc2MWQzZWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkxNjNjMjMzNGFiNzdlZTdlNThmNzVmZmIxZWVlNDkxN2FjM2U1YTJmZWIzMzcwOWU0NjcyYTgwMTlkMTAxYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-24T04:03:55.323Z"
+  }
+}

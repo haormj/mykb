@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:a7b494e0e619ab2305ed206bed2e9b72a4f9b511adc2c518130456ce0d3db19b",
+  "claims": [
+    {
+      "id": "claim_ef1886ce554c431583efb09b5ae47b2f",
+      "statement": "create_knowledge_base 在一个事务内校验唯一名称、生成 id 与唯一 slug、初始化本地或克隆远程仓库、加密存储凭据、写入 KnowledgeBase 并把创建者设为 owner。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/kb/service.py#L54-L104",
+          "version": "repo-lines-v1:sha256:91c5316895e9dc032d77e9236614a8e132737356686977cbbec75e0d9d0887c9:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkNDAwNzEzN2I2OWM5ZWIxZDA0NDRhOGUyOGMyYmYyNTg3YjBmNDMxN2NhYjNhYjY0MWYzODgzM2UzN2MzNTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ1ZTVjZGI3Mzc1YWEyYjZmZjg4NTNjYTBjZjljZjJiMmI4MjlhYmMwODg4ODMxMDA3MzIyMWVmNTMyMDk0ZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2YWE4NTQwZWM0NjU0NzRjNzg4ZTI5MzMyYjNiODQ0NWZhYTUwNzI3YmE0MjQ5YTJjYmFjZDcyOTQzMjBmNGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bcc33f3ccea24bafbf3523572531c9c2",
+      "statement": "本地路径固定为 MYKB_KB_ROOT/<slug>-<id前8位>，创建失败时回滚数据库并删除已创建目录。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/kb/service.py#L100-L107",
+          "version": "repo-lines-v1:sha256:5bcdf6012dd87a1c04d669e0f08a459a5452111f9e6f2e6765f9cbf9193bc7d4:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjg0MzUwYzU3ZTQ5MzNlMGM5ZmRlYzYwYjE5NDkxNWU1NDJlNTM4YTBlNTgzNDE4ZWVkNzQ1ZGNhNjljNjQyOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDA4YmY2ODUwMzFkMmU4YzVlNmU1Y2U2OGQ1MjU1NjIwMjAzODc3NDM4NjMxM2UzYzI4OGNlMGI5ZTQ3M2NhOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTRkMDQ3MzA0NzJkNGE3OTc3MDhmMDNlNWNmM2Q5NzIwZDQwNDY4N2NkZWEyNWZhOWJlNTBjNTczODVmYWI2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWQzOTdhODQ1NTAwMGY5MmQ1ODY0N2M0OTgzOTExYzcxN2Y5OGZiZTU2ZTZlN2ViMzY5MGU3ZWM5YjI4OTQyZiJ9"
+        },
+        {
+          "resource": "repo://mykb/kb/service.py#L28-L37",
+          "version": "repo-lines-v1:sha256:4de01efa47a31034bb285ae4aaf8d02c60f062c44b5635162cde8460e93df70b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlYmQ3YTUxNzE4NDU0YmY0MzkxOThkNzE1ZDJkZTVhNjQwNDRkNGFhMTM3ZDYyOWU3NTIyOWMwODEzY2VkNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjYTZmMGZlYmFhYWZiM2FlNWY5NjM1YTQwODBlYWRmNGY5YWRkZWJhZGFhODg5MTg1NjgxOTQyZTQxNDgxYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2OWM0YWMwMGEzNjI3YzQyMzM5NmE3NTA4NGYzODM2OTFiMzZhYTE5YzAxOGY1ZGQ2ZWQwMmM0MDljNzM1ZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzZTBiMzc2N2FmMTI5ODA4MjhjMzM3MTkzNDU5MjUyYzdkNzJjYjIwNjg0Nzk1MmE0ZmRlOTFjZWU2MzYyZTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_606ee44586074a51b2794d39960d48e7",
+      "statement": "init_local_repo 执行 git init -b main、建立 OKF 布局与 LFS 后提交初始，clone_or_init_with_remote 克隆后按分支存在性切换并推送。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/kb/gitops.py#L107-L144",
+          "version": "repo-lines-v1:sha256:b128fdf57f015185028bb0ee1d9d837203f137a604ad08e046489a58586301da:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNzI1Njk2ZGE1MGJhZDQ0M2Y4NjgyNmFlMGVkYTU5NGU1NDJiOTcxMzg1MjczNDVkMWEzN2MxMmE1NWE5MTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmZjFhN2NkNWQ2YmY0YmMzYTM4OGU1YjhjODcwODU4MjA4NzFmNDY5MzhlYTMzMTVlODc5ZjRjZTUxOThlMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlYzFlNDA3Njk5ZTg3OThhZDM3ZDdhOTRiNTMxMDBjYzNjYjQyMzRlYWE2ZmY5MzUzNWNiYTA4NzViYmM2OTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7875ccd8291245139fe8fba1988bfafc",
+      "statement": "git 提交作者固定为 mykb-agent <agent@mykb.local>，不依赖宿主 git 配置。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/kb/gitops.py#L12-L20",
+          "version": "repo-lines-v1:sha256:c05a5041efd7752bbc63cf08e5e436615a5a2a4b4717901fd2abf17e88245128:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmMyZWZjNzRkODI0YTM4NDY0MTA1Njk0NmFhYzRkZWY3NmFiMDdlYTIwYzU3ZWY3YmYzNWU0MWQxN2U2ODU2ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmFmYmEwNTI3YzM5NTNjNGI2ZTBlNWI1NzM5YmE4MzYxMmY4MDUzYmNkYzk0NjY3MzAxOTNjZDFkNTkwYjQwOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTAzNGFkMDdhOGExMmNhMzliMDRjZWFhYzFkMjk3MmY0YmZiZDQ4ODE1YzgyODBiY2Y3M2Q2ZGMzZGQ0ZjQwNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGQwNjM4MGNhN2E0NjVlMWQ0ZTE5OTcxNzFhNWU4MzJmOWViZjVhY2IxYzBkMDg2Yjg5ZTQ1ZjExMmQ3YjQ5YiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5c680b6c0c4c4f898f2b4bab92d5df41",
+      "statement": "inject_credential 把 HTTPS token 注入为 oauth2:<token>@host 形式，仅对 http/https 生效。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/kb/gitops.py#L22-L34",
+          "version": "repo-lines-v1:sha256:e7358a99d358afb2c2aa316fdb82b90bf5a43235ad837939e47f12a88ec348a7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyMTg3ZTM1NWU5ZGZiZmM3ODM3NzVjOTRjZTIwOWEyMTcwMzExMDVkY2RhZDc0NDQxYjM2ZjU5ODg2ODI2ZWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwNTBiODBjZGUwMGIwYWI4ZTA2MmI4YzJjYTNlYmE4MjcwMzE0NDUxNzA4ODhjMjU0M2U2NzFiMTBmNzIwNTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlNzNlNDZkYzAxODc2Y2EwNjg2YjE3NGMyNjZiOWRmMzNjMGYzMzJiZmVjNzY0NWJhYzUzZDQwMzI1NTA4MzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f22d8ec7e14d4a8caf33ab396c9600eb",
+      "statement": "绑定远程只允许空远程，绑定 HTTPS 远程要求 git-lfs 且远程支持 LFS，否则拒绝。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/kb/gitops.py#L150-L169",
+          "version": "repo-lines-v1:sha256:6a395998177ee10607977945541b0ed79165ae3c4e013f2d81ba9dde358873fd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhYmE4MmNlZmY2OTM3YzQzNDFjZDZjYjM1MjE2Y2U5ZjMyYmYwYjFlYTFmMDg4NmM2YjdlOGJiOGUyN2ZhNjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2ZjAwNTc3OGU0NWIyYzM2NDU2ODEzMTJlNzhjMjU1OGM2N2I5MjMyMzgxMTc1NGU2Yzg3NzkyYTk0YzZjZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2OTE1MzlhNWQxMGI0ZDhjNTJmYjk5NWNkM2M1YzJjODM0Zjk0OTA1NGI2ODBlY2VkZjA5MmRkOTU4MjEzZjUifQ"
+        },
+        {
+          "resource": "repo://mykb/kb/gitops.py#L94-L105",
+          "version": "repo-lines-v1:sha256:df9a9c373e1cb52741fae933fd27306565c09fd6c898784308b46524edb077a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkYTVjNjZlMTdiMTQ1Mzk3ODM0YjhjODU0ZGM0MTkzZTIxMjUxODBhODk5NmExNGMzMTg4MzMyNmIyZWZiY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzOTQ3NDExMGRkZTZmZTU1OGE1MmRiMjdiMzk4YjNlOGMxNjMyZGEwMDE0NTlmMGY4OWNlNjUwMjc4OTU4OWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1ZjJiOTA0NjQ3OGQ1ZjgyZWQ1MWE4MmIwM2VjMmVmMDVlZDk0MjM1NWU3NGUyN2JmNmEzNDc2YjhjMjA4Y2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2YWNkMDI0NWFmNzQ2YTc0NmMwMzllYzEwYjY3ZWVlZTM1ODUxM2ZhODVjNWJjOTU1NzFmNzFlMjEzNDhlZmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_091ad44ee7e348359eaf08338120b088",
+      "statement": "git 凭据用 Fernet（由 MYKB_SECRET_KEY 的 SHA-256 派生）加密存储，remote_credential 按需解密。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/crypto.py#L12-L28",
+          "version": "repo-lines-v1:sha256:36db575876117a055d511aa109ca1bba8625b193e27514dcb85444ab37daddc0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4NTNhNTRmYmI5OWI2M2Y0MzYyODE4NjE4NDdjODMwY2Q2ODFmNDBiZmJkOGIyNDJmMDE4MDI1MjFjMzQ2MTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2OGVlNmYxYTlmMjI3MGRhYWE3ODFjOGQ2ODhiYTVjNzlhYzZlOWQ0NDVlYTEwYmUyNWEwZDA2MDUyZDUyMjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE2MjM0ZmEyNDdjZWYwMTE3MTdlNGZiYmI1ZjY1ZTcwNmFkMTdjMDhlNWNjYzgxZTRkOWM2ZWExNzU4MTgyNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://mykb/kb/service.py#L108-L129",
+          "version": "repo-lines-v1:sha256:2fe7b7383ccd0dfec783bf1ca4916913cb25d0b24ea5102b3f3879f85bef5c5f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlN2M5NTdiY2I0NGZiNjczYzk4YjAwNTBhNzVkMzgwODJkYjgxZDkxOGRlMzEzYTNmMDdjMTIzNTMwNmQ3ZWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwYWQ2ZDk3ZTAyN2U4ZTFjNzI3Yzg3NTkxYTQ2YmI3ODU2MTcxYWM3ZWEzN2E3MGY4MmRkNDdiOGQwZDFlZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2YWE4NTQwZWM0NjU0NzRjNzg4ZTI5MzMyYjNiODQ0NWZhYTUwNzI3YmE0MjQ5YTJjYmFjZDcyOTQzMjBmNGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0YThkNGMyYjQ3NTUxNmYzOWUzNWUzM2FmYmUwODM3MWY4ZGI1ZjhlNDQyYjUwMTIzZGIyZGI5ZGI2YjQ2YTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_71702237fa5a4e0aa9cae424c58d4e26",
+      "statement": "accessible_bases 对平台管理员返回全部库（视为 owner），对普通用户只返回其成员库。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/kb/service.py#L131-L147",
+          "version": "repo-lines-v1:sha256:f48187e403c5575da1596ae4d663c6e4d5f813f001945187f53f411dbf6de527:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjMGNiMzAzNjQyMjVmYzg0ZDljOTBhNmVkYzY0ZjNlY2RhZTkxZDkyODRjMTMwMTM3YjNlMGE1MTczODYwOTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4YTY4MDBiODBhYjlmZDk3ZDQ0Y2YzZTk5YTQ3ZjI4ZjQ3MDcxYmU2ZGIxMTY0Y2I0YzgwNDQzNzI3ZTdjMGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhY2RiNGNjMzM5YWMzM2U5NzNiY2FmYzk3MzRkMzg3MmU2ZTFhOWI2MzFiNTEyZWU0ODllM2IzOGIwY2JhYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiMGM0ZGEwMjdiYWJlZTRmNjE1YTVhNjBkMjEwNzdlMTQyYzIyMTAwYTUzM2EzZTk1MTZmNTE5NmQ3MTU3OTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e092b7281bd0487a8127983f3c695b39",
+      "statement": "删除知识库时本地仓库目录被重命名移入 .trash/<kb_id>，再删除数据库记录，保留磁盘内容以便恢复。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/api/routes/kbs.py#L137-L155",
+          "version": "repo-lines-v1:sha256:eb33a971ad53c37a260219211a4611f6cf5d66d7b8c7df4ace6fee0428149855:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzYmQzMjc2MjUxNGY5OGU0ODdhNjBlZTYyMzBkOTdhNjA0OTUwOWI3MmM1MTNkNzU5NjA5ZGZlNTZhYmYxZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllZjMzZjBiZmVjODBhNzQ3ZDc1ZTIzMzU0YjcyZjVmODE3MDE1OTNiZWU4ZWM2ZDk0OWU2OTJjY2I3ODg0MjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFmZmVkNWJjZjhiMDY3MzMzNDgyYTgxNTk2YTU3M2U5ZDljNzZlZjk1ZmJiZWYwZWE4MjI2ZGEzNTE4OTU4OTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a0c9610b5bef4c0688028889a62518d5",
+      "statement": "bundle_for 用 local_path 构造 Bundle；RetrievalCache 按库缓存读服务但每次查询解析 active 快照。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/kb/context.py#L18-L57",
+          "version": "repo-lines-v1:sha256:57f24c3ca5ad8d38269cbe2a832c692e1629ba996dcdc211203bdf1466d53530:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiNjU1ZGExZGE0MzEzYzYzODJhNzdlYzc0MjgzYTI3M2M5OTI3MjMwOWZiM2I0MTg2ZWQ0ZTUzZDE5MzA5OTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5NGYzOWM2ZTNjZDM1ZDY0N2FkOWJlNjliYTM4ODk0NmY1ZGUzYjY3NDIwMDBjYzI4ZDNhZDEyOTJkNjMzZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7458b8324afe4b1b82f3975f0ef60c33",
+      "statement": "仓库初始化写入图片 .gitattributes 并 git lfs install --local，无 git-lfs 时跳过；备份必须包含 .git/lfs/objects 或依赖远程 LFS。",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L104-L104",
+          "version": "repo-lines-v1:sha256:ba3f29efc3b125cbbe36dae1c048d8a9ae1e9917dcecbf1262468f1a5616645b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmEzZjI5ZWZjM2IxMjVjYmJlMzZkYWUxYzA0OGQ4YTlhZTFlOTkxN2RjZWNiZjEyNjI0NjhmMWE1NjE2NjQ1YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmEzZjI5ZWZjM2IxMjVjYmJlMzZkYWUxYzA0OGQ4YTlhZTFlOTkxN2RjZWNiZjEyNjI0NjhmMWE1NjE2NjQ1YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmE3ZjRkNWE1N2Q5NDU0NDBlYmUxNWEyNmYxMTQ0NGZjMzRkODEwODk1OGMyZjY2NGFiYTczYmMzZGFkZDljZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGU2MWFjMzkzYzMzYzBmZTYyNmZlNDdjNzI3OWI2MTIwYTZhZWJhNjM5MDJmMTdiZTM1YWRlOGVmZDFmNzYxMyJ9"
+        },
+        {
+          "resource": "repo://mykb/kb/gitops.py#L68-L92",
+          "version": "repo-lines-v1:sha256:e33a8cf1ced40103fd4da05d97a88e15fd1af4b7e5e8b37e6eb3b015e672c03b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmMzYzMTNhOWM1ZDRkN2U3MjQyNGJlZGIyNjM2NzczODZmN2JiMDJjYWNhMWM0M2Y3ZTYzOTg0OTVmNDhmMmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1ZmU1M2YyYTZiZDE4NzVmYTY5ZDc4OGEzNjFkN2RhN2I0NWQ2NDljYzBhNjAyMjYwOTk4NmU5YWRiNmJiYTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxMWM1ZWNkYmEyZmQ5ZDUxNjA4MDI1ZDQzZjk0ODQ0Njc2MjBiODBjYzBmNzZmOThiNGYyYzE5ZjI5ZmQ2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1MTE3YTQyYTVlMzJjNDQ1ZjA0MTUzZDRjMjMzY2I3OWY2ZWI2MjQ0YTI1MmNmNjgwOGJjNTg5NWI4ZjJjOGYifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-24T04:03:55.323Z"
+  }
+}

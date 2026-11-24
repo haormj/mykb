@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:04e9242a15c2aae5ab2267ac9c64b8ae370661107a1ad3ccc631f95e1947331d",
+  "claims": [
+    {
+      "id": "claim_d97c9c1c97874d0ebadbe4a377616773",
+      "statement": "每份源文档在提取时生成一条 change/doc 分支，内含 raw 概念及其引发的业务知识变更，构成一个文档级 MR。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/extraction/pipeline.py#L120-L143",
+          "version": "repo-lines-v1:sha256:4cd4472a485ccf4cf4d0acfb2ab75e7965d0e671e81b2024d2fafa779155e769:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZWFhN2FkZjM0OGQ1NWY0NDZhYzM0MGFhNjhhZTAwMmVhNDI2NDMzZWVkOTdkYzIyYzMxNjMzZWEyMGZjMTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTYwMGE3M2QyZTAyZjM1MmI5MGZlZjFkOGQ2MzgxMWJhNGE4ZWUwYzFiZWFhN2FlNDY1OGYzNmFhMmUxOTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4NGM0MWJhYWRmZDA1NTc4MzQ3MDc0MDVkZTU5MjgyMTA5MDFiMWQ2OTNiYWIwYTk2NjMyNzVjODE4YzgyNmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ0NjMzMmQxMjRhOWQwYjYwNzc0ODJlODBkNzA4OGUzYzdkN2Y5ZDg1NTQ2ZDZhNTViNDAwMmRiM2FkZjY2ZGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_78136b42825c45849b69fac28bc8e8ff",
+      "statement": "提取项状态为 queued→processing→reviewing→merged|rejected，处理失败进入 failed；导入任务状态由提取项聚合。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/extraction/queue.py#L16-L33",
+          "version": "repo-lines-v1:sha256:9dde79d4b96ced4d703a1502c18bfddb3c88260062a9b03871968b3538112945:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmNTA1OGRiZWJmNGEzZDVjNzE4YmU3MjM1MjgwNWMyYjNmY2IzZGQ4N2Y5NmNhMjRlYjk1OGU4YzZjMzczYjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZiNGY4ZTA3OGNkN2FmMDQxNDMyMGU2ZTU0MTkxZGRmZDhjNGFhMGE1NzJhYTUzODJmZjY5MjBiZjllMjdjODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyZGE0OGU2YTRkZDI3NmIyNGRlZGQzYmRhMDY4YmUzNjZiMzAxNTY0YTJmY2Y5ZGIyYzM4MTFiNzVhNWQ2YzcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b63b3d02c64a43c1bb2dad5a0ca0ff31",
+      "statement": "has_open_review 检查是否存在 processing/queued-for-review/reviewing 的项，保证同库同时只有一个打开的 MR。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/extraction/queue.py#L64-L79",
+          "version": "repo-lines-v1:sha256:927fd1db90590f666798dbb8b7d962064487ec4d60ed5afb97434ee7d3770d99:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwMDBlNjY3NGI5ZTNmNGE5MDk2N2UwN2ZkMjcxNmNkZDEwYjkzZjRmYzVmYmM4NTU3OTdlZGNhZjY3ODBmNzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjNDBlY2Q4ZmJiMzA4ZjE2ZDI5ZDZmYjlmODcxMjk4YTkzMzcyMDEwYjcyZjlmYmNmMDQ1MWExODRlNGIwOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNDE0YzgwNTk1OWViZjEzNjNjYTlmZDEzMTc2YWFkNmI4YjE1ODJkODUzY2NkMmI4YTcxMTZlODQ2MTZiNmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_249fafb1fd5d476a954e7c7de8488816",
+      "statement": "refresh_import_task_status 把提取项状态聚合回导入任务，已 failed/cancelled 的任务不被覆盖。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/extraction/queue.py#L137-L158",
+          "version": "repo-lines-v1:sha256:d6010150c0707d292ad1e063a9995335888083460318e4e88403871c5790efab:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkYTNkM2YzMzRmOGE3OWMxNWY2YTBiNTNjOWVjYzU2NTIzY2EwMWQ1NzMwZWI3YzIwOGYzYjVlOTg4NzBjNDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyYWFlZmNkNzlmOGMyZWUzZTNlMmJiN2IxYzI0ZjUwNTMyZWIzMWI4MDI3NzI3ZThmYjZjZmY5NjE4NGJjM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjYzRhN2QxY2M3OTZhYmEzZTQ2NzIzMzI3ZjUxN2U5ZjgxMTk4MmQyNTBmMDcwMjk4NmU0YjU3NjRhZDk1ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_49473d54f05b4512be41158ac033adbf",
+      "statement": "审批后 --no-ff 合并分支到 main，对变更中的 knowledge/*.md 打 verified 并置 stable，提交 CI 标记后推送并删除分支。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/extraction/pipeline.py#L207-L267",
+          "version": "repo-lines-v1:sha256:b88d2fe9ef7a221f131a3fc76ef97ccab1cf9f96402fc67d9623d1e028b67c4c:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlMjAxOWE2Y2VhZjQ3ZjllMmI5NTAyZDE3ZjMxZDMxYTIyM2IyM2I2ODc0MTM5ODIyMWVmMjc2MWQ2ZTU3NjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlZDA2NTU0NGJiOTFmZjFlNjJjNjhkYzdhZjliMTgyNzM2YjU3ZjcwMzY1OWM4ZjRjODA2NWQ0ZWY3MDEwMDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwMjdmNjljYWEzNjg5MDMxMDYzNjFjZjZlMWY3YWI0MjBmZDVlODZiODdjMjE2ZGNmNDU4NGFkMDMxMzZiZDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c3887917dd7d451c81ad4018c9086775",
+      "statement": "stamp_verified 把 status 置为 stable 并追加 human:<reviewer> 验证事件。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/extraction/review.py#L29-L37",
+          "version": "repo-lines-v1:sha256:b4491024fd63660be2d428c8e2968cd39de381b0fdbfbee7a4781f00b0f30595:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODkxNTU4ODI3NGQxNzJmNjEyZDY1OGE1YTE4ODhlMjYzNDljNzE5MDFlNmI5YjE4MDE3M2RjOTE2ZmFlMDM4NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzU1ODA1ZTFhMjAzMDAwM2E5NzhmZmE5ODdjMmRhNjIwYWRiMDIyZDUyM2IyOGIxNjEyMWUzNjgyYWYxYjBkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzQ3M2M4YzcyNjc1ZThiZmJjOGViYWYyOWQxNWMxMzE1NTU2Y2QwMTkxMDEyOGFmZGViOGM5OGRkNTUzNTc4ZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2b20a9f2188348cf8b5724986deced62",
+      "statement": "拒绝时删除分支而不合并或打标记，项标记 rejected 并清理暂存。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/extraction/pipeline.py#L269-L308",
+          "version": "repo-lines-v1:sha256:e7bfabfbf2cb16b7112e88219d09cffc5041bdf6600b11d7cd53b2ea23f65dd9:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczNWY1MzNhYWEzNWI1OTcwMjFkMjUwZDI5MGQ4N2Y0MjM0MDU2YTdjMmRkYjU2OWQ5ZDRiZmJhYWRhZjI5NWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2NzM0ZTk1N2NjODA1MTc1N2M3NzNiODFlMTQxOTUxMTQ5MDJhNGZmMThhYWQ0YmIyN2FiMjhhMjNlOTk2MmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhMDFiNjhiMzc4YmYzZWFjMjBlY2JhNDY5YjNkZTg5ODVkMTdhZTFmZmZhNjc0ZmRlNzM1MjZhN2FmZThkZDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7619f8aaac8941009742be03945bc31f",
+      "statement": "退回重做删除原分支与已生成草稿，把项重新置为 queued 并重新提取到同一 MR，实现部分接受。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/extraction/pipeline.py#L310-L344",
+          "version": "repo-lines-v1:sha256:7b24d47a303ff39aec71157e0c9c801938bc0bac1f260ef29719a466c0a11646:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiZmJhNjkyZWMwZGJiODFhNzYxZTY1MmYxOGU4NGZiMWJhZmE0MDljMjM5Zjc0NjAzMzI0ZTkxNmQ2ZGIyODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwNmE0MmViMTFjODVlNWMwOWM4NmI1YzIzYzcxMzVmZDYwYmM2YTg4YzI4YjU5M2MxODM3MmEzZmUxY2QwZjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4OWQxZjVhYTM5OGI4OTFlNzMwYTg2ZDViMzI3MDM0MzYzM2UxYWZjYjI0NGM1MjgyMzdmMThiM2FjY2MzMmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ2ZmI4NmQxNDQ2MGIzMThjNzA2ZGYxZWEyODRiYzQ3OTVkOGY4MzdiNTJiNzU4NmY3ZTdjNjI5NWE4NjM2NTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3ec0957d96094dea8f4e3f2413233e3a",
+      "statement": "构建失败时强制回 main 并 reset，进程重启时 recover_processing 把残留 processing 项重置为 queued 可续跑。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/extraction/pipeline.py#L180-L200",
+          "version": "repo-lines-v1:sha256:aa2a59963957059d9fe234452c8d57a73b716c0552e1279f75f44aac79bace87:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3M2E5MDY4ZjdhYmM0NTY1NmI5ZjQ1YThlMTRiMTkxMDJhOGIwZjIxOWJlMGI2NTY1MTY3ZTM5ODUzZmEyNDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkYTVjNjZlMTdiMTQ1Mzk3ODM0YjhjODU0ZGM0MTkzZTIxMjUxODBhODk5NmExNGMzMTg4MzMyNmIyZWZiY2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg3MjU5MjdhZGY3ODc2YjBiZGExNTA2Mjg1M2VlM2Q4NmMxZGU3NTk0MTBkYjMyNmMzMmQ0Mzc5OWRjYmRjNTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ0OTUxYmE0YjRkMTk3Y2Y3YTEyODZhMjJiMzYxOTZkMGFlYzVlODRjYzhjNmY0MjI1NzVlZmQ0OTJiZmQ0MGYifQ"
+        },
+        {
+          "resource": "repo://mykb/extraction/queue.py#L114-L135",
+          "version": "repo-lines-v1:sha256:5d98dcaf980eae732a3b1ef719f58bd618b33af689a0faf1d5f5c975849c8d6e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiYzMzNWQxMWQ0YTU1ZWMyNTQyN2Y1MDlkNDUxMTE3ZTBiMmNkMDc5MGUyZTY0YzdhZDkwMTJjNTNmOWFkM2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5NDgzMzgyZjU0N2QyZDEzYWQ3NThmNjJkMmQwMzBhMDZmOWViMDFmMWRhMzZiOTNlOTZjYzdkMGRiNzFiZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYzY2ZmZDhjZTE2YjBmMzQyNzVhYjEzNGFmYjRjNGQwODcxMTQ3MjUzNDRlZDBmZTkxZDA0MWFhZGMyMmJjNDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_11f48b532b3a45a4afeb4a04bab68690",
+      "statement": "GitReview 提供草稿分支的 submit/approve/approve_draft/reject，分支名为 review/<concept slug>，审批时合并后标记。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/extraction/review.py#L79-L142",
+          "version": "repo-lines-v1:sha256:84b38b47f30a6cbed04d2c8a4152481652d0931aacadcdcefe61121a6d76901d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkNWUyYzUyZWY5MmMyZDY3OTJmYzRiMDkxYTVhOTBiMTM2ODE3NmI3N2MxMmNlZjJiZDkwOTNjZWU4NWU0ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmODJhOWY4ODNhODM0NmM2ZjI0YmRhMDVlNDAzNDgzYjdlYTAxZDc1YTA4Yzk3OTNiYmNlNGQ4Mjk1Mzc4YTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYzMGZhNTkzYzIxOGQwYTJkNmYwOTY5YzQ3NjhhZGFlNjYyODJjYzI1MDQzYmQwODhiZWUxYzZkNzMxMzdkNzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5dceae26b31d45929f88a890239b306a",
+      "statement": "评审 API 要求知识库 admin：列出 reviewing/queued/processing 的 MR、展示三点 diff、并触发 approve/reject/redraft。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/api/routes/review.py#L81-L185",
+          "version": "repo-lines-v1:sha256:8944ab9a86f0488371b97608fef3bd7757d3d28d4d8dd3546ab6b972bb383dd9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlZWUyODM0NDczNGQ1MTI1NTYwMzkzZjFmZmY0NTYxM2I2ZTc3NmYyZWYyNmMyMzhkM2EwYzc1ZDczNjgxZTcyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzODY2MjU2Y2E5NGQ5MzdiMjgwYTY1Y2RiMzNhNDQxMjk1ZmMyYjk4OTcxMmUwZTI5MGYxYmQzODczYzc4MzA0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxZDhiODk1MzYxZWMzYzJmNzcyMDVkYmVmMDFkNGY4ODBmYTZlODhlZDJhMWYwOWY0MTlhM2RiN2FmNDE1MDQyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_716b50c6f02b486c8b66ab7719b7123c",
+      "statement": "测试覆盖 stamp_verified、git 审批/拒绝不落主干、拒绝与重做、队列状态机与 recover_processing。",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_extraction.py#L51-L94",
+          "version": "repo-lines-v1:sha256:3ba23a13295da755611eeab5ee50900b8175fcc2db0a527720b1f9c4c5e4a147:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkZjk1NDNjZmE4ZmM2ZWUyMDdiZmY1ZmVmNDY2ODYzMTJlNDU5NDg4MzYyOWNmOGY3N2E5M2Q1MGQ0YzBmNjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4NWQ1ZmE0NTMzYTg1MGE4M2ZmNjZmYmNhNGZiMGY1YzdmYmQ2Y2YwZGIyY2MwMjlhZTkwNzM2NmM1ZWZlZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ0YjFhZThiNTRmODEzNTFkOWI5ZmM1MmFkODJjNzFiMjA2NGUyYzFhM2VmMDViZTljMTA2YjBlNjgwZjVlNmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzY2MyYzliYzAwNzk3OGI1MWZmOWQ2ZWZhMGUxZDE0OWUwYzYxOTcwYTY1ZGI1OGZiMzYzZGJmYzlmMTBmZGYifQ"
+        },
+        {
+          "resource": "repo://tests/test_extraction_pipeline.py#L234-L290",
+          "version": "repo-lines-v1:sha256:0b90da3a040ad38e2e3cddc49334840cabfe99aa51da6fff5fa8678f1c65592e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4N2Y4MmVkZTAwMzEyNWFkYTg4MGIyYmIzZTRjZjFiNGZjZWY2OWUyYTAzYWE2NzkzNzA0ZjgzOTZmNjFhZGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlNDRjNGE3YTM5YjU0ZGRiODAwMmY0YTM3MmE4OWZlZmM5YWJlMjZlNDRiOWRmYjVlZDBjYjVlMWVjZGU5NzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkMWRjNGZhOThjNjNkM2NhYzRjN2JhNGNjZjYzODI5YmUyYzFkYTc3ZDE2ZGZkMDlkNjAyMGJmODVhZTkzMTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJmMTA2MmExNjJjNjM4ZTk1MjkxMDUzZjgxZjMyNmQxOTQyN2Y5NmU2ODA5YzRkMDBlNWViODc5Yzc1MTQ5YzEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-24T04:03:55.323Z"
+  }
+}

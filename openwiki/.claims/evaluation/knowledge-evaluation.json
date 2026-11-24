@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:ce3207983d1e6742a645a4c52109fd3db805cd75f9af236bef7594f4d7da7392",
+  "claims": [
+    {
+      "id": "claim_0e0c7aeaa34a4bf98f13e9981e86feaf",
+      "statement": "评测集是平台级共享资源，存于 Postgres、不进入 git bundle，一次运行绑定一个目标库，同题集可对多个库批量运行。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/api/routes/evaluation.py#L1-L8",
+          "version": "repo-lines-v1:sha256:6c79b5975147742782016df5deee69ce14a789ca4c52a76d5e1e49f1a5b687e0:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGE2ZjU0MjdlZTFjZDQ2YTZmMDAwNzVhMmM5NWMwYTM1YjRiODVlMjBmZGY2MWFjNjczMzc0YjcyOTFmOGNmYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjUwMDMwYWVhMGM1MjE2MmFjODY3MGE0OGU2MGU0ODgxNmYyM2MxMGFiN2EyYjRiNTI5ODMyZjEwZGYyNzI3YiJ9"
+        },
+        {
+          "resource": "repo://mykb/evaluation/store.py#L1-L6",
+          "version": "repo-lines-v1:sha256:fba8385edf5b07f90d2eede4c654a8a647ce6d9658110b37528e861fc8628d7c:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWI0MGY5ZmY5NGRhZGY0NzliMTE3NDAwNDVhZTdmMzk3YTY1YTA0ZTRkZWJjOGRhOTJiMWQ2YWVkMjFkNGM3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTMwM2VjZGQ0YTRkMTBmMTljNzNmZDQyZmQxMjQzN2ZkMzM1NGE4MjY4MTYwNWRhNTI1NWE5N2EzOTA2OGRiYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTViNmU4NzA2YjQzMDQ3ZjJhNmRiNjdmMTMyNjM4NTk1NjA0ZTY3ZjM2OTY2ODc2Y2UwMTU4ZjAwNTNlNmJkMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d961fe4402764ff7a9f3b6d7fd1013a3",
+      "statement": "eval_case_results 快照化 question，使后续编辑题集不会改变历史运行的含义。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/db/models.py#L266-L289",
+          "version": "repo-lines-v1:sha256:5eb51e48cc0bbe2201b44cf42c88cdb6a7650301ea20f56df8bc6ea42e3784d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwZGY5YmEzMDczMzhlYTcwZmEyYjMxNjk0OTU5NjA1ZDE2OTgxNmQ5NTQzMDZiNDg4YjY3ZjJhZTBlZDkwMjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExYTljMTQ3ODYwM2YwZTg2OGYzZDUyYzg5MTJhNzU4ODQ5ODNkOTMzZWRmNmIyMjE3YTkzZGQ3MDdiY2EwZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY3ZGRhODcxMTRhMzQ5OTA1MDhjZTE2MTg1ODI4NGIzMjg3MTE3NTE4YTVjNWM5NTdlNWQyNjZiMjRjYzU0NDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c6d1b73ba5d349798d9b2a0d75fe0c91",
+      "statement": "评测集登录用户可读，但修改与删除仅创建者或平台管理员可做，否则 403。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/api/routes/evaluation.py#L133-L144",
+          "version": "repo-lines-v1:sha256:1993f4570db22ed0670ce693af3cf2078968a6e4f912da941647304e29e11492:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgxOTgxNjBhMzQ3ZWY2ZTc4YjAyMjFmMGNjYjU4ZWFlZGU0MTYwMjkwZjQ3ZGM0ZDg5NjdkODMxYjk3MjA3NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4ZWMyYzRlNDhhYTU3YmU2NGIwOWMxNjk3ZWNjZjhmMDFjMWQwNGNkNjhiOWFiNGJkNTRiNzcwODI0ZWEwYmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0ZTYwYTcwZTg1NmRmOThhMWM1NDA0ODNkMmFjMjQ1ZGMwZGY3MTdhMTg4YjM1MGE2ZWViYzA3M2IyMDEwZjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9b4d98c00e4f431498748394f5ef72a6",
+      "statement": "EvalRunner 是纯打分组件，不碰数据库也不写评测存储，持久化完全由 store 负责。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/evaluation/runner.py#L1-L10",
+          "version": "repo-lines-v1:sha256:7c93222bdb53a1ee048515ce3d87890412072e4aca2af0ff3ac2131f8d15daf4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkMTAxZThkNWQ3ODFjODk3NTI4ODEwM2I3MjFjMjFkYjRkNzhjMWQxY2M2OGMzMDc1MzFhZGY1N2U5YjE4NmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3OGVjYTZkOWVkNTE3NzViN2NkZjM0YjQxOTg2MTUzZmM4YzgwMzgyZTU1MzI1ZDQxYjI4YzY0OTExZjg2ZTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhNDNhZTZiNWViODA1MmRkZGUzMGUyOGQ3M2UzOGU4NWZkMjI2ZTdjMTg1NmJlYTViNTc3M2RkMGQwN2EzZjUifQ"
+        },
+        {
+          "resource": "repo://mykb/evaluation/runner.py#L40-L75",
+          "version": "repo-lines-v1:sha256:c912cfd1e35a82a62572460638a62306703269766fe4a1450abda1305cb3abff:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4ZjNjMGEyNjQzNDRjMTU3YmE0ZWQ2OWU1ZWNkNDU4NmZmNTVlYjIwN2UyMWJjYWU4Nzc4NjQzYzg0NzBjNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkYmZlNDZiNDhkZjFmZmVkOTI5YTIwZmQ2M2RiM2Q4ZmJhYjU5NmQ3ZDhkMWI4NzQwZWQ3ZTcxYWQwNWU2NDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0MzUxNTBiM2MwMjVmYTFmMzE5YjU5MDlkNDQ4MjdmN2QxYjdjMmRkM2FmMTI1M2RmMDg1Zjk5ODJhNjdiNzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiMGQ0MjAyNzllMmIxZjg2OTVmYjI0MTNmNWE3Y2VjZTkwODUzYTc2NDQ2MTk0ZGIxMTFlZDUwYzNhMGQyOGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_acfacc5b478e42ac9ae71a1c1b42e62c",
+      "statement": "A 分分类顺序为：无期望概念 b_only、文件缺失 missing、未 verified&&stable unverified、top_k 命中 hit（1.0）、否则 not_retrieved。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/evaluation/runner.py#L77-L100",
+          "version": "repo-lines-v1:sha256:a4fc8da1ed2b8aff5c19eeb623d35c7dfd59af538af432f061f236a0b2410815:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiMTY3Yzc1NGNjMmI0Mzg1ZTZjY2QzOTMwZjBmYjIwNjcwNTAzOTRjMTg4Y2QwY2FiOTEwN2E5M2QwYTg2MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5N2E3MmNiNmZkOWFiZDlkYmViZGFkOTI5YmZkZDg4ZjFjOTgxYWIyYTc0NmU5N2YwMzA1YzhiNDY0N2RiYjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkxNzM4YWMwMzVjMGQxYTQ1NWUyNDVmYjlhOTMwNjFiZjhmYjYwOWMyYmZmYmFlZTA0NDRhOTRmMjAwYmRkMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a3feaabadfa249a7a6a796dfb3538be8",
+      "statement": "B 分用词集合 F1 相似度比较生成的答案与参考答案，确定性且离线，不依赖外部模型。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/evaluation/runner.py#L15-L28",
+          "version": "repo-lines-v1:sha256:17595f6a9f591bc59eeea2fa0e1fdd4742c117718dd3f0c3454dd3ad331b56f7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5ZTgzODI3YTY2N2Q2NDA4OTk4ZDc2OTExZTE5NzdkYjNkOWFiYTU4NjVhNDg3Y2M2ODgzZWI0NWQ2Yzg5NjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlMmU2NTA2ODQ3ZTI0MWYzNmRkYmVjMTExMzNjNjlhOGNhNjVlZTYwOTE4Nzg3OTNlZWViODRkZTI5M2VmZTcifQ"
+        },
+        {
+          "resource": "repo://mykb/evaluation/runner.py#L90-L100",
+          "version": "repo-lines-v1:sha256:8fead6f3f0d55cb73a1bcb13a3a0ae034d7230757600f8d9e259ae7785b70e9e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxNDk1ZjIxMThiM2MxN2JmODY5NjYwMDc1YjhlOWQxODZmOTA0OTBhMTIwZDU3NTJiZjJiY2Y5ODUzOThjZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5N2E3MmNiNmZkOWFiZDlkYmViZGFkOTI5YmZkZDg4ZjFjOTgxYWIyYTc0NmU5N2YwMzA1YzhiNDY0N2RiYjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4NDNhYTdiOTY4ZjIwYzQ3YmE4ZDM3ODZkY2E5YjgyNzExNWE4OWY1MzM0OTAxNmI0OGNkN2RlNDI1YzgwZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6f742c6894b6465b96b3cfd41b9e585a",
+      "statement": "a_score 为非 b_only 题均分，coverage 为非 b_only 题中状态属于 hit/not_retrieved/unverified 的比例，b_score 为全部题均分。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/evaluation/runner.py#L54-L75",
+          "version": "repo-lines-v1:sha256:57101f47a65c56f463a5d9078ef2d4685da8fad11cd0acd5fb0a32f93c9ec8f4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwZDljZWM3OWNlMTEwMjUwYjI0MzZlMmViNWZlNTYxY2Y1MGU1ZjY0YTk4MTNhNDU1NGE0MWI1NTMyYzFlOTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkYmZlNDZiNDhkZjFmZmVkOTI5YTIwZmQ2M2RiM2Q4ZmJhYjU5NmQ3ZDhkMWI4NzQwZWQ3ZTcxYWQwNWU2NDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxNjU2MTVmYmE4NTMzZTA2MWQ5YjYzYzE2ZDMxZjg3MTFmYTAyMmZmZTVlMWRjMTg2NDczODY4Njk3ZGQ3ZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiMGQ0MjAyNzllMmIxZjg2OTVmYjI0MTNmNWE3Y2VjZTkwODUzYTc2NDQ2MTk0ZGIxMTFlZDUwYzNhMGQyOGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7581c5f920114dc59864589399390d16",
+      "statement": "逐题状态包括 hit/not_retrieved/unverified/missing/b_only，b_only 不计入 A 分与 coverage。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/evaluation/types.py#L6-L13",
+          "version": "repo-lines-v1:sha256:5affe1ab6d6fa8790d6349ba658d066a38595c67ee15c074060aa8ed0e589c31:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2NkZjc0OWRjMDI0NmNhMTQ2YTE4ODllMjVhYzEzNGMwN2Y4OWI3YjAzZjRiYjA3Mzk2ZTY0MDhkY2M5Y2FjYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTQ0ODA0N2U2MDJiNzI0NWFjMTJkNmM0MDRmMTlhZGY0MDRlZDNiN2Y5ZmEzNTVkNzNlNGI5MjFkYzhmZThhNSJ9"
+        },
+        {
+          "resource": "repo://tests/test_evaluation.py#L63-L74",
+          "version": "repo-lines-v1:sha256:93ccde5209b42f4224ce77532d9f9e904cd3f939d6b9457478392d26f7a2ea92:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1Y2U4ODA4MDAwOTg2OWRiMWZjYWQ1YmM2YTZjYzNjZmM1MjdhMWM5NGY0MTAwN2IyYTI1YmY5MzNiZmQzZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1YmRkY2QwOWY2NjdmMWVjZjIwMjFlMDhkZGE4MWM1OTM4MGNhOTk1NjlkYWFlYTkyZThiYTU5OTVjN2M4YWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0ZmE0YjdmOTc3N2M0OGNhODk0NGZmODYzMTc4NmVjMTI4YzgxMDUzYWIwOWJiM2UwOTQ3NWNmNThlZWMzOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2NjE0N2FkZDQyMzM3Yzg0NDc2NTBhM2U5NzlmZGRhMWZiNGIwOWFmZDhiMTZjNjcwNTRiMjQ1NTdjY2UyODcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c2f01fcc748d490181336e1c51cfac0e",
+      "statement": "批量运行先对所有目标库以 editor 权限预检，任一失败则一条运行记录都不写入，呈全有或全无语义。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/api/routes/evaluation.py#L216-L252",
+          "version": "repo-lines-v1:sha256:7123a3cc5b59b3b983b0c5df138d031d1f221d5e22e0feeff392b8a3095be03b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1NmExNDdlY2UzZTQ3OWZiODNhNmUyNDYxZWNlNzEwZWU1OGY4OTk2ZDU0MmI0ODE0ZmQ2YjVkNjc0Mzg3YmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4OTI2NmJhMmE1YmM0NzhhMjAzNGYxNWExMjkzYzZiMDE4ZTQ0ZDc0MmVhNDIyMWQ4M2IyZjIyMGE1NGRjY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMDIzMTg3NmNjMTM4M2JjNzZiZWM0ZGM0ZjFmYzdlZmM1NjM3ZWU1YjlkYzkzN2MxZmU1YTBjYTQwNzAyY2QifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b348f43cbc9b47cd91d6f9f4f74fc5cf",
+      "statement": "runs 列表可按库或题集过滤但受可访问库范围限制，run 详情需目标库 viewer 权限，trend 按题集和库返回时间序列，overview 聚合可见库、题集和运行。",
+      "evidence": [
+        {
+          "resource": "repo://mykb/api/routes/evaluation.py#L254-L334",
+          "version": "repo-lines-v1:sha256:5e88404694954b33e8e1c7c53b01d980229b180bee1eded01b9f762b31be0a0b:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1MzI2ZWNkMTc1OTg3ZmVkZmU0ODYzODExNTcyNGQ0YzQzNGU1YThkMWZhNmI3ZjkzZmQxY2E2YzZkNDAzYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg1MWIzYTRlYTRlOTM5NWRlYjgxNzI4ZjlmZTcwM2VlODFmMjVjMjE3ZTFhYTYyZWRlYTg1NWU4MjllYWZjMWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5c5f601596ea4127aad875e1e2c700c2",
+      "statement": "测试覆盖批量运行与结果可见性、跨库 overview、批量运行全有或全无语义以及隔离。",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_evaluation.py#L129-L215",
+          "version": "repo-lines-v1:sha256:76280e81db554b5db0e2b9abc03f5b59dc104cf9c043ed034b1d2ea926993677:eyJzZWxlY3RlZExpbmVDb3VudCI6ODcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4YzRiNjVmNzNhOGY0NGMyY2M2ZDYwOWZkNGU1MGRiNTQwZWNhNzdlZDBhMjQ2NGExNTg1MWY2NzgxNmQwZGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3ODkwYWJiNTkxZjIxMjQ1MDI4OGVmMjBkNTU3NDI5NWI2NjUzN2E0YjQ4MWQ5OTM0OGY2NjhiMDQ2MjhhZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyOTc0OTU0YjFmZjJlZTM2MTQzMTM0ZTRlY2ExNGM1ZTc2MzRkZjM0ZWI5NTE3MzRmNGNlYjM2YmNkN2VkNWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-24T04:03:55.323Z"
+  }
+}
