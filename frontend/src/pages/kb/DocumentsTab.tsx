@@ -1,28 +1,30 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button,
   Card,
   Drawer,
   Empty,
+  Input,
   Modal,
   Space,
   Spin,
   Table,
   Tag,
+  Tree,
   Typography,
   Upload,
   message,
 } from "antd";
-import type { UploadFile } from "antd";
+import type { TreeDataNode, UploadFile } from "antd";
 import {
   DeleteOutlined,
-  EyeOutlined,
   ReloadOutlined,
   StopOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
 import { useOutletContext } from "react-router-dom";
 import MarkdownView from "@/components/MarkdownView";
+import { filterTree, buildTree, type TreeNode } from "@/lib/tree";
 import {
   api,
   isActiveTask,
@@ -48,6 +50,25 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: "default",
 };
 
+const FILE_KEY_PREFIX = "file:";
+
+function toDataNode(node: TreeNode<DocumentItem>): TreeDataNode {
+  return {
+    key: node.key,
+    isLeaf: node.isLeaf,
+    selectable: node.isLeaf,
+    title: node.isLeaf ? (
+      <span title={node.conceptId}>{node.title}</span>
+    ) : (
+      <Space size={6}>
+        <span>{node.title}</span>
+        <Text type="secondary">{node.count}</Text>
+      </Space>
+    ),
+    children: node.children?.map(toDataNode),
+  };
+}
+
 export default function DocumentsTab() {
   const { kb, canWrite } = useOutletContext<KbOutletContext>();
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
@@ -56,13 +77,13 @@ export default function DocumentsTab() {
   const [importOpen, setImportOpen] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
-  const [preview, setPreview] = useState<{
-    conceptId: string;
-    title: string;
-    markdown: string;
-  } | null>(null);
+  const [previewMarkdown, setPreviewMarkdown] = useState<string | null>(null);
+  const previewRequest = useRef(0);
+  const expandedInitialized = useRef(false);
 
   const hasActive = tasks.some(isActiveTask) || mrs.some((mr) => mr.status === "reviewing");
 
@@ -77,6 +98,11 @@ export default function DocumentsTab() {
     setMrs(reviewMrs);
   }, [kb.id]);
 
+  const fullTree = useMemo(() => buildTree(documents, "raw"), [documents]);
+  const filtered = useMemo(() => filterTree(fullTree, query), [fullTree, query]);
+  const treeData = useMemo(() => filtered.nodes.map(toDataNode), [filtered.nodes]);
+  const displayExpandedKeys = query.trim() ? filtered.expandKeys : expandedKeys;
+
   useEffect(() => {
     void refresh().catch((error) => message.error(String(error)));
   }, [refresh]);
@@ -90,6 +116,54 @@ export default function DocumentsTab() {
     }, 1500);
     return () => window.clearInterval(timer);
   }, [hasActive, refresh]);
+
+  useEffect(() => {
+    if (expandedInitialized.current || documents.length === 0) {
+      return;
+    }
+    expandedInitialized.current = true;
+    setExpandedKeys(fullTree.filter((node) => !node.isLeaf).map((node) => node.key));
+  }, [documents.length, fullTree]);
+
+  useEffect(() => {
+    if (selectedId && !documents.some((doc) => doc.concept_id === selectedId)) {
+      previewRequest.current += 1;
+      setSelectedId(null);
+      setPreviewMarkdown(null);
+      setPreviewLoading(false);
+    }
+  }, [documents, selectedId]);
+
+  const openPreview = async (item: DocumentItem) => {
+    const request = previewRequest.current + 1;
+    previewRequest.current = request;
+    setSelectedId(item.concept_id);
+    setPreviewMarkdown(null);
+    setPreviewLoading(true);
+    try {
+      const content = await api.getConceptContent(kb.id, item.concept_id);
+      if (request !== previewRequest.current) {
+        return;
+      }
+      setPreviewMarkdown(content.body);
+    } catch (error) {
+      if (request === previewRequest.current) {
+        message.error(String(error));
+        setSelectedId(null);
+      }
+    } finally {
+      if (request === previewRequest.current) {
+        setPreviewLoading(false);
+      }
+    }
+  };
+
+  const closePreview = () => {
+    previewRequest.current += 1;
+    setSelectedId(null);
+    setPreviewMarkdown(null);
+    setPreviewLoading(false);
+  };
 
   const submitImport = async () => {
     const files = fileList.map((item) => item.originFileObj).filter(Boolean) as File[];
@@ -131,25 +205,6 @@ export default function DocumentsTab() {
     }
   };
 
-  const openPreview = async (document: DocumentItem) => {
-    setPreviewOpen(true);
-    setPreviewLoading(true);
-    setPreview(null);
-    try {
-      const content = await api.getConceptContent(kb.id, document.concept_id);
-      setPreview({
-        conceptId: document.concept_id,
-        title: document.title,
-        markdown: content.body,
-      });
-    } catch (error) {
-      message.error(String(error));
-      setPreviewOpen(false);
-    } finally {
-      setPreviewLoading(false);
-    }
-  };
-
   const deleteDoc = async (conceptId: string) => {
     Modal.confirm({
       title: "删除文档？",
@@ -158,6 +213,39 @@ export default function DocumentsTab() {
       cancelText: "取消",
       onOk: () => runMrAction("已生成删除变更", () => api.deleteDocument(kb.id, conceptId)),
     });
+  };
+
+  const selectedItem = documents.find((doc) => doc.concept_id === selectedId) ?? null;
+
+  const renderDocuments = () => {
+    if (documents.length === 0) {
+      return <Empty description="还没有导入文档" />;
+    }
+    if (query.trim() && treeData.length === 0) {
+      return <Empty description="没有匹配的文档" />;
+    }
+    return (
+      <Tree
+        blockNode
+        showLine
+        height={360}
+        treeData={treeData}
+        expandedKeys={displayExpandedKeys}
+        onExpand={(keys) => setExpandedKeys(keys.map(String))}
+        selectedKeys={selectedId ? [`${FILE_KEY_PREFIX}${selectedId}`] : []}
+        onSelect={(keys) => {
+          const key = keys[0];
+          if (typeof key !== "string" || !key.startsWith(FILE_KEY_PREFIX)) {
+            return;
+          }
+          const conceptId = key.slice(FILE_KEY_PREFIX.length);
+          const item = documents.find((doc) => doc.concept_id === conceptId);
+          if (item) {
+            void openPreview(item);
+          }
+        }}
+      />
+    );
   };
 
   return (
@@ -182,60 +270,17 @@ export default function DocumentsTab() {
       }
     >
       <Space direction="vertical" size={16} style={{ width: "100%" }}>
-        {documents.length === 0 ? (
-          <Empty description="还没有导入文档" />
-        ) : (
-          <Table
-            size="small"
-            rowKey="concept_id"
-            pagination={false}
-            dataSource={documents}
-            columns={[
-              { title: "标题", dataIndex: "title" },
-              { title: "概念", dataIndex: "concept_id" },
-              {
-                title: "来源",
-                dataIndex: "resource",
-                render: (value: string | null) => (
-                  <Text type="secondary" ellipsis style={{ maxWidth: 260 }}>
-                    {value ?? "-"}
-                  </Text>
-                ),
-              },
-              {
-                title: "导入任务",
-                dataIndex: "import_task_id",
-                render: (value: string | null) =>
-                  value ? <Text code>{value.slice(0, 8)}</Text> : "-",
-              },
-              {
-                title: "操作",
-                key: "actions",
-                render: (_value: unknown, document: DocumentItem) => (
-                  <Space size={4}>
-                    <Button
-                      size="small"
-                      icon={<EyeOutlined />}
-                      onClick={() => void openPreview(document)}
-                    >
-                      预览
-                    </Button>
-                    {canWrite && (
-                      <Button
-                        size="small"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => void deleteDoc(document.concept_id)}
-                      >
-                        删除
-                      </Button>
-                    )}
-                  </Space>
-                ),
-              },
-            ]}
-          />
-        )}
+        <Card size="small" title="目录">
+          <Space direction="vertical" size={12} style={{ width: "100%" }}>
+            <Input
+              allowClear
+              placeholder="按标题或路径过滤"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+            {renderDocuments()}
+          </Space>
+        </Card>
 
         <Card size="small" title="待审变更（文档级 MR）">
           {mrs.length === 0 ? (
@@ -381,22 +426,57 @@ export default function DocumentsTab() {
       </Modal>
 
       <Drawer
-        title={preview?.title ?? "文档预览"}
-        open={previewOpen}
-        onClose={() => setPreviewOpen(false)}
+        title={selectedItem?.title ?? "文档预览"}
+        open={selectedItem !== null}
+        onClose={closePreview}
         width={860}
         destroyOnClose
       >
-        {previewLoading || !preview ? (
-          <div style={{ padding: 48, textAlign: "center" }}>
-            <Spin />
-          </div>
-        ) : (
-          <MarkdownView
-            kbId={kb.id}
-            conceptId={preview.conceptId}
-            markdown={preview.markdown}
-          />
+        {selectedItem && (
+          <Space direction="vertical" size={12} style={{ width: "100%" }}>
+            <Card size="small">
+              <Space direction="vertical" size={6} style={{ width: "100%" }}>
+                <Text code copyable>
+                  {selectedItem.concept_id}
+                </Text>
+                <Space size={[8, 4]} wrap>
+                  <Text type="secondary">来源：{selectedItem.resource ?? "-"}</Text>
+                  <Text type="secondary">
+                    导入任务：
+                    {selectedItem.import_task_id ? (
+                      <Text code>{selectedItem.import_task_id.slice(0, 8)}</Text>
+                    ) : (
+                      "-"
+                    )}
+                  </Text>
+                  <Tag color={STATUS_COLORS[selectedItem.status ?? ""] ?? "default"}>
+                    {selectedItem.status ?? "unknown"}
+                  </Tag>
+                </Space>
+                {canWrite && (
+                  <Button
+                    danger
+                    size="small"
+                    icon={<DeleteOutlined />}
+                    onClick={() => void deleteDoc(selectedItem.concept_id)}
+                  >
+                    删除
+                  </Button>
+                )}
+              </Space>
+            </Card>
+            {previewLoading || previewMarkdown === null ? (
+              <div style={{ padding: 48, textAlign: "center" }}>
+                <Spin />
+              </div>
+            ) : (
+              <MarkdownView
+                kbId={kb.id}
+                conceptId={selectedItem.concept_id}
+                markdown={previewMarkdown}
+              />
+            )}
+          </Space>
         )}
       </Drawer>
     </Card>
